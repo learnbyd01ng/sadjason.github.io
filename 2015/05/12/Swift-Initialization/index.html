@@ -1,0 +1,663 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Swift构造过程 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="构造过程概述
+构造过程是为了使用某个类、结构体或枚举类型的实例而进行的准备过程。这个过程包含了为实例中的每个属性设置初始值和为其执行必要的准备和初始化任务。「构造过程」是通过定义「构造器」（Initializers）来实现的，这些构造器可以看做是用来创建特定类型实例的特殊方法，它们的主要任务是保证新">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/05/12/Swift-Initialization/" title="Swift构造过程" itemprop="url">Swift构造过程</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-05-12T07:18:11.000Z" itemprop="datePublished">2015-05-12</time>
+    更新日期:<time datetime="2015-07-04T09:00:21.000Z" itemprop="dateModified">2015-07-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#构造过程概述"><span class="toc-number">1.</span> <span class="toc-text">构造过程概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#存储型属性的初始赋值"><span class="toc-number">2.</span> <span class="toc-text">存储型属性的初始赋值</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#默认属性值"><span class="toc-number">2.1.</span> <span class="toc-text">默认属性值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构造器"><span class="toc-number">2.2.</span> <span class="toc-text">构造器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#定制构造过程"><span class="toc-number">3.</span> <span class="toc-text">定制构造过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#构造参数"><span class="toc-number">3.1.</span> <span class="toc-text">构造参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构造器的外部参数名"><span class="toc-number">3.2.</span> <span class="toc-text">构造器的外部参数名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#在构造器中初始化常量属性"><span class="toc-number">3.3.</span> <span class="toc-text">在构造器中初始化常量属性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#默认构造器"><span class="toc-number">4.</span> <span class="toc-text">默认构造器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#结构体的逐一成员构造器"><span class="toc-number">4.1.</span> <span class="toc-text">结构体的逐一成员构造器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#值类型的构造器代理"><span class="toc-number">5.</span> <span class="toc-text">值类型的构造器代理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#类的继承和构造过程"><span class="toc-number">6.</span> <span class="toc-text">类的继承和构造过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#「指定构造器」和「便利构造器」"><span class="toc-number">6.1.</span> <span class="toc-text">「指定构造器」和「便利构造器」</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#类类型的构造器链"><span class="toc-number">6.2.</span> <span class="toc-text">类类型的构造器链</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#两段式构造过程"><span class="toc-number">6.3.</span> <span class="toc-text">两段式构造过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构造器的继承和重载"><span class="toc-number">6.4.</span> <span class="toc-text">构造器的继承和重载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#自动构造器的继承"><span class="toc-number">6.5.</span> <span class="toc-text">自动构造器的继承</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Failable_Initializers"><span class="toc-number">7.</span> <span class="toc-text">Failable Initializers</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Failable_Initializers介绍"><span class="toc-number">7.1.</span> <span class="toc-text">Failable Initializers介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用Failable_Initializer"><span class="toc-number">7.2.</span> <span class="toc-text">使用Failable Initializer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#The_init!_Failable_Initializer"><span class="toc-number">7.3.</span> <span class="toc-text">The init! Failable Initializer</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Required_Initializers"><span class="toc-number">8.</span> <span class="toc-text">Required Initializers</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最后说明"><span class="toc-number">9.</span> <span class="toc-text">最后说明</span></a></li></ol>
+		</div>
+		
+		<h2 id="构造过程概述"><strong>构造过程概述</strong></h2>
+<p>构造过程是为了使用某个类、结构体或枚举类型的实例而进行的准备过程。这个过程包含了<strong>为实例中的每个属性设置初始值和为其执行必要的准备和初始化任务</strong>。「构造过程」是通过定义「构造器」（Initializers）来实现的，这些构造器可以看做是用来创建特定类型实例的特殊方法，它们的主要任务是保证新实例在第一次使用前完成正确的初始化。构造器和普通的实例方法相比有些不同：</p>
+<ul>
+<li>构造器默认情况下是不被继承的；</li>
+<li>构造器没有返回值；</li>
+</ul>
+<p>P.S：Swift中关于initialization的信息量非常大！</p>
+<h2 id="存储型属性的初始赋值"><strong>存储型属性的初始赋值</strong></h2>
+<p>Swift中属性分为两种：「存储型属性」（stored properties）以及「计算型属性」（computed properties），这两个概念基本上类似于OC中的「普通属性」（譬如UIView的bounds属性）和「合成属性」（譬如UIView的frame属性）。很容易理解到：「计算型属性」和initialization基本上没啥关系，能扯上关系的只能是「存储型属性」了。</p>
+<p>P.S：关于「存储型属性」和「计算型属性」的详细的描述，参考<a href="/2015/05/11/Swift-Properties/">这里</a>。</p>
+<p>类和结构体在创建实例时，必须为所有存储型属性设置合适的初始值，存储型属性的值不能处于一个未知的状态。Swift手册是这么说的：</p>
+<blockquote>
+<p>Classes and structures <strong>must</strong> set all of their stored properties to an appropriate initial value by the time an instance of that class or structure is created. Stored properties cannot be left in an indeterminate state.</p>
+</blockquote>
+<p>P.S：所谓的「Swift手册」指的是《The Swift Programming Language》，如果没有特别书名，本文所谈及的Swift参考文档都是它。</p>
+<p>P.S：为什么没有提到枚举（enumerations）呢？因为「枚举」只能包含「计算型属性」嘛，更多关于「枚举」的介绍，参考<a href="/2015/05/05/Swift-Enumerations/">这里</a>。</p>
+<p><strong>Optional类型属性的初始化</strong></p>
+<p>笔者在看到上面这段来自Swift手册的引文后，立马自己做了一个实验，发现不太靠谱啊！当「存储型属性」是optional时不需要对它初始化啊，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span>: <span class="title">NSObject</span> </span>{</div><div class="line">    <span class="keyword">var</span> name: <span class="type">String</span>?</div><div class="line">    <span class="keyword">init</span>(name: <span class="type">String</span>) {</div><div class="line">        <span class="keyword">super</span>.<span class="keyword">init</span>()</div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<p>完全合法啊，使用也没啥问题。难道文档这段话有漏洞？后来又在文档中发现了这么一句话：</p>
+<blockquote>
+<p>If you define an optional variable without providing a default value, the variable is automatically set to nil for you.</p>
+</blockquote>
+<p>呵，文档并没有说错。当「存储型属性」是optional时，你可以任性一点：既不在定义语句中为之赋值（default value），也不在initializer中对其进行初始化。这样也是没问题的，因为对于optional，你若在定义时不提供默认值，Swift会帮你将其赋值为字面值<code>nil</code>。（据我所知，只有optional属性/变量/常量才有这样的待遇，其他情况下，Swift都不会帮你提供任何默认值。）</p>
+<p>扯了这么多，总之一句话：类和结构体在创建实例时，必须为所有「存储型属性」设置合适的初始值，存储型属性的值不能处于一个未知的状态。</p>
+<p>那么如何为「存储型属性」设置初始值呢？有两个时机：</p>
+<ul>
+<li>在定义时提供默认值；</li>
+<li>在构造器中初始化；</li>
+</ul>
+<h3 id="默认属性值"><strong>默认属性值</strong></h3>
+<p>可以在属性声明（或曰「定义」）时为其设置默认值，设置默认值的姿势有很多种，包括：<br>「字面值赋值」，「创建实例赋值」，「函数赋值」，「闭包赋值」等等，更详细的说明参考<a href="/2015/05/11/Swift-Properties/#存储型属性的初始化">这里</a>。</p>
+<h3 id="构造器"><strong>构造器</strong></h3>
+<p>另一种为「存储型属性」设置初始值的方式是在「构造器」中设置。「构造器」（initializer）并不是一个新鲜的名词，我所知道的面向对象语言中都存在这么一个东东，只是形态各异。在Swift中，构造器（initializer）的最简单形式类似于一个不带任何参数的实例方法，以关键字<code>init</code>命名。如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Fahrenheit</span> </span>{</div><div class="line">    <span class="keyword">var</span> temperature: <span class="type">Double</span></div><div class="line">    <span class="keyword">init</span>() {</div><div class="line">        temperature = <span class="number">32.0</span></div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<p>P.S：这两种「为存储型属性设置初始值」的方式就介绍这么多吧，但是，哪种好呢？根据Swift文档的描述，无论是哪种，最终它们实现的效果是一样的，很多的时候两种都会涉及到。</p>
+<h2 id="定制构造过程"><strong>定制构造过程</strong></h2>
+<p>You can customize the initialization process with input parameters and optional property types, or by assigning constant properties during initialization.</p>
+<p>简而言之，你可以通过定义各种各样的<code>init (...) {...}</code>来自定义构造过程。</p>
+<h3 id="构造参数"><strong>构造参数</strong></h3>
+<p>可以在定义构造函数时提供构造参数，为其提供定制化构造所需的类型和名字，构造器参数的功能和语法跟函数和方法相同。</p>
+<p>下面例子中定义了一个包含摄氏度温度的结构体Celsius。如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Celsius</span> </span>{</div><div class="line">    <span class="keyword">var</span> temperatureInCelsius: <span class="type">Double</span> = <span class="number">0.0</span></div><div class="line">    <span class="keyword">init</span>(fromFahrenheit fahrenheit: <span class="type">Double</span>) {</div><div class="line">        temperatureInCelsius = (fahrenheit - <span class="number">32.0</span>) / <span class="number">1.8</span></div><div class="line">    }</div><div class="line">    <span class="keyword">init</span>(fromKelvin kelvin: <span class="type">Double</span>) {</div><div class="line">        temperatureInCelsius = kelvin - <span class="number">273.15</span></div><div class="line">    }</div><div class="line">}</div><div class="line"><span class="keyword">let</span> boilingPointOfWater = <span class="type">Celsius</span>(fromFahrenheit: <span class="number">212.0</span>)</div><div class="line"><span class="comment">// boilingPointOfWater.temperatureInCelsius 是 100.0</span></div><div class="line"><span class="keyword">let</span> freezingPointOfWater = <span class="type">Celsius</span>(fromKelvin: <span class="number">273.15</span>)</div><div class="line"><span class="comment">// freezingPointOfWater.temperatureInCelsius 是 0.0"</span></div></pre></figure>
+
+<p>它定义了两个不同的构造器，这两个构造器都只有一个参数，并且参数类型完全一样，只不过前者的参数的外部名字是fromFahrenheit，后者的参数的外部名字是fromKelvin；这两个参数都将唯一的参数值转换成摄氏温度值，并保存在属性temperatureInCelsius中。</p>
+<h3 id="构造器的外部参数名"><strong>构造器的外部参数名</strong></h3>
+<p>和其他众多语言（譬如OC）一样，Swift中的类也可以包含多个initializers，不同的是OC中的initializers有不同的名字，譬如<code>initWithFrame:</code>和<code>init</code>，而在Swift中，所有的initializers的名字都相同，都叫<code>init</code>，那么如何来区分这些initializers呢？</p>
+<p>显然，不同的「参数类型」可以作为一个区分指标，譬如<code>(Int)</code>和<code>(Int, String)</code>的区分比较比较明显了。但是向上面的Celsius结构体，这两个init的参数列表类型都是<code>(String)</code>，该如何区分呢？此时就得依赖于参数的外部名字了。也正因为external parameter names对于init如此重要，所以<strong>Swift强制要求initializer的每一个参数都有一个external parameter name，如果没有显式指明外部名字，Swift编译器在编译时会主动加上一个与local parameter name相同的external parameter name</strong>。</p>
+<h3 id="在构造器中初始化常量属性"><strong>在构造器中初始化常量属性</strong></h3>
+<p>下意识里，常量属性只能在定义时指定默认值，不能在构造器中赋值。但事实是：你可以在initializer中初始化常量属性（就像处理其他非常量属性一样）。如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span> </span>{</div><div class="line">    <span class="keyword">let</span> gender: <span class="type">Int</span> = -<span class="number">1</span>	<span class="comment">// gender表示「性别」，-1（未知），0（女），1（男）</span></div><div class="line">    <span class="keyword">var</span> name: <span class="type">String</span></div><div class="line">    <span class="keyword">init</span>(name: <span class="type">String</span>, gender: <span class="type">Int</span>) {</div><div class="line">        <span class="keyword">self</span>.name = name</div><div class="line">        <span class="keyword">self</span>.gender = gender</div><div class="line">}</div></pre></figure>
+
+<p><strong>注意：</strong></p>
+<blockquote>
+<p>For class instances, a constant property can only be modified during initialization by the class that introduce it. It cannot be modified by a subclass.</p>
+</blockquote>
+<h2 id="默认构造器"><strong>默认构造器</strong></h2>
+<p>在Swift中，构造器不是必须的，因为Swift会帮你自动提供一个默认的构造器（其他大多数支持面向对象的语言也支持这个），但必须满足如下条件（缺一不可）：</p>
+<ul>
+<li>所有「存储型属性」都有一个默认值；</li>
+<li>没有显式创建任何构造器；</li>
+</ul>
+<p>满足这两个条件，Swift就会自动帮你构建一个默认构造器，该默认构造器将简单地创建一个所有属性值都设置为默认值的实例。</p>
+<p>可以猜测到，默认构造器的形式一定是<code>init(){super.init()}</code>。</p>
+<p>对于结构体，除了这个你所能猜测到的默认构造器（default initializer）之外，Swift还为它提供了另外一个构造器，叫做「逐一成员构造器」（memberwise initializer）。</p>
+<p>P.S：当然，Swift为结构体自动创建「逐一成员构造器」的前提同样是满足上述两个条件。</p>
+<p>P.S：「逐一成员构造器」是Swift为「结构体」提供的福利，「类」是没福分享用的。</p>
+<h3 id="结构体的逐一成员构造器"><strong>结构体的逐一成员构造器</strong></h3>
+<p>逐一成员构造器是用来初始化结构体新实例里成员属性的快捷方法。我们在调用「逐一成员构造器」时，通过与成员属性名相同的参数名进行传值来完成对成员属性的初始赋值。</p>
+<p>举个栗子：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Size</span> </span>{</div><div class="line">    <span class="keyword">var</span> width = <span class="number">0.0</span>, height = <span class="number">0.0</span></div><div class="line">}</div><div class="line"><span class="keyword">let</span> size1 = <span class="type">Size</span>()                          <span class="comment">// 使用「默认构造器」对属性进行初始化</span></div><div class="line"><span class="keyword">let</span> size2 = <span class="type">Size</span>(width: <span class="number">10.0</span>, height: <span class="number">10.0</span>) <span class="comment">// 使用「逐一成员构造器」对属性进行初始化</span></div></pre></figure>
+
+<p>注意，如果你为某个值类型（譬如结构体））定义了一个定制的构造器，你将无法访问到默认构造器（如果是结构体，则无法访问逐一对象构造器）。所以Swift文档建议：</p>
+<blockquote>
+<p>If you want your custom value type to be initializable with the default initializer and memberwise initializer, and also with your own custom initializers, write your custom initializers in an extension rather than as part of the value type’s original implementation.</p>
+</blockquote>
+<h2 id="值类型的构造器代理"><strong>值类型的构造器代理</strong></h2>
+<p>构造器可以通过调用其它构造器来完成实例的部分构造过程。这一过程称为构造器代理，它能减少多个构造器间的代码重复。</p>
+<p>构造器代理的实现规则和形式在值类型和类类型中有所不同。值类型（结构体和枚举类型）不支持继承，所以构造器代理的过程相对简单，因为它们只能代理任务给本身提供的其它构造器（即<code>self.init(...)</code>）；类则不同，它可以继承自其它类，这意味着<strong>类有责任保证其所有继承的存储型属性在构造时也能正确的初始化</strong>。</p>
+<p>理解『值类型的构造器代理』并不难，看一个应用示例就没啥问题了：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Size</span> </span>{</div><div class="line">    <span class="keyword">var</span> width = <span class="number">0.0</span>, height = <span class="number">0.0</span></div><div class="line">}</div><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Point</span> </span>{</div><div class="line">    <span class="keyword">var</span> x = <span class="number">0.0</span>, y = <span class="number">0.0</span></div><div class="line">}</div><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Rect</span> </span>{</div><div class="line">    <span class="keyword">var</span> origin = <span class="type">Point</span>()</div><div class="line">    <span class="keyword">var</span> size = <span class="type">Size</span>()</div><div class="line">   </div><div class="line">    <span class="keyword">init</span>() {}</div><div class="line">   </div><div class="line">    <span class="keyword">init</span>(origin: <span class="type">Point</span>, size: <span class="type">Size</span>) {</div><div class="line">        <span class="keyword">self</span>.origin = origin</div><div class="line">        <span class="keyword">self</span>.size = size</div><div class="line">    }</div><div class="line">   </div><div class="line">    <span class="keyword">init</span>(center: <span class="type">Point</span>, size: <span class="type">Size</span>) {</div><div class="line">        <span class="keyword">let</span> originX = center.x - (size.width / <span class="number">2</span>)</div><div class="line">        <span class="keyword">let</span> originY = center.y - (size.height / <span class="number">2</span>)</div><div class="line">        <span class="keyword">self</span>.<span class="keyword">init</span>(origin: <span class="type">Point</span>(x: originX, y: originY), size: size)</div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<h2 id="类的继承和构造过程"><strong>类的继承和构造过程</strong></h2>
+<p>类里面的所有存储型属性 — 包括所有继承自父类的属性 — 都必须在构造过程中设置初始值。</p>
+<p>Swift提供了两种类型的类构造器来确保所有类实例中存储型属性都能获得初始值，它们分别是「指定构造器」（designated initializer）和「便利构造器」（convenience initializer）。</p>
+<h3 id="「指定构造器」和「便利构造器」"><strong>「指定构造器」和「便利构造器」</strong></h3>
+<p>「便利构造器」是指被<code>convenience</code>修饰的构造器；反之，在类中没被<code>convenience</code>修饰的initializer都是designated initializer，举个栗子：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span>: <span class="title">NSObject</span> </span>{</div><div class="line">    <span class="keyword">var</span> name: <span class="type">String</span></div><div class="line">    <span class="keyword">let</span> score: <span class="type">Int</span> = <span class="number">0</span></div><div class="line">    <span class="comment">// designated initializer</span></div><div class="line">    <span class="keyword">init</span>(name: <span class="type">String</span>) {</div><div class="line">        <span class="keyword">self</span>.name = name</div><div class="line">        <span class="keyword">super</span>.<span class="keyword">init</span>()</div><div class="line">    }</div><div class="line">    <span class="comment">// convenience initializer</span></div><div class="line">    convenience <span class="keyword">init</span>(<span class="type">WithName</span> name: <span class="type">String</span>, age: <span class="type">Int</span>) {</div><div class="line">        <span class="keyword">self</span>.<span class="keyword">init</span>(name:name)</div><div class="line">        <span class="keyword">self</span>.age = age</div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<p>Swift</p>
+<p><strong>「指定构造器」是类中最主要的构造器。</strong></p>
+<p>一个指定构造器将初始化类中提供的所有属性，并根据父类链往上调用父类的构造器来实现父类的初始化。每一个类都必须拥有至少一个指定构造器，在某些情况下，许多类通过继承了父类中的「指定构造器」而满足了这个条件。</p>
+<p>P.S：本文开头讲过『构造器默认情况下是不被继承的』。但是这里有提到『许多类通过继承了父类中的「指定构造器」而满足了这个条件』，到底是怎么回事儿呢？事实上，子类是可以继承父类的构造器的，但是必须满足某些条件，后文会详细阐述。</p>
+<p><strong>「便利构造器」是类中比较次要的、辅助型的构造器。</strong></p>
+<p>你可以定义「便利构造器」来调用同一个类中的「指定构造器」，并为其参数提供默认值。你也可以定义「便利构造器」来创建一个特殊用途或特定输入的实例。</p>
+<p>你应当只在必要的时候为类提供便利构造器，比方说某种情况下通过使用便利构造器来快捷调用某个指定构造器，能够节省更多开发时间并让类的构造过程更清、晰明。</p>
+<p>P.S：关于「指定构造器」和「遍历构造器」的最佳使用实践，还待以后补充！</p>
+<h3 id="类类型的构造器链"><strong>类类型的构造器链</strong></h3>
+<p>为了简化「指定构造器」和「便利构造器」之间的调用关系，Swift采用以下三条规则来限制构造器之家的代理调用：</p>
+<ul>
+<li>规则一，「指定构造器」<strong>必须</strong>调用其直接父类的指定构造器；</li>
+<li>规则二，「便利构造器」必须调用同一类中定义的其他构造器；</li>
+<li>规则三，「便利构造器」必须最终调用一个「指定构造器」；</li>
+</ul>
+<p>一图胜千言：<br><img src="/img/201505/6ABE1751.png" width="329" height="160/"><br>该图更加生动地描述了上述的三条规则。</p>
+<h3 id="两段式构造过程"><strong>两段式构造过程</strong></h3>
+<p>Swift中类的构造过程包含两个阶段。<br>第一个阶段，每个存储型属性通过引入它们的类的构造器来设置初始值。当每一个存储型属性值被确定后，第二阶段开始，它给每个类一次机会在新实例准备使用之前进一步定制它们的存储型属性。</p>
+<p>两段式构造过程的使用让构造过程更安全，同时在整个类层级结构中给予了每个类完全的灵活性。两段式构造过程可以防止属性值在初始化之前被访问；也可以防止属性被另外一个构造器意外地赋予不同的值。</p>
+<p>注意：Swift的两段式构造过程跟OC中的构造过程类似。最主要的区别在于「阶段一」，OC给每一个属性赋值0或nil；Swift的构造流程更加灵活，它允许你设置定制的初始化值，并自如应对某些属性不能以0或nil作为合法默认值的情况。</p>
+<p>Swift编译器将执行4中有效情况的安全检查，以确保两段式构造过程能顺利完成：</p>
+<ul>
+<li>安全检查1。「指定构造器」必须保证它所在类引入的所有属性都必须先初始化完成，之后才能将其他构造任务向上代理父类的构造器；简而言之，子类的构造器在<code>super.init(...)</code>之前必须确保自己的存储型属性（非继承属性）都完成了初始化。</li>
+<li>安全检查2。「指定构造器」必须先向上代理调用父类构造器，然后再为继承的属性设置新值。如果没有这么做，「指定构造器」赋予的新值将被父类的构造器所覆盖。</li>
+<li>安全检查3。便利构造器必须先代理调用同一类中的其它构造器，然后再为任意属性赋新值。如果没这么做，便利构造器赋予的新值将被同一类中其它指定构造器所覆盖。</li>
+<li>安全检查4。构造器在第一阶段构造完成之前，不能调用任何实例方法、不能读取任何实例属性的值，也不能引用self的值。</li>
+</ul>
+<p>The class instance is not fully valid until the first phase ends. Properties can only be accessed, and methods can only be called, once the class instance is known to be valid at the end of the first phase.</p>
+<p>以下是两段式构造过程中基于上述安全检查的构造流程展示：</p>
+<p><strong>阶段一：</strong></p>
+<ul>
+<li>某个「指定构造器」或「便利构造器」被调用；</li>
+<li>完成新实例内存的分配，但此时内存还没有被初始化；</li>
+<li>「指定构造器」确保其所在类引入的所有「存储型属性」都已赋初值，「存储型属性」所属的内存完成初始化；</li>
+<li>「指定构造器」将调用父类的构造器，完成父类属性的初始化；</li>
+<li>这个调用父类构造器的过程沿着构造器链一直往上执行，直到到达构造器链的最顶部；</li>
+<li>当到达了构造器链最顶部，且已确保所有实例包含的「存储型属性」都已经赋值，这个实例的内存被认为已经完全初始化（此时「阶段一」完成）。</li>
+</ul>
+<p><strong>阶段二：</strong></p>
+<ul>
+<li>从顶部构造器链一直往下，每个构造器链中类的指定构造器都有机会进一步定制实例；构造器此时可以访问self、修改它的属性并调用实例方法等等；</li>
+<li>最终，任意构造器链中的便利构造器可以有机会定制实例和使用self。</li>
+</ul>
+<p>下图展示了在假定的子类和父类之间构造的「阶段一」：</p>
+<p><img src="/img/201505/3B436EC7.png" width="470" height="220/"></p>
+<p>以下展示了相同构造过程的「阶段二」：</p>
+<p><img src="/img/201505/19D4FD6C.png" width="470" height="224/"></p>
+<h3 id="构造器的继承和重载"><strong>构造器的继承和重载</strong></h3>
+<p>跟OC中的子类不同，Swift中的子类不会默认继承父类的构造器。Swift的这种机制可以防止一个父类的简单构造器被一个更专业的子类继承，并被错误的用来创建子类的实例。</p>
+<p>P.S：initializer在OC中会被继承，这是个非常蛋疼的问题（可谓OC的一大槽点）；举个例子，某个自定义View叫ZWLabel，它继承自UIView，后者提供了<code>init``initWithFrame:</code>等initializers，这些initializers都会被ZWLabel继承；除此之外，ZWLabel也自定义了一个initializer <code>initWithString:</code>，并且只希望调用者调用这个<code>initWithString:</code>来初始化；然而，无论ZWLabel的作者愿不愿意，ZWLabel的用户都可以使用<code>init</code>和<code>initWithFrame:</code>；这是一个非常麻烦的事情。</p>
+<p>P.S：在学习Swift过程中，对比OC，就会发现OC真的很落后（但像我这种小啰啰是很难体会到的，除非和其他语言进行对比）。</p>
+<p>假如你希望自定义的子类中能实现一个或多个跟父类相同的构造器 — 也许是为了完成一些定制的构造过程 — 你可以在你定制的子类中􏰁供和重载与父类相同的构造器。</p>
+<p>如果你重载的构造器是一个指定构造器，你可以在子类里重载它的实现，并在自定义版本的构造器中调用父类版本的构造器。</p>
+<p>如果你重载的构造器是一个便利构造器，你的重载过程必须通过调用同一类中提供的其它指定构造器来实现。</p>
+<p>注意：</p>
+<blockquote>
+<p>You always write the <code>override</code> modifier when overriding a superclass <strong>designated initializer</strong>, even if your subclass’s implementation of the initializer is a convenience initializer.</p>
+</blockquote>
+<p>通过示例验证，我这句话的理解如下，如果子类需要定义一个与父类某个initializer同类型的initializer时（譬如父类中已有一个构造器<code>init(paraName: TypeName){}</code>，子类也想定义这么个构造器）：</p>
+<ul>
+<li>当该构造器在父类中是一个「指定构造器」时，子类override该构造器时，既可以将该构造器修饰为「designated」，也可以修饰为「convenience」，但无论如何，都需要在前面加上override关键字；</li>
+<li>当该构造器在父类中是一个「便利构造器」时，子类override该构造器时，既可以将该构造器修饰为「designated」，也可以修饰为「convenience」，并且不需要加上override关键字修饰，否则会报错：Initializer does not override a designated initializer from its superclass.</li>
+</ul>
+<p>简单来说，只有对于类的「指定构造器」而言，才有谈及override的意义，子类可以override父类的「指定构造器」为「指定构造器」或者「便利构造器」；对于「便利构造器」，不存在所谓的override。</p>
+<h3 id="自动构造器的继承"><strong>自动构造器的继承</strong></h3>
+<p>如上文所述，子类不会默认继承父类的构造器。但是如果特定条件可以满足，父类构造器是可以被自动继承的。在实际应用中，这意味着对于许多常见场景你不必重载父类的构造器，并且在尽可能安全的情况下以最小的代价来继承父类的构造器。</p>
+<p>自动构造器的继承规则如下。</p>
+<p><strong>「规则一」：</strong><br>如果子类没有定义任何指定构造器，它将自动继承所有父类的指定构造器。</p>
+<p><strong>「规则二」：</strong><br>如果子类提供了所有父类指定构造器的实现 — 不管是通过「规则一」继承过来的，还是通过自定义实现的 — 它将自动继承所有父类的便利构造器。</p>
+<p>即使你在子类中添加了更多的便利构造器，这两条规则仍然适用。</p>
+<h2 id="Failable_Initializers"><strong>Failable Initializers</strong></h2>
+<h3 id="Failable_Initializers介绍"><strong>Failable Initializers介绍</strong></h3>
+<p><strong>Initializer没有返回值</strong></p>
+<p>在OC中，initializer都是有返回值的，返回nil或者一个类对象；对于Swift，应该也是类似的，譬如对于<code>var jason = Student(name: &quot;Jason&quot;)</code>，构造器应该也返回一个指向Student的对象才对啊，否则如何为左值（jason变量）赋值呢？但根据上文的描述，Swift的initializers都是没有返回值的，主要原因是因为Swift认为这些initializers的返回值都是一样，都是指向类型对象的引用<code>self</code>，所以为了简洁起见，Swift就要求<code>return self</code>这样的逻辑给省掉，它会帮你处理。</p>
+<p>但在有些时候，构造过程并不一定会成功，同样站在OC的角度来看，<code>init</code>或<code>initWithFrame:</code>这些构造器方法的返回值并不一定总是有效的类实例指针，也可能是nil。如果是构造器返回nil则说明构造失败。为什么会失败呢，可能是传入的参数不合法，也可能是其他原因。</p>
+<p>显然，结合实际，Swift也应该有应对「构造过程失败」的逻辑。</p>
+<p>Swift把支持「构造过程失败」的构造器称为「failable initializer」；当构造失败时，和OC一样，这个构造器会返回一个nil，若构造成功，则啥都不返回（Swift会帮你处理）。「failable initializer」相对于普通构造器，多了一个标识符<code>?</code>，即在init关键字后面多了<code>?</code>，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span> </span>{</div><div class="line">    <span class="keyword">var</span> age: <span class="type">Int</span> = <span class="number">0</span>    <span class="comment">// 年龄</span></div><div class="line">    <span class="keyword">init</span>?(age: <span class="type">Int</span>) {</div><div class="line">        <span class="keyword">self</span>.age = age</div><div class="line">        <span class="keyword">if</span> age &lt; <span class="number">0</span> || age &gt; <span class="number">200</span> {</div><div class="line">            <span class="keyword">return</span> <span class="built_in">nil</span></div><div class="line">        }</div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<p>关于「failable initializer」存在的必要性，Swift官方文档的阐述更加详细：</p>
+<blockquote>
+<p>It is sometimes useful to define a class, structure, or enumeration for which initialization can fail. This failure might be triggered by invalid initialization parameter values, the absence of a required external resource, or other condition that prevents initialization from succeeding.</p>
+</blockquote>
+<p>P.S：可以看到，「failable initialization」不是类所独有的，structures以及enumerations也同样适用。</p>
+<p>可以理解到，<code>init?</code>和普通的<code>init</code>的唯一区别是前者可能有一个nil返回值；如果使用上述定义的Student类，则<code>var aStudent = Student(age:20)</code>的结果是『aStudent是一个optional』。</p>
+<p>你可以在类/结构体/枚举中定义一个或多个「failable initializer」。但是：</p>
+<blockquote>
+<p>You cannot define a failable and nonfailable initializer with the same parameter types and names.</p>
+</blockquote>
+<p>想一想，很容易了理解嘛。如果上述的Student同时定义了<code>init?(age: Int) {}</code>和<code>init(age: Int) {}</code>，<code>var aStudent = Student(age:20)</code>使用的initializer是哪个呢？傻傻分不清楚嘛！</p>
+<p>再次说明：在「failable initializer」中使用<code>return nil</code>的作用是<code>to trigger an initialization failure</code>，但你千万不能使用<code>return</code>或者<code>return self</code>之类的语句「通知initialization成功」。</p>
+<h3 id="使用Failable_Initializer"><strong>使用Failable Initializer</strong></h3>
+<p>如下有一些关于「failable initializer」与同级initializer以及父类initializer之间的关系说明：</p>
+<ul>
+<li>类/结构体/枚举的failure initializer可以delegate同级的其他failable initializer；</li>
+<li>子类的failure initializer也可以delegate父类的failable initializer；</li>
+</ul>
+<p>Failure initializer也可以delegate其他的non-failable initializer，但是要注意语序，如下是一个使用例子：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>{</div><div class="line">    <span class="keyword">var</span> name: <span class="type">String</span></div><div class="line">    <span class="keyword">init</span>(name: <span class="type">String</span>) {</div><div class="line">        <span class="keyword">self</span>.name = name</div><div class="line">    }</div><div class="line">}</div><div class="line">   </div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span>: <span class="title">Person</span> </span>{</div><div class="line">    <span class="keyword">var</span> age: <span class="type">Int</span> = <span class="number">0</span>    <span class="comment">// 年龄</span></div><div class="line">    <span class="keyword">init</span>?(name: <span class="type">String</span>, age: <span class="type">Int</span>) {</div><div class="line">        <span class="keyword">self</span>.age = age</div><div class="line">        <span class="keyword">super</span>.<span class="keyword">init</span>(name: name)</div><div class="line">        <span class="keyword">if</span> age &lt; <span class="number">0</span> || age &gt; <span class="number">200</span> {</div><div class="line">            <span class="keyword">return</span> <span class="built_in">nil</span></div><div class="line">        }</div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<p>注意：Failable initializer可以delegate同级或者superclass（对于类而言）的non-failable initializer，但是：</p>
+<blockquote>
+<p>A non-failable initializer can never delegate to a failable initializer.</p>
+</blockquote>
+<p><strong>重载Failable Initializer</strong></p>
+<p>对于类而言，像其他的initializer一样，你可以override父类的failable initializer；你甚至可以在子类中使用non-failable initializer去override父类的failable initializer。只是此时你不能再delegate父类的failable initializer了，因为「A non-failable initializer can never delegate to a failable initializer」。</p>
+<p>这在有些时候可能会产生一些问题，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>{</div><div class="line">    <span class="keyword">var</span> name: <span class="type">String</span></div><div class="line">    <span class="keyword">init</span>?(name: <span class="type">String</span>) {</div><div class="line">        <span class="keyword">self</span>.name = name</div><div class="line">    }</div><div class="line">}</div><div class="line">   </div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span>: <span class="title">Person</span> </span>{</div><div class="line">    <span class="keyword">var</span> age: <span class="type">Int</span> = <span class="number">0</span>    <span class="comment">// 年龄</span></div><div class="line">   </div><div class="line">    <span class="keyword">override</span> <span class="keyword">init</span>(name: <span class="type">String</span>) {</div><div class="line">        <span class="keyword">self</span>.name = name</div><div class="line">        <span class="comment">// 在这里无论是否执行`super.init(name: name)`都会产生编译错误</span></div><div class="line">        <span class="comment">// 如果调用，会有编译错误：A non-failable initializer cannot chain to failable initializer</span></div><div class="line">        <span class="comment">// 如果不调用，也会有编译错误：super.init isn't called before returning from initializer</span></div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<p>当然，这个示例比较极端，因为父类中只有一个「failable initializer」；可见，在将父类的「failure initializer」override成「non-failure initializer」一定要考虑周全！此外，父类不能只有「failure initializer」而没有「non-failure initializer」。</p>
+<p>P.S：这个示例可以从某个角度说明，Swift的initialization似乎弄得有些复杂了，难道没有更好的设计吗？</p>
+<h3 id="The_init!_Failable_Initializer"><strong>The init! Failable Initializer</strong></h3>
+<p>除了<code>init? failable initializer</code>，你还可以定义<code>init! failable initializer</code>，它和failable initializer一样，基于它得到的东东是一个optional（可能包含一个对象，也可能是一个nil值）；不同的是，它得到的optional带有<code>implicitly unwrapped</code>功能。关于<code>implicitly unwrapped</code>这里就略过了。</p>
+<p>举个栗子：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>{</div><div class="line">    <span class="keyword">var</span> name: <span class="type">String</span></div><div class="line">    <span class="keyword">init</span>(name: <span class="type">String</span>) {</div><div class="line">        <span class="keyword">self</span>.name = name</div><div class="line">    }</div><div class="line">}</div><div class="line">   </div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span>: <span class="title">Person</span> </span>{</div><div class="line">    <span class="keyword">var</span> age: <span class="type">Int</span> = <span class="number">0</span>    <span class="comment">// 年龄</span></div><div class="line">    <span class="keyword">init</span>!(name: <span class="type">String</span>, age: <span class="type">Int</span>) {</div><div class="line">        <span class="keyword">self</span>.age = age</div><div class="line">        <span class="keyword">super</span>.<span class="keyword">init</span>(name: name)</div><div class="line">        <span class="keyword">if</span> age &lt; <span class="number">0</span> || age &gt; <span class="number">200</span> {</div><div class="line">            <span class="keyword">return</span> <span class="built_in">nil</span></div><div class="line">        }</div><div class="line">    }</div><div class="line">}</div><div class="line">   </div><div class="line"><span class="comment">// 测试</span></div><div class="line"><span class="keyword">var</span> aStudent1 = <span class="type">Student</span>(name: <span class="string">"张不坏"</span>, age: <span class="number">23</span>)</div><div class="line"><span class="keyword">if</span> aStudent1 == <span class="built_in">nil</span> {</div><div class="line">    <span class="built_in">println</span>(<span class="string">"1号Student：构造失败"</span>)</div><div class="line">} <span class="keyword">else</span> {</div><div class="line">    <span class="built_in">println</span>(<span class="string">"1号Student：<span class="subst">\(aStudent1.name)</span>的年龄是<span class="subst">\(aStudent1.age)</span>岁"</span>)</div><div class="line">}</div><div class="line">   </div><div class="line"><span class="keyword">var</span> aStudent2 = <span class="type">Student</span>(name: <span class="string">"张无忌"</span>, age: <span class="number">630</span>)</div><div class="line"><span class="keyword">if</span> aStudent2 == <span class="built_in">nil</span> {</div><div class="line">    <span class="built_in">println</span>(<span class="string">"2号Student：构造失败"</span>)</div><div class="line">} <span class="keyword">else</span> {</div><div class="line">    <span class="built_in">println</span>(<span class="string">"2号Student：<span class="subst">\(aStudent2.name)</span>的年龄是<span class="subst">\(aStudent2.age)</span>岁"</span>)</div><div class="line">}</div><div class="line"><span class="comment">/* 输出：</span></div><div class="line">1号Student：张不坏的年龄是23岁</div><div class="line">2号Student：构造失败</div><div class="line">*/</div></pre></figure>
+
+<h2 id="Required_Initializers"><strong>Required Initializers</strong></h2>
+<p>对于某个类，如果在initializer前加上关键字<code>required</code>修饰，则要求：所有该类的子类都得实现这个initializer。并且子类在实现该required initializer时也得加上关键字<code>required</code>修饰；和其他的initializer不同，此时不再需要关键字<code>override</code>。</p>
+<h2 id="最后说明"><strong>最后说明</strong></h2>
+<ul>
+<li>Swift中关于initialization的内容比较复杂，个人感觉不够简洁优美；</li>
+<li>本文内容是笔者阅读《The Swift Programming Language》整理的笔记，目前还没有太多个人使用体会，希望以后将本篇博客压缩提炼；</li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Swift/">Swift</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/05/12/Swift-Initialization/" data-title="Swift构造过程 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/05/12/Swift-ARC/" title="Swift自动引用计数">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  Swift自动引用计数</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/05/12/Swift-Methods-and-Subscripts/"  title="Swift方法和下标">
+ <strong>NEXT:</strong><br/> 
+ <span>Swift方法和下标
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/05/12/Swift-Initialization/" data-title="Swift构造过程" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#构造过程概述"><span class="toc-number">1.</span> <span class="toc-text">构造过程概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#存储型属性的初始赋值"><span class="toc-number">2.</span> <span class="toc-text">存储型属性的初始赋值</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#默认属性值"><span class="toc-number">2.1.</span> <span class="toc-text">默认属性值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构造器"><span class="toc-number">2.2.</span> <span class="toc-text">构造器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#定制构造过程"><span class="toc-number">3.</span> <span class="toc-text">定制构造过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#构造参数"><span class="toc-number">3.1.</span> <span class="toc-text">构造参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构造器的外部参数名"><span class="toc-number">3.2.</span> <span class="toc-text">构造器的外部参数名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#在构造器中初始化常量属性"><span class="toc-number">3.3.</span> <span class="toc-text">在构造器中初始化常量属性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#默认构造器"><span class="toc-number">4.</span> <span class="toc-text">默认构造器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#结构体的逐一成员构造器"><span class="toc-number">4.1.</span> <span class="toc-text">结构体的逐一成员构造器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#值类型的构造器代理"><span class="toc-number">5.</span> <span class="toc-text">值类型的构造器代理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#类的继承和构造过程"><span class="toc-number">6.</span> <span class="toc-text">类的继承和构造过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#「指定构造器」和「便利构造器」"><span class="toc-number">6.1.</span> <span class="toc-text">「指定构造器」和「便利构造器」</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#类类型的构造器链"><span class="toc-number">6.2.</span> <span class="toc-text">类类型的构造器链</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#两段式构造过程"><span class="toc-number">6.3.</span> <span class="toc-text">两段式构造过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构造器的继承和重载"><span class="toc-number">6.4.</span> <span class="toc-text">构造器的继承和重载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#自动构造器的继承"><span class="toc-number">6.5.</span> <span class="toc-text">自动构造器的继承</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Failable_Initializers"><span class="toc-number">7.</span> <span class="toc-text">Failable Initializers</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Failable_Initializers介绍"><span class="toc-number">7.1.</span> <span class="toc-text">Failable Initializers介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用Failable_Initializer"><span class="toc-number">7.2.</span> <span class="toc-text">使用Failable Initializer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#The_init!_Failable_Initializer"><span class="toc-number">7.3.</span> <span class="toc-text">The init! Failable Initializer</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Required_Initializers"><span class="toc-number">8.</span> <span class="toc-text">Required Initializers</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最后说明"><span class="toc-number">9.</span> <span class="toc-text">最后说明</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

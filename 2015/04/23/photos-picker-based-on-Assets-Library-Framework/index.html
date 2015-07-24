@@ -1,0 +1,498 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>基于Assets Library Framework的图片选择器的实现 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="写在前面
+从iOS设备中选择图片资源（选择图片和从相机拍一张）是很多iOS App的基础功能。这个需求属于普遍需求，并且开发者自己从零开始自己实现这么一个功能是比较困难的。于是iOS提供了原生的公共ViewController来帮助开发者简化这个工作，即UIImagePickerController">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/04/23/photos-picker-based-on-Assets-Library-Framework/" title="基于Assets Library Framework的图片选择器的实现" itemprop="url">基于Assets Library Framework的图片选择器的实现</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-04-23T01:54:08.000Z" itemprop="datePublished">2015-04-23</time>
+    更新日期:<time datetime="2015-07-04T09:07:53.000Z" itemprop="dateModified">2015-07-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Assets_Library_Framework介绍"><span class="toc-number">2.</span> <span class="toc-text">Assets Library Framework介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#图片浏览器实现说明"><span class="toc-number">3.</span> <span class="toc-text">图片浏览器实现说明</span></a></li></ol>
+		</div>
+		
+		<h2 id="写在前面">写在前面</h2>
+<p>从iOS设备中选择图片资源（选择图片和从相机拍一张）是很多iOS App的基础功能。这个需求属于普遍需求，并且开发者自己从零开始自己实现这么一个功能是比较困难的。于是iOS提供了原生的公共ViewController来帮助开发者简化这个工作，即UIImagePickerController。</p>
+<p>但是UIImagePickerController有一个问题：功能比较单一。对于「图片选择」功能而言，一次UIImagePickerController调用只能选择一张图片（也许以后会改善），所以在很多时候开发者宁愿自己动手实现「图片选择器」，而不使用UIImagePickerController。</p>
+<p>不过好在，iOS提供了非常丰富的框架用来帮助开发者实现更复杂的图片管理功能。</p>
+<p>手头的项目有“从本地图片库一次性选择多张图片”的需求。网上有很多第三方库可以直接使用，<a href="https://github.com/mwaterfall/MWPhotoBrowser" target="_blank" rel="external">MWPhotoBrowser</a>是我所知道的比较杰出的一个，但笔者决定以学习的心态自己动手做一个。做成什么样子的呢？身边没有比较好的设计师，模仿微信吧！</p>
+<p>最终gif效果图如下：</p>
+<p><img src="/img/201504/2015-04-23-01.gif" alt="2015-04-23-01.gif"></p>
+<p>P.S：效果图中用的是在知乎中非常受欢迎的一位女神「王诺诺」的照片，挺喜欢她的，不晓得是否有不妥之处。</p>
+<p>Demo代码在<a href="https://github.com/sadjason/iOSDemos/tree/master/PhotosPickerInWeChat" target="_blank" rel="external">这里</a>。</p>
+<h2 id="Assets_Library_Framework介绍">Assets Library Framework介绍</h2>
+<p>Assets Library Framework是iOS中内置的一套框架，可以用它来访问和管理Photos App中管理的图片和视频资源。</p>
+<p>在iOS8中，Apple推出了另外一套框架：Photos Framework，根据官方的说法，这一套框架比Assets Library Framework具备更多特性、性能更好。看势头，Photos Framework会逐渐代替Assets Library Framework，但站在兼容性的角度，我决定先着力于Assets Library Framework这个框架。</p>
+<p>Assets Library Framework比我想象中要容易理解得多。它包括如下几个重要的类：</p>
+<ul>
+<li>ALAssetsLibrary</li>
+<li>ALAssetsGroup</li>
+<li>ALAsset</li>
+<li>ALAssetRepresentation</li>
+<li>ALAssetsFilter</li>
+</ul>
+<p>首先是ALAssetsLibrary。Reference中的介绍如下：</p>
+<blockquote>
+<p>An instance of ALAssetsLibrary provides access to the videos and photos that are under the control of the Photos application.</p>
+</blockquote>
+<p>理解ALAssetsLibrary可以参照「图片库」本身。</p>
+<p>然后是ALAssetsGroup，在Photos App中，图片是有归类的，ALAssetsGroup对应的就是类别。</p>
+<p>接着是ALAsset和ALAssetRepresentation，刚开始我以为一个ALAsset对应一个图片文件，后来发现理解错了，在iOS中，「a photo」可能对应多个图片文件。形象来说，我拍摄一张照片取名叫zhangbuhuai，这张图片可能有两个图片文件：zhangbuhuai.jpg和zhangbuhuai.raw，前者是jpg压缩文件，后者是照片原生数据文件（未经压缩）。所以在我的理解里，ALAsset对应「一张图片」，ALAssetRepresentation对应「一个图片文件」。</p>
+<p>最后是ALAssetsFilter，顾名思义，这个类的对象是一个过滤器，在读取「图片库」的时候，可以创建一个ALAssetsFilter对象用来对图片资源进行过滤。</p>
+<h2 id="图片浏览器实现说明">图片浏览器实现说明</h2>
+<p>读取图片库的第一步是读取图片库中的类别信息，一般会使用TableView来呈现图片类别信息，如下：</p>
+<p><img src="/img/201504/2015-04-23-02.png" alt="2015-04-23-02.png"></p>
+<p>如何读取呢？关键方法是ALAssetsLibrary的enumerateGroupsWithTypes:usingBlock:failureBlock:方法。</p>
+<figure class="highlight Objective-C"><pre><div class="line">- (<span class="keyword">void</span>)viewDidLoad {</div><div class="line">    [<span class="keyword">super</span> viewDidLoad];</div><div class="line">    </div><div class="line">    <span class="keyword">self</span><span class="variable">.photoGroupArray</span> = [<span class="built_in">NSMutableArray</span> array];</div><div class="line">    </div><div class="line">    ALAssetsLibraryGroupsEnumerationResultsBlock resultsBlock = ^(ALAssetsGroup *group, <span class="built_in">BOOL</span> *stop) {</div><div class="line">        <span class="keyword">if</span> (group && group<span class="variable">.numberOfAssets</span> &gt; <span class="number">0</span>) {</div><div class="line">            [<span class="keyword">self</span><span class="variable">.photoGroupArray</span> addObject:group];</div><div class="line">            [group enumerateAssetsWithOptions:<span class="number">0</span></div><div class="line">                                   usingBlock:<span class="literal">nil</span>];</div><div class="line">        } <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">self</span><span class="variable">.photoGroupArray</span><span class="variable">.count</span> &gt; <span class="number">0</span>) {</div><div class="line">            [<span class="keyword">self</span><span class="variable">.tableView</span> reloadData];</div><div class="line">        }</div><div class="line">    };</div><div class="line">    </div><div class="line">    ALAssetsLibraryAccessFailureBlock failureBlock = ^(<span class="built_in">NSError</span> *error) {</div><div class="line">        </div><div class="line">    };</div><div class="line">    </div><div class="line">    ALAssetsGroupType type = ALAssetsGroupAll;</div><div class="line">    </div><div class="line">    [<span class="keyword">self</span><span class="variable">.sharedAssetsLibrary</span> enumerateGroupsWithTypes:type</div><div class="line">                                            usingBlock:resultsBlock</div><div class="line">                                          failureBlock:failureBlock];</div><div class="line">}</div><div class="line">	</div><div class="line">- (ALAssetsLibrary *)sharedAssetsLibrary {</div><div class="line">    <span class="keyword">static</span> <span class="built_in">dispatch_once_t</span> pred = <span class="number">0</span>;</div><div class="line">    <span class="keyword">static</span> ALAssetsLibrary *assetsLibrary = <span class="literal">nil</span>;</div><div class="line">    <span class="built_in">dispatch_once</span>(&pred, ^{</div><div class="line">        assetsLibrary = [[ALAssetsLibrary alloc] init];</div><div class="line">    });</div><div class="line">    <span class="keyword">return</span> assetsLibrary;</div><div class="line">}</div></pre></figure>
+
+<p>选择某个ALAssetsGroup对象之后，我们就跳转到下一个ViewController，这个ViewController负责呈现该group（或category）下的所有图片信息，一般会用CollectionView来呈现图片信息，如下：</p>
+<p><img src="/img/201504/2015-04-23-03.png" alt="2015-04-23-02.png"></p>
+<p>读取图片信息，即根据ALAssetsGroup读取所有的ALAsset信息，同样是一个遍历，这里用到的是ALAssetsGroup的enumerateAssetsUsingBlock:方法，代码比较简单：</p>
+<figure class="highlight Objective-C"><pre><div class="line">- (<span class="type">void</span>)viewDidLoad {</div><div class="line">    // ...</div><div class="line">    <span class="type">ALAssetsGroupEnumerationResultsBlock</span> resultsBlock = ^(<span class="type">ALAsset</span> *<span class="literal">result</span>, <span class="type">NSUInteger</span> index, <span class="type">BOOL</span> *stop) {</div><div class="line">        <span class="keyword">if</span> (<span class="literal">result</span> && [[<span class="literal">result</span> valueForProperty:<span class="type">ALAssetPropertyType</span>] isEqual:<span class="type">ALAssetTypePhoto</span>]) {</div><div class="line">            <span class="type">ZWPhoto</span> *aPhoto = [[<span class="type">ZWPhoto</span> alloc] initWithAsset:<span class="literal">result</span>];</div><div class="line">            aPhoto.checked = <span class="literal">false</span>;</div><div class="line">            aPhoto.originPhotoNeeded = <span class="literal">false</span>;</div><div class="line">            </div><div class="line">            [self.photosArray addObject:aPhoto];</div><div class="line">        } <span class="keyword">else</span> <span class="keyword">if</span> (self.photosArray.count &gt; <span class="number">0</span>) {</div><div class="line">            [self.collectionView reloadData];</div><div class="line">        }</div><div class="line">    };</div><div class="line">	</div><div class="line">    [self.assetsGroup enumerateAssetsUsingBlock:resultsBlock];</div><div class="line">}</div></pre></figure>
+
+<p>看到了吧，基于Assets Library Framework，获取系统图片资源是非常容易的。</p>
+<p>写整个Demo的过程中，最难的一部分是图片浏览器的部分，如下：</p>
+<p><img src="/img/201504/2015-04-23-04.png" alt="2015-04-23-04.png"></p>
+<p>它的复杂程度自己可以通过使用微信的图片选择器模块感受一下。</p>
+<p>笔者在开发过程中大范围参考了MWPhotoBrowser的源码，详细过程在这里就不多说了，因为仍然有待改善。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Assets/">Assets</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/iOS/">iOS</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/04/23/photos-picker-based-on-Assets-Library-Framework/" data-title="基于Assets Library Framework的图片选择器的实现 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/04/25/learn-to-use-NSArray-NSSet-NSDictionary/" title="NSArray、NSDictionary以及NSSet使用报告">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  NSArray、NSDictionary以及NSSet使用报告</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/04/17/basics-about-thread-in-iOS/"  title="iOS Thread基础知识">
+ <strong>NEXT:</strong><br/> 
+ <span>iOS Thread基础知识
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/04/23/photos-picker-based-on-Assets-Library-Framework/" data-title="基于Assets Library Framework的图片选择器的实现" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Assets_Library_Framework介绍"><span class="toc-number">2.</span> <span class="toc-text">Assets Library Framework介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#图片浏览器实现说明"><span class="toc-number">3.</span> <span class="toc-text">图片浏览器实现说明</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

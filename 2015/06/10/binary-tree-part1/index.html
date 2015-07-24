@@ -1,0 +1,624 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>二叉树与算法 第一弹 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="写在前面
+基础数据结构中，各种树结构比比皆是：红黑树、B树、霍夫曼树等等。二叉树可谓「树」簇中最基础的概念，基础算法中也有针对二叉树的各种经典问题。
+LeetCode中有三十多道与二叉树相关的算法题，笔者刷完了大部分题目，本文算是对这些算法题的一些总结。本文根据自己的理解将所遇到的算法问题进行归类，">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/06/10/binary-tree-part1/" title="二叉树与算法 第一弹" itemprop="url">二叉树与算法 第一弹</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-06-10T03:11:43.000Z" itemprop="datePublished">2015-06-10</time>
+    更新日期:<time datetime="2015-07-04T08:54:43.000Z" itemprop="dateModified">2015-07-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二叉树的性质"><span class="toc-number">2.</span> <span class="toc-text">二叉树的性质</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#判断平衡性"><span class="toc-number">2.1.</span> <span class="toc-text">判断平衡性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#树的最大深度"><span class="toc-number">2.2.</span> <span class="toc-text">树的最大深度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#树的最小深度"><span class="toc-number">2.3.</span> <span class="toc-text">树的最小深度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#判断两棵树是否相同"><span class="toc-number">2.4.</span> <span class="toc-text">判断两棵树是否相同</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#计算完全二叉树的节点数"><span class="toc-number">2.5.</span> <span class="toc-text">计算完全二叉树的节点数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#判断镜像树"><span class="toc-number">2.6.</span> <span class="toc-text">判断镜像树</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#判断二叉搜索树"><span class="toc-number">2.7.</span> <span class="toc-text">判断二叉搜索树</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#n个结点构建多少种BST"><span class="toc-number">2.8.</span> <span class="toc-text">n个结点构建多少种BST</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二叉树遍历问题"><span class="toc-number">3.</span> <span class="toc-text">二叉树遍历问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#先序遍历"><span class="toc-number">3.1.</span> <span class="toc-text">先序遍历</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#中序遍历"><span class="toc-number">3.2.</span> <span class="toc-text">中序遍历</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#后序遍历"><span class="toc-number">3.3.</span> <span class="toc-text">后序遍历</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#层序遍历"><span class="toc-number">3.4.</span> <span class="toc-text">层序遍历</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#遍历总结"><span class="toc-number">3.5.</span> <span class="toc-text">遍历总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构建二叉树"><span class="toc-number">4.</span> <span class="toc-text">构建二叉树</span></a></li></ol>
+		</div>
+		
+		<h2 id="写在前面"><strong>写在前面</strong></h2>
+<p>基础数据结构中，各种树结构比比皆是：红黑树、B树、霍夫曼树等等。二叉树可谓「树」簇中最基础的概念，基础算法中也有针对二叉树的各种经典问题。</p>
+<p>LeetCode中有三十多道与二叉树相关的<a href="https://leetcode.com/tag/tree/" target="_blank" rel="external">算法题</a>，笔者刷完了大部分题目，本文算是对这些算法题的一些总结。本文根据自己的理解将所遇到的算法问题进行归类，这种归类与问题难易程度无关，所有算法实现代码全部使用Python实现，这些代码都为LeetCode所<code>Accepted</code>，并尽可能进行了优化，确保算法时间在LeetCode数据库中处于上游。</p>
+<p>P.S：本文持续更新，可能也会包括一些来自于其他地方（LeetCode之外）的题目。</p>
+<p>本文分析的问题对象是「二叉树」，其中有相当部分的算法是针对「二叉搜索树」，关于「二叉树」以及「二叉搜索树」的概念，本文不再赘述，因为这些信息非常容易获取。</p>
+<p>本文算法会使用到一些公共的数据结构，比如结点TreeNode、Stack等等，为了避免重复，将这些公共的数据结构写在前面：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="comment"># Definition for a binary tree node.</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">TreeNode</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, x)</span>:</span></div><div class="line">        self.val = x</div><div class="line">        self.left = <span class="keyword">None</span></div><div class="line">        self.right = <span class="keyword">None</span></div><div class="line">	</div><div class="line"><span class="comment"># 基于数组，自定义Stack</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Stack</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></div><div class="line">        self.list = []</div><div class="line">        self.size = <span class="number">0</span></div><div class="line">	</div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">push</span><span class="params">(self, item)</span>:</span></div><div class="line">        <span class="keyword">if</span> len(self.list) &lt;= self.size:</div><div class="line">            self.list.append(item)</div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            self.list[self.size] = item</div><div class="line">        self.size += <span class="number">1</span></div><div class="line">	</div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">pop</span><span class="params">(self)</span>:</span></div><div class="line">        <span class="keyword">if</span> self.size == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> <span class="keyword">None</span></div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            ret = self.list[self.size-<span class="number">1</span>]</div><div class="line">            self.size -= <span class="number">1</span></div><div class="line">            <span class="keyword">return</span> ret</div><div class="line">		</div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">top</span><span class="params">(self)</span>:</span></div><div class="line">        <span class="keyword">if</span> self.size == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> <span class="keyword">None</span></div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            <span class="keyword">return</span> self.list[self.size-<span class="number">1</span>]</div></pre></figure>
+
+<p>P.S：其实根本没必要定义Stack这个数据结构，Python中的数组完全可以充当。</p>
+<hr>
+<h2 id="二叉树的性质"><strong>二叉树的性质</strong></h2>
+<p>LeetCode中有很多算法题是关于二叉树性质的，譬如判断二叉树的平衡性（是否平衡）、树的最大/小深度等等。</p>
+<h3 id="判断平衡性"><strong>判断平衡性</strong></h3>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/balanced-binary-tree/" target="_blank" rel="external">Balanced Binary Tree</a>，描述如下：</p>
+<blockquote>
+<p>Given a binary tree, determine if it is height-balanced.<br>&nbsp;<br>For this problem, a height-balanced binary tree is defined as a binary tree in which the depth of the two subtrees of every node never differ by more than 1.</p>
+</blockquote>
+<p>这道题目使用递归思想非常容易解决，话不多说，上代码：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {TreeNode} root</span></div><div class="line">    <span class="comment"># @return {boolean}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">isBalanced</span><span class="params">(self, root)</span>:</span></div><div class="line">        <span class="keyword">if</span> root <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">            <span class="keyword">return</span> <span class="keyword">True</span></div><div class="line">        (ret, _) = isBalanced(root)</div><div class="line">        <span class="keyword">return</span> ret</div><div class="line">	</div><div class="line">	</div><div class="line"><span class="comment"># 判断一棵二叉树是否平衡，返回值类型：(boolean, integer)</span></div><div class="line"><span class="comment"># 第一个返回值指示该树是否平衡；</span></div><div class="line"><span class="comment"># 第二个返回值记录该树的深度；</span></div><div class="line"><span class="comment"># 当第一个返回值为False时，第二个参数没有意义</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">isBalanced</span><span class="params">(root)</span>:</span></div><div class="line">    (lBalanced, lDepth) = (<span class="keyword">True</span>, <span class="number">0</span>)</div><div class="line">    (rBalanced, rDepth) = (<span class="keyword">True</span>, <span class="number">0</span>)</div><div class="line">    </div><div class="line">    <span class="keyword">if</span> root.left <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">        (lBalanced, lDepth) = isBalanced(root.left)</div><div class="line">    </div><div class="line">    <span class="keyword">if</span> lBalanced <span class="keyword">is</span> <span class="keyword">False</span>:      <span class="comment"># 左子树不平衡</span></div><div class="line">        <span class="keyword">return</span> (<span class="keyword">False</span>, <span class="number">0</span>)</div><div class="line">    </div><div class="line">    <span class="keyword">if</span> root.right <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">        (rBalanced, rDepth) = isBalanced(root.right)</div><div class="line">        </div><div class="line">    <span class="keyword">if</span> rBalanced <span class="keyword">is</span> <span class="keyword">False</span>:      <span class="comment"># 右子树不平衡</span></div><div class="line">        <span class="keyword">return</span> (<span class="keyword">False</span>, <span class="number">0</span>)</div><div class="line">    </div><div class="line">    <span class="keyword">if</span> lDepth &gt; rDepth + <span class="number">1</span> <span class="keyword">or</span> lDepth &lt; rDepth - <span class="number">1</span>:</div><div class="line">        <span class="keyword">return</span> (<span class="keyword">False</span>, <span class="number">0</span>)</div><div class="line">    </div><div class="line">    <span class="keyword">return</span> (<span class="keyword">True</span>, max(lDepth, rDepth)+<span class="number">1</span>)</div></pre></figure>
+
+<h3 id="树的最大深度"><strong>树的最大深度</strong></h3>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/maximum-depth-of-binary-tree/" target="_blank" rel="external">Maximum Depth of Binary Tree</a>，描述如下：</p>
+<blockquote>
+<p>Given a binary tree, find its maximum depth.<br>&nbsp;<br>The maximum depth is the number of nodes along the longest path from the root node down to the farthest leaf node.</p>
+</blockquote>
+<p>不能有更简单的题目了，我的Solution如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {TreeNode} root</span></div><div class="line">    <span class="comment"># @return {integer}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">maxDepth</span><span class="params">(self, root)</span>:</span></div><div class="line">        <span class="keyword">return</span> maxDepth(root)</div><div class="line">    </div><div class="line">	</div><div class="line"><span class="comment"># 获取以node为根节点的二叉（子）树的深度</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">maxDepth</span><span class="params">(node)</span>:</span></div><div class="line">    <span class="keyword">if</span> node <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">        <span class="keyword">return</span> <span class="number">0</span></div><div class="line">    c1 = maxDepth(node.left)</div><div class="line">    c2 = maxDepth(node.right)</div><div class="line">    <span class="keyword">if</span> c1 &lt; c2:</div><div class="line">        <span class="keyword">return</span> c2 + <span class="number">1</span></div><div class="line">    <span class="keyword">else</span>:</div><div class="line">        <span class="keyword">return</span> c1 + <span class="number">1</span></div></pre></figure>
+
+<p>上面这段代码是递归版本，笔者也写了一个迭代版本，如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {TreeNode} root</span></div><div class="line">    <span class="comment"># @return {integer}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">maxDepth</span><span class="params">(self, root)</span>:</span></div><div class="line">        <span class="keyword">if</span> root <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">            <span class="keyword">return</span> <span class="number">0</span></div><div class="line">        stack = Stack()</div><div class="line">        stack.push(root)</div><div class="line">        </div><div class="line">        up, down = <span class="number">1</span>, <span class="number">2</span></div><div class="line">        dir = down</div><div class="line">        </div><div class="line">        ret = <span class="number">1</span></div><div class="line">        </div><div class="line">        <span class="keyword">while</span> <span class="keyword">True</span>:</div><div class="line">            cur = stack.top()</div><div class="line">            <span class="keyword">if</span> cur <span class="keyword">is</span> <span class="keyword">None</span> <span class="keyword">and</span> pre <span class="keyword">is</span> root:</div><div class="line">                <span class="keyword">break</span></div><div class="line">            </div><div class="line">            <span class="keyword">if</span> dir == down:</div><div class="line">                <span class="keyword">if</span> cur.left <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">                    stack.push(cur.left)</div><div class="line">                    pre, dir = cur, down</div><div class="line">                <span class="keyword">elif</span> cur.right <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">                    stack.push(cur.right)</div><div class="line">                    pre, dir = cur, down</div><div class="line">                <span class="keyword">else</span>:</div><div class="line">                    pre, dir = cur, up</div><div class="line">                    stack.pop()</div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                <span class="keyword">if</span> pre <span class="keyword">is</span> cur.left <span class="keyword">and</span> cur.right <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">                    stack.push(cur.right)</div><div class="line">                    pre, dir = cur, down</div><div class="line">                <span class="keyword">else</span>:</div><div class="line">                    pre, dir = cur, up</div><div class="line">                    stack.pop()</div><div class="line">            <span class="keyword">if</span> stack.size &gt; ret:</div><div class="line">                ret = stack.size</div><div class="line">        </div><div class="line">        <span class="keyword">return</span> ret</div></pre></figure>
+
+<p>迭代版本需要维护一个stack，经过笔者测试，迭代版本的速度反而不如递归版本。</p>
+<h3 id="树的最小深度"><strong>树的最小深度</strong></h3>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/minimum-depth-of-binary-tree/" target="_blank" rel="external">Minimum Depth of Binary Tree</a>，描述如下：</p>
+<blockquote>
+<p>Given a binary tree, find its minimum depth.<br>&nbsp;<br>The minimum depth is the number of nodes along the shortest path from the root node down to the nearest leaf node.</p>
+</blockquote>
+<p>这道题看起来和上面一道题完全一样，似乎修改一下maxDepth函数中的<code>&lt;</code>为<code>&gt;</code>就可以了，然而事实并不是这样的。至于原因，这里就不多说了，自己体会吧！</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param root, a tree node</span></div><div class="line">    <span class="comment"># @return an integer</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">minDepth</span><span class="params">(self, root)</span>:</span></div><div class="line">        <span class="keyword">if</span> root <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">            <span class="keyword">return</span> <span class="number">0</span></div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            <span class="keyword">return</span> minDepth(root)</div><div class="line">	</div><div class="line">	</div><div class="line"><span class="comment"># 返回以node为根节点的二叉（子）树的最小深度</span></div><div class="line"><span class="comment"># 确保node不为空</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">minDepth</span><span class="params">(node)</span>:</span></div><div class="line">    <span class="keyword">if</span> node.left <span class="keyword">is</span> <span class="keyword">None</span> <span class="keyword">and</span> node.right <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">        <span class="keyword">return</span> <span class="number">1</span></div><div class="line">    <span class="keyword">elif</span> node.left <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">        <span class="keyword">return</span> minDepth(node.right)+<span class="number">1</span></div><div class="line">    <span class="keyword">elif</span> node.right <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">        <span class="keyword">return</span> minDepth(node.left)+<span class="number">1</span></div><div class="line">    <span class="keyword">else</span>:</div><div class="line">        c1 = minDepth(node.left)</div><div class="line">        c2 = minDepth(node.right)</div><div class="line">        <span class="keyword">if</span> c1 &gt; c2:</div><div class="line">            <span class="keyword">return</span> c2 + <span class="number">1</span></div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            <span class="keyword">return</span> c1 + <span class="number">1</span></div></pre></figure>
+
+<p>和上面「树的最大深度」类似，本题也可以用迭代的方式实现，比较简单，本文不再赘述！</p>
+<h3 id="判断两棵树是否相同"><strong>判断两棵树是否相同</strong></h3>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/same-tree/" target="_blank" rel="external">Same Tree</a>，描述如下：</p>
+<blockquote>
+<p>Given two binary trees, write a function to check if they are equal or not.<br>&nbsp;<br>Two binary trees are considered equal if they are structurally identical and the nodes have the same value.</p>
+</blockquote>
+<p>这道题太简单了，我的Solution代码：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param p, a tree node</span></div><div class="line">    <span class="comment"># @param q, a tree node</span></div><div class="line">    <span class="comment"># @return a boolean</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">isSameTree</span><span class="params">(self, p, q)</span>:</span></div><div class="line">        <span class="keyword">return</span> isSameTree(p, q)</div><div class="line">	</div><div class="line">	</div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">isSameTree</span><span class="params">(root1, root2)</span>:</span></div><div class="line">    <span class="keyword">if</span> root1 <span class="keyword">is</span> <span class="keyword">None</span> <span class="keyword">and</span> root2 <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">        <span class="keyword">return</span> <span class="keyword">True</span></div><div class="line">    <span class="keyword">elif</span> root1 <span class="keyword">is</span> <span class="keyword">None</span> <span class="keyword">or</span> root2 <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">        <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line">    <span class="keyword">else</span>:</div><div class="line">        <span class="keyword">if</span> root1.val != root2.val:</div><div class="line">            <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            b = isSameTree(root1.left, root2.left)</div><div class="line">            <span class="keyword">if</span> <span class="keyword">not</span> b:</div><div class="line">                <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line">            b = isSameTree(root1.right, root2.right)</div><div class="line">            <span class="keyword">if</span> <span class="keyword">not</span> b:</div><div class="line">                <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line">            <span class="keyword">return</span> <span class="keyword">True</span></div></pre></figure>
+
+<h3 id="计算完全二叉树的节点数"><strong>计算完全二叉树的节点数</strong></h3>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/count-complete-tree-nodes/" target="_blank" rel="external">Count Complete Tree Nodes</a>，描述如下：</p>
+<blockquote>
+<p>Given a complete binary tree, count the number of nodes.</p>
+</blockquote>
+<p>计算二叉树结点数量非常简单，基于递归数行代码就可以搞定，如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {TreeNode} root</span></div><div class="line">    <span class="comment"># @return {integer}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">countNodes</span><span class="params">(self, root)</span>:</span></div><div class="line">        <span class="keyword">return</span> countTree(root)</div><div class="line">	</div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">countTree</span><span class="params">(root)</span>:</span></div><div class="line">    <span class="keyword">if</span> root <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">        <span class="keyword">return</span> <span class="number">0</span></div><div class="line">    <span class="keyword">return</span> countTree(root.left) + countTree(root.right) + <span class="number">1</span></div></pre></figure>
+
+<p>这段代码的时间复杂度为O(n)，提交到LeetCode是不被接受的：Time Limit Exceeded。</p>
+<p>审题审题！题目已经明说了是「完全二叉树」，所以我们完全可以利用「完全二叉树」的性质优化算法。如果从某节点一直向左的高度 == 一直向右的高度，那么以该节点为root的子树一定是满树。而满树节点数为2^h - 1。如果高度不相等，则递归调用:<br>return countNode(left) + countNode(right) + 1。<br>复杂度为O(h^2)。</p>
+<p>总之，我的Solution代码如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {TreeNode} root</span></div><div class="line">    <span class="comment"># @return {integer}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">countNodes</span><span class="params">(self, root)</span>:</span></div><div class="line">        <span class="keyword">return</span> countTree(root)</div><div class="line">	</div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">countTree</span><span class="params">(root)</span>:</span></div><div class="line">    <span class="keyword">if</span> root <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">        <span class="keyword">return</span> <span class="number">0</span></div><div class="line">    </div><div class="line">    l, r = root.left, root.right</div><div class="line">    hl, hr = <span class="number">0</span>, <span class="number">0</span></div><div class="line">    <span class="keyword">while</span> l <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:    <span class="comment"># 一路向左，计算高度</span></div><div class="line">        hl += <span class="number">1</span></div><div class="line">        l = l.left</div><div class="line">    <span class="keyword">while</span> r <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:    <span class="comment"># 一路向右，计算高度</span></div><div class="line">        hr += <span class="number">1</span></div><div class="line">        r = r.right</div><div class="line">    </div><div class="line">    <span class="keyword">if</span> hl == hr:</div><div class="line">        <span class="keyword">return</span> (<span class="number">1</span> &lt;&lt; (hl+<span class="number">1</span>)) - <span class="number">1</span></div><div class="line">    <span class="keyword">else</span>:</div><div class="line">        <span class="keyword">return</span> countTree(root.left) + countTree(root.right) + <span class="number">1</span></div></pre></figure>
+
+<h3 id="判断镜像树"><strong>判断镜像树</strong></h3>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/symmetric-tree/" target="_blank" rel="external">Symmetric Tree</a>，描述如下：</p>
+<blockquote>
+<p>Given a binary tree, check whether it is a mirror of itself (ie, symmetric around its center).</p>
+</blockquote>
+<p>镜像树的概念比较简单，解题思路和上文的算法几乎一样，如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param root, a tree node</span></div><div class="line">    <span class="comment"># @return a boolean</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">isSymmetric</span><span class="params">(self, root)</span>:</span></div><div class="line">        <span class="keyword">if</span> root <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">            <span class="keyword">return</span> <span class="keyword">True</span></div><div class="line">	</div><div class="line">        <span class="keyword">return</span> isMirror(root.left, root.right)</div><div class="line">	</div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">isMirror</span><span class="params">(leftNode, rightNode)</span>:</span></div><div class="line">    <span class="keyword">if</span> leftNode <span class="keyword">is</span> <span class="keyword">None</span> <span class="keyword">and</span> rightNode <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">        <span class="keyword">return</span> <span class="keyword">True</span></div><div class="line">    <span class="keyword">elif</span> leftNode <span class="keyword">is</span> <span class="keyword">None</span> <span class="keyword">or</span> rightNode <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">        <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line">    <span class="keyword">else</span>:</div><div class="line">        <span class="keyword">if</span> leftNode.val != rightNode.val:</div><div class="line">            <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            <span class="keyword">if</span> <span class="keyword">not</span> isMirror(leftNode.left, rightNode.right):</div><div class="line">                <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line">            <span class="keyword">if</span> <span class="keyword">not</span> isMirror(leftNode.right, rightNode.left):</div><div class="line">                <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line">            <span class="keyword">return</span> <span class="keyword">True</span></div></pre></figure>
+
+<h3 id="判断二叉搜索树"><strong>判断二叉搜索树</strong></h3>
+<p>上面几道题都是二叉树相关的，「搜索二叉树」是一种重要的二叉搜索树（可以说是应用最广泛的二叉树）。LeetCode有题：<a href="https://leetcode.com/problems/validate-binary-search-tree/" target="_blank" rel="external">Validate Binary Search Tree</a>，描述如下：</p>
+<blockquote>
+<p>Given a binary tree, determine if it is a valid binary search tree (BST).<br>&nbsp;<br>Assume a BST is defined as follows:</p>
+<ul>
+<li>The left subtree of a node contains only nodes with keys less than the node’s key.</li>
+<li>The right subtree of a node contains only nodes with keys greater than the node’s key.</li>
+<li>Both the left and right subtrees must also be binary search trees.</li>
+</ul>
+</blockquote>
+<p>基于递归思想仍然很容易解决这个问题。我的Solution如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {TreeNode} root</span></div><div class="line">    <span class="comment"># @return {boolean}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">isValidBST</span><span class="params">(self, root)</span>:</span></div><div class="line">        <span class="keyword">if</span> root <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">            <span class="keyword">return</span> <span class="keyword">True</span></div><div class="line">        (isBST, _, _) = subtreeInfo(root)</div><div class="line">        <span class="keyword">return</span> isBST</div><div class="line">        </div><div class="line">	</div><div class="line"><span class="comment"># 返回以node为根节点的子树的信息，包括：(是否是BST, 最小值, 最大值)</span></div><div class="line"><span class="comment"># 优先考虑第一个返回值，若为False，则后面两个参数无意义</span></div><div class="line"><span class="comment"># 确保node不为Node</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">subtreeInfo</span><span class="params">(node)</span>:</span></div><div class="line">    (isBST, minVal, maxVal) = (<span class="keyword">False</span>, <span class="number">0</span>, <span class="number">0</span>)</div><div class="line">    <span class="keyword">if</span> node.left <span class="keyword">is</span> <span class="keyword">None</span> <span class="keyword">and</span> node.right <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">        <span class="keyword">return</span> (<span class="keyword">True</span>, node.val, node.val)</div><div class="line">    <span class="keyword">elif</span> node.left <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">        (isBST, minVal, maxVal) = subtreeInfo(node.right)</div><div class="line">        <span class="keyword">if</span> isBST == <span class="keyword">True</span> <span class="keyword">and</span> node.val &lt; minVal: <span class="comment"># 确保右子树的所有结点值都大于node.val</span></div><div class="line">            <span class="keyword">return</span> (isBST, node.val, maxVal)</div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            <span class="keyword">return</span> (<span class="keyword">False</span>, <span class="number">0</span>, <span class="number">0</span>)</div><div class="line">    <span class="keyword">elif</span> node.right <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">        (isBST, minVal, maxVal) = subtreeInfo(node.left)</div><div class="line">        <span class="keyword">if</span> isBST == <span class="keyword">True</span> <span class="keyword">and</span> node.val &gt; maxVal: <span class="comment"># 确保右子树的所有结点值都大于node.val</span></div><div class="line">            <span class="keyword">return</span> (isBST, minVal, node.val)</div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            <span class="keyword">return</span> (<span class="keyword">False</span>, <span class="number">0</span>, <span class="number">0</span>)</div><div class="line">    <span class="keyword">else</span>:</div><div class="line">        (lIsBST, lMinVal, lMaxVal) = subtreeInfo(node.left)     <span class="comment"># 左子树信息</span></div><div class="line">        <span class="keyword">if</span> <span class="keyword">not</span> lIsBST:</div><div class="line">            <span class="keyword">return</span> (<span class="keyword">False</span>, <span class="number">0</span>, <span class="number">0</span>)</div><div class="line">        (rIsBST, rMinVal, rMaxVal) = subtreeInfo(node.right)    <span class="comment"># 右子树信息</span></div><div class="line">        <span class="keyword">if</span> <span class="keyword">not</span> rIsBST:</div><div class="line">            <span class="keyword">return</span> (<span class="keyword">False</span>, <span class="number">0</span>, <span class="number">0</span>)</div><div class="line">        <span class="keyword">if</span> lMaxVal &lt; node.val <span class="keyword">and</span> rMinVal &gt; node.val:</div><div class="line">            <span class="keyword">return</span> (<span class="keyword">True</span>, lMinVal, rMaxVal)</div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            <span class="keyword">return</span> (<span class="keyword">False</span>, <span class="number">0</span>, <span class="number">0</span>)</div></pre></figure>
+
+<h3 id="n个结点构建多少种BST"><strong>n个结点构建多少种BST</strong></h3>
+<p>n个不同值的结点能够构建多少种二叉搜索树？</p>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/unique-binary-search-trees/" target="_blank" rel="external">Unique Binary Search Trees</a>，描述如下：</p>
+<blockquote>
+<p>Given n, how many structurally unique BST’s (binary search trees) that store values 1…n?</p>
+</blockquote>
+<p>当n=3时，能够构建5棵不同二叉搜索树，如下图：<br><img src="/img/201506/20150618-01.png" width="300" height="90"></p>
+<p>我是这么分析的：假设有n个结点，它们的值从小到大依次为1,2,3,…,n-1,n。以第n个结点为参考点，最终构成的二叉搜索树的结果如下：<br><img src="/img/201506/20150618-02.png" width="200" height="230"></p>
+<p>其中，上图中的<code>k</code>的取值范围为[0,n-1]；且红色框的所有结点的值小于蓝色框的所有结点的值。因此，若红色框中有k个结点，则所有结点值一定是前k个最小的，剩下的结点全部扔在蓝色框中。因此，只要计算k个结点所能构建的二叉搜索树的数量，加上n-k-1个结点所能构建的二叉搜索树的数量，我们便可以计算n个节点所能构建的二叉树的数量；</p>
+<p>结合上图，基于动态规划思想可以很容易构建子结构式：<br>设s(k)表示k个不同值结点所能构建的二叉平衡树的个数，则有如下公式：<br>s(n) = [s(0)×s(n-1)] + [s(1)×s(n-2)] + s(2)×s(n-3)] + … + [s(n-2)×s(1)] + [s(n-1)×s(0)]</p>
+<p>因此，我的Solution代码如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer} n</span></div><div class="line">    <span class="comment"># @return {integer}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">numTrees</span><span class="params">(self, n)</span>:</span></div><div class="line">        nums = [<span class="number">1</span>] * (n+<span class="number">1</span>)      <span class="comment"># nums[i]记录n=i个结点能够组成的BST的个数</span></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">1</span>, n+<span class="number">1</span>):</div><div class="line">            s = <span class="number">0</span></div><div class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> xrange(<span class="number">0</span>, i):</div><div class="line">                s += (nums[j] * nums[i-<span class="number">1</span>-j])</div><div class="line">            nums[i] = s</div><div class="line">        </div><div class="line">        <span class="keyword">return</span> nums[n]</div></pre></figure>
+
+<p>呵，逻辑非常简洁！LeetCode中还有一道衍生题目：<a href="https://leetcode.com/problems/unique-binary-search-trees-ii/" target="_blank" rel="external">Unique Binary Search Trees II</a>，换汤不换药，此处略过。</p>
+<h2 id="二叉树遍历问题"><strong>二叉树遍历问题</strong></h2>
+<p>二叉树的遍历问题在二叉树算法题目中占据相当大的比例，常见的遍历方式包括：</p>
+<ul>
+<li>先序遍历（pre-order）；</li>
+<li>中序遍历（in-order）；</li>
+<li>后序遍历（post-order）；</li>
+<li>层序遍历（level-order）；</li>
+</ul>
+<p>这4种典型的遍历树方式在<a href="https://en.wikipedia.org/wiki/Tree_traversal" target="_blank" rel="external">维基百科</a>中有详细介绍，本文不再赘述。</p>
+<p>还有一些非典型的遍历方式，譬如Z型遍历；</p>
+<p>这一部分内容将对LeetCode中与树遍历相关的题目做一个汇总，主要是代码层面的汇总，因为原理实在非常简单。</p>
+<h3 id="先序遍历"><strong>先序遍历</strong></h3>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/binary-tree-preorder-traversal/" target="_blank" rel="external">Binary Tree Preorder Traversal</a>，描述如下：</p>
+<blockquote>
+<p>Given a binary tree, return the preorder traversal of its nodes’ values.<br>&nbsp;<br>Note: Recursive solution is trivial, could you do it iteratively?</p>
+</blockquote>
+<p>递归版本：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {TreeNode} root</span></div><div class="line">    <span class="comment"># @return {integer[]}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">preorderTraversal</span><span class="params">(self, root)</span>:</span></div><div class="line">        ret = []</div><div class="line">        self.preorder(root, ret)</div><div class="line">        <span class="keyword">return</span> ret</div><div class="line">        </div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">preorder</span><span class="params">(self, root, ret)</span>:</span></div><div class="line">        <span class="keyword">if</span> root <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">            <span class="keyword">return</span></div><div class="line">        ret.append(root.val)</div><div class="line">        self.preorder(root.left, ret)</div><div class="line">        self.preorder(root.right, ret)</div></pre></figure>
+
+<p>迭代版本稍微复杂一下，需要一个Stack维护结点次序，参考下图：<br><img src="/img/201506/20150618-03.png" width="336" height="287"></p>
+<p>我的Solution代码如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {TreeNode} root</span></div><div class="line">    <span class="comment"># @return {integer[]}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">preorderTraversal</span><span class="params">(self, root)</span>:</span></div><div class="line">        ret = []</div><div class="line">        stack = Stack()</div><div class="line">        node = root</div><div class="line">        <span class="keyword">while</span> node <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">            ret.append(node.val)</div><div class="line">            <span class="keyword">if</span> node.right <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">                stack.push(node.right)</div><div class="line">            node = node.left</div><div class="line">            <span class="comment"># 回溯</span></div><div class="line">            <span class="keyword">if</span> node <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">                node = stack.pop()</div><div class="line">	</div><div class="line">        <span class="keyword">return</span> ret</div></pre></figure>
+
+<h3 id="中序遍历"><strong>中序遍历</strong></h3>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/binary-tree-inorder-traversal/" target="_blank" rel="external">Binary Tree Inorder Traversal</a>，描述：</p>
+<blockquote>
+<p>Given a binary tree, return the inorder traversal of its nodes’ values.<br>&nbsp;<br>Note: Recursive solution is trivial, could you do it iteratively?</p>
+</blockquote>
+<p>递归版本如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {TreeNode} root</span></div><div class="line">    <span class="comment"># @return {integer[]}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">inorderTraversal</span><span class="params">(self, root)</span>:</span></div><div class="line">        ret = []</div><div class="line">        self.inorder(root, ret)</div><div class="line">        <span class="keyword">return</span> ret</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">inorder</span><span class="params">(self, root, ret)</span>:</span></div><div class="line">        <span class="keyword">if</span> root <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">            <span class="keyword">return</span></div><div class="line">        self.inorder(root.left, ret)</div><div class="line">        ret.append(root.val)</div><div class="line">        self.inorder(root.right, ret)</div></pre></figure>
+
+<p>迭代版本如下，参考下图：<br><img src="/img/201506/20150618-04.png" width="336" height="287"></p>
+<p>我的Solution代码如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {TreeNode} root</span></div><div class="line">    <span class="comment"># @return {integer[]}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">inorderTraversal</span><span class="params">(self, root)</span>:</span></div><div class="line">        ret = []</div><div class="line">        stack = Stack()</div><div class="line">        stack.push(root)</div><div class="line">	</div><div class="line">        down, up = <span class="number">1</span>, <span class="number">2</span></div><div class="line">        dir = down</div><div class="line">        pre = <span class="keyword">None</span></div><div class="line">        </div><div class="line">        <span class="keyword">while</span> <span class="keyword">True</span>:</div><div class="line">            cur = stack.top()</div><div class="line">            <span class="keyword">if</span> cur <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">                <span class="keyword">break</span></div><div class="line">            <span class="keyword">if</span> dir == down:</div><div class="line">                <span class="keyword">if</span> cur.left <span class="keyword">is</span> <span class="keyword">None</span> <span class="keyword">and</span> cur.right <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">                    ret.append(cur.val)</div><div class="line">                    pre, dir = cur, up</div><div class="line">                    stack.pop()</div><div class="line">                <span class="keyword">elif</span> cur.left <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">                    ret.append(cur.val)</div><div class="line">                    pre, dir = cur, down</div><div class="line">                    stack.push(cur.right)</div><div class="line">                <span class="keyword">else</span>:</div><div class="line">                    pre, dir = cur, down</div><div class="line">                    stack.push(cur.left)</div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                <span class="keyword">if</span> pre <span class="keyword">is</span> cur.left:</div><div class="line">                    ret.append(cur.val)</div><div class="line">                    <span class="keyword">if</span> cur.right <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">                        stack.pop()</div><div class="line">                        pre, dir = cur, up</div><div class="line">                    <span class="keyword">else</span>:</div><div class="line">                        stack.push(cur.right)</div><div class="line">                        pre, dir = cur, down</div><div class="line">                <span class="keyword">elif</span> pre <span class="keyword">is</span> cur.right:</div><div class="line">                    pre, dir = cur, up</div><div class="line">                    stack.pop()</div><div class="line">        <span class="keyword">return</span> ret</div></pre></figure>
+
+<h3 id="后序遍历"><strong>后序遍历</strong></h3>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/binary-tree-postorder-traversal/" target="_blank" rel="external">Binary Tree Postorder Traversal</a>，描述：</p>
+<blockquote>
+<p>Given a binary tree, return the postorder traversal of its nodes’ values.<br>&nbsp;<br>Note: Recursive solution is trivial, could you do it iteratively?</p>
+</blockquote>
+<p>递归版本如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {TreeNode} root</span></div><div class="line">    <span class="comment"># @return {integer[]}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">postorderTraversal</span><span class="params">(self, root)</span>:</span></div><div class="line">        ret = []</div><div class="line">        self.postorder(root, ret)</div><div class="line">        <span class="keyword">return</span> ret</div><div class="line">        </div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">postorder</span><span class="params">(self, root, ret)</span>:</span></div><div class="line">        <span class="keyword">if</span> root <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">            <span class="keyword">return</span></div><div class="line">        self.postorder(root.left, ret)</div><div class="line">        self.postorder(root.right, ret)</div><div class="line">        ret.append(root.val)</div></pre></figure>
+
+<p>迭代版本和上一个差不多，参考下图：<br><img src="/img/201506/20150618-05.png" width="336" height="287"></p>
+<p>我的Solution代码如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {TreeNode} root</span></div><div class="line">    <span class="comment"># @return {integer[]}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">postorderTraversal</span><span class="params">(self, root)</span>:</span></div><div class="line">        ret = []</div><div class="line">        stack = Stack()</div><div class="line">        stack.push(root)</div><div class="line">	</div><div class="line">        down, up = <span class="number">1</span>, <span class="number">2</span></div><div class="line">        dir = down</div><div class="line">        pre = <span class="keyword">None</span></div><div class="line">	</div><div class="line">        <span class="keyword">while</span> <span class="keyword">True</span>:</div><div class="line">            cur = stack.top()</div><div class="line">            <span class="keyword">if</span> cur <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">                <span class="keyword">break</span></div><div class="line">            <span class="keyword">if</span> dir == down:</div><div class="line">                <span class="keyword">if</span> cur.left <span class="keyword">is</span> <span class="keyword">None</span> <span class="keyword">and</span> cur.right <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">                    ret.append(cur.val)</div><div class="line">                    pre, dir = cur, up</div><div class="line">                    stack.pop()</div><div class="line">                <span class="keyword">elif</span> cur.left <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">                    pre, dir = cur, down</div><div class="line">                    stack.push(cur.right)</div><div class="line">                <span class="keyword">else</span>:</div><div class="line">                    pre, dir = cur, down</div><div class="line">                    stack.push(cur.left)</div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                <span class="keyword">if</span> pre <span class="keyword">is</span> cur.left <span class="keyword">and</span> cur.right <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">                    stack.push(cur.right)</div><div class="line">                    pre, dir = cur, down</div><div class="line">                <span class="keyword">else</span>:</div><div class="line">                    ret.append(cur.val)</div><div class="line">                    pre, dir = cur, up</div><div class="line">                    stack.pop()</div><div class="line">	</div><div class="line">        <span class="keyword">return</span> ret</div></pre></figure>
+
+<h3 id="层序遍历"><strong>层序遍历</strong></h3>
+<p>相对于前序遍历、中序遍历以及后序遍历，层序遍历似乎不是那么常见，据说「层序遍历」问题最开始是在微软的某一次笔试题中出现。</p>
+<p>所谓层序遍历即「一层一层地遍历」，LeetCode中有题：<a href="https://leetcode.com/problems/binary-tree-level-order-traversal/" target="_blank" rel="external">Binary Tree Level Order Traversal</a>，描述如下：</p>
+<blockquote>
+<p>Given a binary tree, return the level order traversal of its nodes’ values. (ie, from left to right, level by level).</p>
+</blockquote>
+<p>和上面三种遍历不一样，递归策略对于层序遍历问题似乎没有显示出明显的优势，我的Solution如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {TreeNode} root</span></div><div class="line">    <span class="comment"># @return {integer[][]}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">levelOrder</span><span class="params">(self, root)</span>:</span></div><div class="line">        <span class="keyword">if</span> root <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">            <span class="keyword">return</span> []</div><div class="line">        </div><div class="line">        curLevel = [root]</div><div class="line">        ret = []</div><div class="line">        </div><div class="line">        <span class="keyword">while</span> len(curLevel) &gt; <span class="number">0</span>:</div><div class="line">            ret.append([node.val <span class="keyword">for</span> node <span class="keyword">in</span> curLevel])</div><div class="line">            nextLevel = []</div><div class="line">            <span class="keyword">for</span> node <span class="keyword">in</span> curLevel:</div><div class="line">                <span class="keyword">if</span> node.left <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">                    nextLevel.append(node.left)</div><div class="line">                <span class="keyword">if</span> node.right <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">                    nextLevel.append(node.right)</div><div class="line">            curLevel = nextLevel</div><div class="line">        <span class="keyword">return</span> ret</div></pre></figure>
+
+<p>值得一提的是，代码中的curLevel（数组）充当「队列」的作用，Python中数组比较强大；若是在其他静态语言中，可能需要使用真正的队列。</p>
+<p>LeetCode中还有一道衍生题：<a href="https://leetcode.com/problems/binary-tree-level-order-traversal-ii/" target="_blank" rel="external">Binary Tree Level Order Traversal II</a>，类似处理，本文略过！</p>
+<h3 id="遍历总结"><strong>遍历总结</strong></h3>
+<p>总得来说，二叉树有四种比较常见的遍历姿势：前序遍历，中序遍历，后序遍历以及层序遍历。</p>
+<p>若以递归策略解决问题，前三种的解题步骤几乎一致；若以迭代策略解决问题则有所不同，但都会用到堆栈这种数据结构。其实，本质上，根据我的理解，这三种遍历方式都属于「深度优先搜索」。</p>
+<p>层序遍历则不一样，它从本质上讲属于「广度优先搜索」。</p>
+<p>根据我的个人经验，相对于迭代策略，递归策略对于「深度优先搜索」有着较大优势：代码简洁清晰。但对于「广度优先搜索」，递归策略似乎就不是那么值得考虑了，似乎迭代是更好的选择，并且常常会用到「队列」这种数据结构。</p>
+<h2 id="构建二叉树"><strong>构建二叉树</strong></h2>
+<p>二叉树中还有一种题目比较常见，即根据遍历结果将二叉树给还原出来，这种题目经常出现在各种考试选择题中。LeetCode中有两道与此相关的题目，解题思路一般是，先找到根节点，然后将遍历结果一分为二，分别构建左子树和右子树，如此递归即可完成，不多说了，本文直接上代码。</p>
+<p><a href="https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/" target="_blank" rel="external"><strong>Construct Binary Tree from Preorder and Inorder Traversal</strong></a></p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer[]} preorder</span></div><div class="line">    <span class="comment"># @param {integer[]} inorder</span></div><div class="line">    <span class="comment"># @return {TreeNode}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">buildTree</span><span class="params">(self, preorder, inorder)</span>:</span></div><div class="line">        <span class="keyword">return</span> constructTree(preorder, <span class="number">0</span>, len(inorder), inorder, <span class="number">0</span>, len(inorder))</div><div class="line">	</div><div class="line">	</div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">constructTree</span><span class="params">(preorder, start1, stop1, inorder, start2, stop2)</span>:</span></div><div class="line">    <span class="keyword">if</span> start1 == stop1:</div><div class="line">        <span class="keyword">return</span> <span class="keyword">None</span></div><div class="line">    </div><div class="line">    <span class="keyword">if</span> start1 == stop1-<span class="number">1</span>:</div><div class="line">        <span class="keyword">return</span> TreeNode(preorder[start1])</div><div class="line">    </div><div class="line">    rootVal = preorder[start1]</div><div class="line">    index = start2</div><div class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> xrange(start2, stop2):</div><div class="line">        <span class="keyword">if</span> inorder[i] == rootVal:</div><div class="line">            index = i</div><div class="line">            <span class="keyword">break</span></div><div class="line">    </div><div class="line">    root = TreeNode(rootVal)</div><div class="line">    root.left = constructTree(preorder, start1+<span class="number">1</span>, index-start2+<span class="number">1</span>+start1, inorder, start2, index)</div><div class="line">    root.right = constructTree(preorder, index-start2+<span class="number">1</span>+start1, stop1, inorder, index+<span class="number">1</span>, stop2)</div><div class="line">    <span class="keyword">return</span> root</div></pre></figure>
+
+<p><a href="https://leetcode.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal/" target="_blank" rel="external"><strong>Construct Binary Tree from Inorder and Postorder Traversal</strong></a></p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer[]} inorder</span></div><div class="line">    <span class="comment"># @param {integer[]} postorder</span></div><div class="line">    <span class="comment"># @return {TreeNode}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">buildTree</span><span class="params">(self, inorder, postorder)</span>:</span></div><div class="line">        <span class="keyword">return</span> constructTree(inorder, <span class="number">0</span>, len(inorder), postorder, <span class="number">0</span>, len(inorder))</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">constructTree</span><span class="params">(inorder, start1, stop1, postorder, start2, stop2)</span>:</span></div><div class="line">    <span class="keyword">if</span> start1 == stop1:</div><div class="line">        <span class="keyword">return</span> <span class="keyword">None</span></div><div class="line">	</div><div class="line">    <span class="keyword">if</span> start1 == stop1-<span class="number">1</span>:</div><div class="line">        <span class="keyword">return</span> TreeNode(inorder[start1])</div><div class="line">	</div><div class="line">    rootVal = postorder[stop2-<span class="number">1</span>]</div><div class="line">    index = start1</div><div class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> xrange(start1, stop1):</div><div class="line">        <span class="keyword">if</span> inorder[i] == rootVal:</div><div class="line">            index = i</div><div class="line">            <span class="keyword">break</span></div><div class="line">    root = TreeNode(rootVal)</div><div class="line">    root.left = constructTree(inorder, start1, index, postorder, start2, start2+index-start1)</div><div class="line">    root.right = constructTree(inorder, index+<span class="number">1</span>, stop1, postorder, stop2-stop1+index, stop2-<span class="number">1</span>)</div><div class="line">	</div><div class="line">    <span class="keyword">return</span> root</div></pre></figure>
+
+<p>关于二叉树还有很多其他的算法，《<a href="/2015/06/12/binary-tree-part2/">二叉树与算法第二弹</a>》接着说。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/LeetCode/">LeetCode</a><a href="/tags/Binary-Tree/">Binary Tree</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/06/10/binary-tree-part1/" data-title="二叉树与算法 第一弹 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/06/12/binary-tree-part2/" title="二叉树与算法 第二弹">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  二叉树与算法 第二弹</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/06/09/linked-list/"  title="单链表与算法">
+ <strong>NEXT:</strong><br/> 
+ <span>单链表与算法
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/06/10/binary-tree-part1/" data-title="二叉树与算法 第一弹" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二叉树的性质"><span class="toc-number">2.</span> <span class="toc-text">二叉树的性质</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#判断平衡性"><span class="toc-number">2.1.</span> <span class="toc-text">判断平衡性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#树的最大深度"><span class="toc-number">2.2.</span> <span class="toc-text">树的最大深度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#树的最小深度"><span class="toc-number">2.3.</span> <span class="toc-text">树的最小深度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#判断两棵树是否相同"><span class="toc-number">2.4.</span> <span class="toc-text">判断两棵树是否相同</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#计算完全二叉树的节点数"><span class="toc-number">2.5.</span> <span class="toc-text">计算完全二叉树的节点数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#判断镜像树"><span class="toc-number">2.6.</span> <span class="toc-text">判断镜像树</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#判断二叉搜索树"><span class="toc-number">2.7.</span> <span class="toc-text">判断二叉搜索树</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#n个结点构建多少种BST"><span class="toc-number">2.8.</span> <span class="toc-text">n个结点构建多少种BST</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二叉树遍历问题"><span class="toc-number">3.</span> <span class="toc-text">二叉树遍历问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#先序遍历"><span class="toc-number">3.1.</span> <span class="toc-text">先序遍历</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#中序遍历"><span class="toc-number">3.2.</span> <span class="toc-text">中序遍历</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#后序遍历"><span class="toc-number">3.3.</span> <span class="toc-text">后序遍历</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#层序遍历"><span class="toc-number">3.4.</span> <span class="toc-text">层序遍历</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#遍历总结"><span class="toc-number">3.5.</span> <span class="toc-text">遍历总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构建二叉树"><span class="toc-number">4.</span> <span class="toc-text">构建二叉树</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,486 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>理解Objective-C Runtime（二）消息传递机制 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="在对象上调用方法是包括Objective-C的众多语言都具备的功能。但在Objective-C中，这个术语叫「传递消息」（pass a message）。「消息」有可以接受参数，也可能有返回值。
+静态绑定和动态绑定
+由于Objective-C是C的超集，所以最好先理解C语言的函数调用方式。C语言使用">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/04/27/unstanding-the-Objective-C-Runtime-part2/" title="理解Objective-C Runtime（二）消息传递机制" itemprop="url">理解Objective-C Runtime（二）消息传递机制</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-04-27T03:16:36.000Z" itemprop="datePublished">2015-04-27</time>
+    更新日期:<time datetime="2015-07-24T07:39:41.000Z" itemprop="dateModified">2015-07-24</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#静态绑定和动态绑定"><span class="toc-number">1.</span> <span class="toc-text">静态绑定和动态绑定</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#消息传递机制"><span class="toc-number">2.</span> <span class="toc-text">消息传递机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考资料"><span class="toc-number">3.</span> <span class="toc-text">参考资料</span></a></li></ol>
+		</div>
+		
+		<p>在对象上调用方法是包括Objective-C的众多语言都具备的功能。但在Objective-C中，这个术语叫「传递消息」（pass a message）。「消息」有可以接受参数，也可能有返回值。</p>
+<h2 id="静态绑定和动态绑定"><strong>静态绑定和动态绑定</strong></h2>
+<p>由于Objective-C是C的超集，所以最好先理解C语言的函数调用方式。C语言使用「静态绑定」（static binding），也就是说，在编译期间就能决定运行时所应调用的函数。以下代码为例：</p>
+<figure class="highlight C"><pre><div class="line"><span class="preprocessor">#import &lt;stdio.h&gt;</span></div><div class="line">	</div><div class="line"><span class="keyword">void</span> printHello() {</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"Hello, world!\n"</span>);</div><div class="line">}</div><div class="line">    </div><div class="line"><span class="keyword">void</span> printGoodbye() {</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"Goodbye!\n"</span>);</div><div class="line">}</div><div class="line">    </div><div class="line"><span class="keyword">void</span> doTheThing(<span class="keyword">int</span> type) {</div><div class="line">    <span class="keyword">if</span> (type == <span class="number">0</span>) {</div><div class="line">        printHello();</div><div class="line">    } <span class="keyword">else</span> {</div><div class="line">        printGoodbye();</div><div class="line">    }</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">}</div></pre></figure>
+
+<p>若不考虑「内联」（inline），那么编译器在编译代码时就已经知道程序中有printHello与printGoodbye这两个函数了，于是会直接生成调用这些函数的指令（站在汇编的角度，call命令）。而函数地址实际上是与硬编码在指令之中的。</p>
+<p>如果将上述代码写成下面这样，会如何呢？</p>
+<figure class="highlight C"><pre><div class="line"><span class="preprocessor">#import &lt;stdio.h&gt;</span></div><div class="line">	</div><div class="line"><span class="keyword">void</span> printHello() {</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"Hello, world!\n"</span>);</div><div class="line">}</div><div class="line">    </div><div class="line"><span class="keyword">void</span> printGoodbye() {</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"Goodbye!\n"</span>);</div><div class="line">}</div><div class="line">    </div><div class="line"><span class="keyword">void</span> doTheThing(<span class="keyword">int</span> type) {</div><div class="line">    <span class="keyword">void</span> (*fnc)();</div><div class="line">    <span class="keyword">if</span> (type == <span class="number">0</span>) {</div><div class="line">        fnc = printHello;</div><div class="line">    } <span class="keyword">else</span> {</div><div class="line">        fuc = printGoodbye;</div><div class="line">    }</div><div class="line">    fnc();</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">}</div></pre></figure>
+
+<p>这就是「动态绑定」（dynamic binding）！因为所要调用的函数知道运行期才能确定。编译器在这种情况下生成的指令与刚才的那个例子不同，在第一个例子（静态绑定）中，if与else语句里都有函数调用指令（汇编中的call命令）；而在第二个例子（动态绑定）中，只有一个函数调用指令，不过待调用的函数地址无法硬编码之中，而是要在运行期读出来。</p>
+<h2 id="消息传递机制"><strong>消息传递机制</strong></h2>
+<p>在OC中，如果向某对象传递消息，那就会使用<strong>动态绑定机制</strong>来决定需要调用的方法。在底层，所有方法都是普通的C语言函数，然而对象收到消息之后，究竟该调用哪个方法则完全在runtime决定，甚至可以在程序运行时改变，这些特性使得<strong>Objective-C成为一门真正的动态语言</strong>。</p>
+<p>给对象发生消息可以这样写：<br><code>id returnValue = [someObject messageName:parameter];</code></p>
+<p>someObject是「接收者」（receiver），messageName叫做「选择子」（selector）。二者合起来称为「消息」（message）。</p>
+<p>P.S：「选择子」和「方法」这两个名词经常交替使用，都是一个意思。</p>
+<p>编译器看到此消息后，将其转换为一条标准的C语言函数调用，所调用的函数乃是「消息传递机制」中的核心函数，即鼎鼎有名的<code>objc_msgSend</code>，其原型可以在<code>&lt;objc/message.h&gt;</code>中找到：</p>
+<figure class="highlight C"><pre><div class="line">id objc_msgSend(id self, SEL op, ...)</div></pre></figure>
+
+<p><code>id returnValue = [someObject messageName:parameter];</code>会被编译器翻译成如下形式：</p>
+<figure class="highlight Objective-C"><pre><div class="line"><span class="keyword">id</span> returnValue = objc_msgSend(someObject, <span class="keyword">@selector</span>(messageName:), parameter);</div></pre></figure>
+
+<p>在runtime，<code>objc_msgSend</code>会依据receiver（即上述对象someObject）和选择子类型来调用适当的方法。为了完成此操作，该方法需要在接收者所属的类中搜寻其「方法列表」（关于方法列表，详见<a href="http://localhost:4000/2015/04/26/unstanding-the-Objective-C-Runtime-part1/#objc_class和isa" target="_blank" rel="external">methodLists</a>），如果能找到与「选择子」匹配的方法，就调至其实现的代码。若找不到，那就沿着继承体系继续向上查找，等找到合适的方法之后再跳转。<strong>如果最终还找不到相匹配的方法，那就执行「消息转发」（message forwarding）操作</strong>，这会在下一篇<a href="/2015/04/27/unstanding-the-Objective-C-Runtime-part3/">博客</a>中阐述。</p>
+<p>如此看来，Objective-C在runtime调用一个方法似乎需要很多步骤。所幸的是，<code>objc_msgSend</code>会将匹配结果缓存在「快速映射表」（fast map）里面，每个类都有这样一块缓存，若是稍后还想该类发送与「选择子」相同的方法，那么查找起来就很快了。</p>
+<p>P.S：上一篇博客《<a href="/2015/04/26/unstanding-the-Objective-C-Runtime-part1/#objc_class和isa">理解Objective-C Runtime（一）预备知识</a>》中在介绍objc_class结构体时谈到了其中一个变量cache，但简单忽略飘过；其实，根据我的理解，这里的「快速映射表」所对应的就是objc_class中的变量cache。</p>
+<p>诚然，即便有这种「快速映射表」机制，执行速度还是不如「静态绑定」。实际上，对于当前这种硬件平台，这点速度差根本不值一提。</p>
+<p>在<code>&lt;objc/message.h&gt;</code>中，除了<code>objc_msgSend</code>函数原型之外，还可以看到其他的objc_msgSendXXOO函数，这些方法的详细作用，《Effective Objective-C 2.0》item 11中有详细说明，本文就不赘述了。</p>
+<p>只要理解了Objective-C的对象模型，理解「消息传递机制」还是非常容易的。</p>
+<h2 id="参考资料"><strong>参考资料</strong></h2>
+<ul>
+<li>《Effective Objective-C 2.0》；</li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Runtime/">Runtime</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Objective-C/">Objective-C</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/04/27/unstanding-the-Objective-C-Runtime-part2/" data-title="理解Objective-C Runtime（二）消息传递机制 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/04/27/unstanding-the-Objective-C-Runtime-part3/" title="理解Objective-C Runtime（三）消息转发机制">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  理解Objective-C Runtime（三）消息转发机制</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/04/26/unstanding-the-Objective-C-Runtime-part1/"  title="理解Objective-C Runtime（一）预备知识">
+ <strong>NEXT:</strong><br/> 
+ <span>理解Objective-C Runtime（一）预备知识
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/04/27/unstanding-the-Objective-C-Runtime-part2/" data-title="理解Objective-C Runtime（二）消息传递机制" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#静态绑定和动态绑定"><span class="toc-number">1.</span> <span class="toc-text">静态绑定和动态绑定</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#消息传递机制"><span class="toc-number">2.</span> <span class="toc-text">消息传递机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考资料"><span class="toc-number">3.</span> <span class="toc-text">参考资料</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

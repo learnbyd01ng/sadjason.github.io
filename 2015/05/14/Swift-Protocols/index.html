@@ -1,0 +1,560 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Swift协议 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="「协议」（protocol）声明一系列方法、属性、下标等用来约束其「遵循者」，进而保证「遵循者」能够完成限定的工作。「协议」本身不实现任何功能，它仅仅描述了「遵循者」的实现。「协议」能被类、结构体、枚举所遵循，若某个类型遵循某「协议」，则称该类型遵循（conform to）某协议。
+协议的语法
+协议">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/05/14/Swift-Protocols/" title="Swift协议" itemprop="url">Swift协议</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-05-14T03:11:29.000Z" itemprop="datePublished">2015-05-14</time>
+    更新日期:<time datetime="2015-07-04T09:00:14.000Z" itemprop="dateModified">2015-07-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#协议的语法"><span class="toc-number">1.</span> <span class="toc-text">协议的语法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#属性要求"><span class="toc-number">2.</span> <span class="toc-text">属性要求</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#方法要求"><span class="toc-number">3.</span> <span class="toc-text">方法要求</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构造器要求"><span class="toc-number">4.</span> <span class="toc-text">构造器要求</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#当类实现协议的构造器时"><span class="toc-number">4.1.</span> <span class="toc-text">当类实现协议的构造器时</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#协议类型"><span class="toc-number">5.</span> <span class="toc-text">协议类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代理设计模式"><span class="toc-number">6.</span> <span class="toc-text">代理设计模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#协议和扩展"><span class="toc-number">7.</span> <span class="toc-text">协议和扩展</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#扩展中让已知类型遵循新协议"><span class="toc-number">7.1.</span> <span class="toc-text">扩展中让已知类型遵循新协议</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#在扩展中添加协议成员"><span class="toc-number">7.2.</span> <span class="toc-text">在扩展中添加协议成员</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Protocol的继承"><span class="toc-number">8.</span> <span class="toc-text">Protocol的继承</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Class-Only_Protocol"><span class="toc-number">9.</span> <span class="toc-text">Class-Only Protocol</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#协议合成"><span class="toc-number">10.</span> <span class="toc-text">协议合成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#检验协议的一致性"><span class="toc-number">11.</span> <span class="toc-text">检验协议的一致性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#协议的可选要求"><span class="toc-number">12.</span> <span class="toc-text">协议的可选要求</span></a></li></ol>
+		</div>
+		
+		<p>「协议」（protocol）声明一系列方法、属性、下标等用来约束其「遵循者」，进而保证「遵循者」能够完成限定的工作。「协议」本身不实现任何功能，它仅仅描述了「遵循者」的实现。「协议」能被类、结构体、枚举所遵循，若某个类型遵循某「协议」，则称该类型遵循（conform to）某协议。</p>
+<h2 id="协议的语法"><strong>协议的语法</strong></h2>
+<p>协议的定义与类、结构体和枚举的定义非常相似，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">SomeProtocol</span> </span>{</div><div class="line">    <span class="comment">// 协议内容</span></div><div class="line">}</div></pre></figure>
+
+<p>在类/结构体/枚举的名称后加上协议名称，中间以冒号<code>:</code>分割即可实现协议；实现多个协议时，各协议之间用逗号<code>,</code>分隔，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">SomeStructure</span>: <span class="title">FirstProtocol</span>, <span class="title">AnotherProtocol</span> </span>{</div><div class="line">    <span class="comment">// 结构体内容</span></div><div class="line">}</div></pre></figure>
+
+<p>呵，继承也是使用<code>:</code>哦！当某个类含有父类的同时并实现了协议，应该把父类放在所有协议之前，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">SomeClass</span>: <span class="title">SomeSuperClass</span>, <span class="title">FirstProtocol</span>, <span class="title">AnotherProtocol</span> </span>{</div><div class="line">    <span class="comment">// 类的内容</span></div><div class="line">}</div></pre></figure>
+
+<h2 id="属性要求"><strong>属性要求</strong></h2>
+<p>「协议」能够要求其遵循者必须含有一些特定名称和类型的「实例属性」和「类型属性」，也能够要求属性的读写权限（即gettable和settable），但它不要求属性是「存储型属性」还是「计算型属性」。</p>
+<p>如果「协议」要求某个属性可写，但「其遵循者」将该属性定义为常量，那么认为该类型不满足「协议」的property requirements；另外一种情况，若「协议」要求某个属性可读（仅仅gettable），但某个「遵循者」定义该属性时允许设置（settable），那么认为该类型满足「协议」的property requirements。</p>
+<p>一般而言，「协议」中声明的属性都是变量（即都用<code>var</code>修饰）。Gettable和settable属性用<code>{ get set}</code>修饰；Gettable属性由<code>{ get }</code>修饰，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">SomeProtocol</span> </span>{</div><div class="line">    <span class="keyword">var</span> mustBeSettable: <span class="type">Int</span> { <span class="keyword">get</span> <span class="keyword">set</span>}</div><div class="line">    <span class="keyword">var</span> doesNotNeedToBeSettable: <span class="type">Int</span> { <span class="keyword">get</span> }</div><div class="line">}</div></pre></figure>
+
+<p>也可以在「协议」中声明类型属性，在「协议」中声明「类型属性」和在类/结构体/枚举中定义「类型属性」不太一样。在结构体和枚举中，定义「类型属性」时使用关键字<code>static</code>修饰；在类中定义「类型属性」时可以使用<code>static</code>，也可以使用<code>class</code>，关于二者不同这里不赘述了，详见<a href="/2015/05/11/Swift-Properties/#类型属性语法">这里</a>；但是对于protocol，Swift规定无论什么情况下都使用<code>static</code>修饰静态属性。但是在「协议」的「遵循者」类中定义时，可以根据需要使用<code>static</code>或<code>class</code>。</p>
+<h2 id="方法要求"><strong>方法要求</strong></h2>
+<p>「协议」能够要求其遵循者必须实现某些指定名称和类型的实例方法和类方法。协议方法的声明与普通方法声明相似，但它不需要方法body。</p>
+<p>值得注意的是，协议方法支持变长参数（variadic parameter），但不支持默认参数（default parameter）。</p>
+<p>和「属性要求」类似，「协议」要求无论在什么时候，声明「类型方法」时都是用关键字<code>static</code>修饰。</p>
+<p>除此之外，「协议」中还可以声明mutable类型方法。</p>
+<h2 id="构造器要求"><strong>构造器要求</strong></h2>
+<p>「协议」还可以要求遵循者必须定义某些指定的构造器。在「协议」中声明构造器和在类中声明构造器差不多，只是没有initializer body，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">SomeProtocol</span> </span>{</div><div class="line">    <span class="keyword">init</span>(someParameter: <span class="type">Int</span>)</div><div class="line">}</div></pre></figure>
+
+<h3 id="当类实现协议的构造器时"><strong>当类实现协议的构造器时</strong></h3>
+<p>假设有某个协议SomeProtocol，类SomeClass遵循该协议，那么意味着SomeClass的子类也遵循该协议。为什么呢？因为若SomeProtocol中声明了一些属性和方法以及下标，则SomeClass必然会定义这些属性和方法以及下标，通过继承，SomeClass的子类也必然包括这些属性和方法以及下标，所以我们说「SomeClass的子类也遵循SomeProtocol」。</p>
+<p>然而，上面的这种说法不严密，实际情况更复杂一些，因为协议SomeProtocol中不光可以声明方法/属性/下标，还可以声明「构造器」；但在Swift中，除了某些特殊情况外，构造器是不被子类继承的，所以SomeClass中虽然能够保证定义了protocol要求的「构造器」，但不能保证SomeClass中也定义了protocol要求的「构造器」。</p>
+<p>P.S：哪些特殊情况？看<a href="/2015/05/12/Swift-Initialization/#类的继承和构造过程">这里</a>。</p>
+<p>所以这里有一个八阿哥（bug），SomeClass定义SomeProtocol中声明的构造器没问题，如何保证SomeClass的子类也定义SomeProtocol中声明的构造器呢？</p>
+<p>关键字<code>required</code>可以解决这个问题。</p>
+<p>Swift规定，SomeClass在定义SomeProtocol声明的「构造器」时，必须加上一个<code>required</code>修饰符作为前缀，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">SomeClass</span>: <span class="title">SomeProtocol</span> </span>{</div><div class="line">    required <span class="keyword">init</span>(someParameter: <span class="type">Int</span>) {</div><div class="line">        <span class="comment">// initializer implementation goes here</span></div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<p><code>required</code>的作用是确保SomeClass的子类必须也得实现这个构造器，<a href="/2015/05/12/Swift-Initialization/#Required_Initializers">这里</a>有更详细的描述。</p>
+<p>当然，如果SomeProtocol的遵循者是一个final class（不能被继承的类），那么上面这种情况就不需要<code>required</code>来修饰initializer了。</p>
+<p>还有一种复杂的情况，如果某个子类需要override父类中的designated initializer，同时该子类还遵循了某个协议，该协议也定义了一个与该designated initializer同名的构造器，那么子类在定义该initializer时需要同时使用<code>required</code>和<code>override</code>修饰，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">SomeProtocol</span> </span>{</div><div class="line">    <span class="keyword">init</span>()</div><div class="line">}</div><div class="line">	</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">SomeSuperClass</span> </span>{</div><div class="line">    <span class="keyword">init</span>() {</div><div class="line">        <span class="comment">// initializer implementation goes here</span></div><div class="line">    }</div><div class="line">}</div><div class="line">	</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">SomeSubClass</span>: <span class="title">SomeSuperClass</span>, <span class="title">SomeProtocol</span> </span>{</div><div class="line">    <span class="comment">// "required" from SomeProtocol conformance;</span></div><div class="line">    <span class="comment">// "override" from SomeSuperClass</span></div><div class="line">    required <span class="keyword">override</span> <span class="keyword">init</span>() {</div><div class="line">        <span class="comment">// initializer implementation goes here</span></div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<p>然后，<strong>「协议」还可以声明failable initializer</strong>。</p>
+<h2 id="协议类型"><strong>协议类型</strong></h2>
+<p>「协议」本身不具备任何功能，但在实际使用中，你完全可以把它当做一个类型来使用。使用场景包括：</p>
+<ul>
+<li>作为函数/方法/构造器中的参数类型或返回类型；</li>
+<li>作为常量/变量/属性的类型；</li>
+<li>作为array/set/dictionary等容器中元素的类型；</li>
+</ul>
+<p>举个栗子，定义一个类Dice（表桌游中的骰子），如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">RandomNumberGenerator</span> </span>{</div><div class="line">    <span class="func"><span class="keyword">func</span></span> random() -&gt; <span class="type">Double</span></div><div class="line">}</div><div class="line">	</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dice</span> </span>{</div><div class="line">    <span class="keyword">let</span> sides: <span class="type">Int</span>		<span class="comment">// 表示「骰子」有几个面</span></div><div class="line">    <span class="keyword">let</span> generator: <span class="type">RandomNumberGenerator</span>	<span class="comment">// 随机数生成器</span></div><div class="line">    </div><div class="line">    <span class="comment">// 构造器，RandomNumberGenerator是一个Protocol名</span></div><div class="line">    <span class="keyword">init</span>(sides: <span class="type">Int</span>, generator: <span class="type">RandomNumberGenerator</span>) {</div><div class="line">        <span class="keyword">self</span>.sides = sides</div><div class="line">        <span class="keyword">self</span>.generator = generator</div><div class="line">    }</div><div class="line">    </div><div class="line">    <span class="comment">// 摇动「骰子」</span></div><div class="line">    <span class="func"><span class="keyword">func</span></span> roll() -&gt; <span class="type">Int</span> {</div><div class="line">        <span class="keyword">return</span> <span class="type">Int</span>(generator.random() * <span class="type">Double</span>(sides)) + <span class="number">1</span></div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<p>Dice含有两个属性sides和generator，前者用来表示骰子有几个面，后者为骰子提供一个随机数生成器。由于后者为RandomNumberGenerator的协议类型，所以它能够被赋值为任意遵循该协议的类型。</p>
+<p>roll方法用来模拟骰子的面值，它先用generator的random方法来创建一个[0-1]区间内的随机数种子，然后加工这个随机数种子生成骰子的面值。</p>
+<p>如下所示，￼￼LinearCongruentialGenerator的实例作为随机数生成器传入Dice的构造器：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">LinearCongruentialGenerator</span>: <span class="title">RandomNumberGenerator</span> </span>{</div><div class="line">    <span class="keyword">var</span> lastRandom = <span class="number">42.0</span></div><div class="line">    <span class="keyword">let</span> m = <span class="number">139968.0</span></div><div class="line">    <span class="keyword">let</span> a = <span class="number">3877.0</span></div><div class="line">    <span class="keyword">let</span> <span class="built_in">c</span> = <span class="number">29573.0</span></div><div class="line">    </div><div class="line">    <span class="func"><span class="keyword">func</span></span> random() -&gt; <span class="type">Double</span> {</div><div class="line">        lastRandom = ((lastRandom * a + <span class="built_in">c</span>) % m)</div><div class="line">        <span class="keyword">return</span> lastRandom / m</div><div class="line">    }</div><div class="line">}</div><div class="line">	</div><div class="line"><span class="keyword">var</span> d6 = <span class="type">Dice</span>(sides: <span class="number">6</span>, generator: <span class="type">LinearCongruentialGenerator</span>())</div><div class="line"><span class="keyword">for</span> <span class="number">_</span> <span class="keyword">in</span> <span class="number">1</span>...<span class="number">5</span> {</div><div class="line">    <span class="built_in">println</span>(<span class="string">"Random dice roll is <span class="subst">\(d6.roll()</span>)"</span>)</div><div class="line">}</div><div class="line"><span class="comment">/* 输出：</span></div><div class="line">Random dice roll is 3</div><div class="line">Random dice roll is 5</div><div class="line">Random dice roll is 4</div><div class="line">Random dice roll is 5</div><div class="line">Random dice roll is 4</div><div class="line">*/</div></pre></figure>
+
+<h2 id="代理设计模式"><strong>代理设计模式</strong></h2>
+<p>「委托」（delegation）是一种「设计模式」，它允许类或结构体将一些需要它们负责的功能交由（委托）给其他的类型的实例。在OC中，委托随处可见。在Swift实际开发中，委托设计模式的实现和协议密不可分。</p>
+<p>基于protocol的「委托设计模式」太常见了，这里就赘述了，若以后碰到新知识点再补充吧！</p>
+<h2 id="协议和扩展"><strong>协议和扩展</strong></h2>
+<h3 id="扩展中让已知类型遵循新协议"><strong>扩展中让已知类型遵循新协议</strong></h3>
+<p>在<a href="/2015/05/14/Swift-Extensions/">Swift扩展</a>中已经提到，可以在「扩展」中让某个已存在的类型遵循某个新的协议。这样，哪怕我们没有权限访问该类型的源代码，也可以在「扩展」中为该类型添加新属性、方法、下标。</p>
+<p>举个栗子，在上文骰子类Dice的基础上，定义一个新的协议TextRepresentable，并定义一个Dice扩展，使得Dice遵循该协议，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">TextRepresentable</span> </span>{</div><div class="line">    <span class="func"><span class="keyword">func</span></span> asText() -&gt; <span class="type">String</span></div><div class="line">}</div><div class="line">	</div><div class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Dice</span>: <span class="title">TextRepresentable</span> </span>{</div><div class="line">    <span class="func"><span class="keyword">func</span></span> asText() -&gt; <span class="type">String</span> {</div><div class="line">        <span class="keyword">return</span> <span class="string">"A <span class="subst">\(<span class="keyword">self</span>.sides)</span>-sided dice"</span></div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<h3 id="在扩展中添加协议成员"><strong>在扩展中添加协议成员</strong></h3>
+<p>有的时候，某个类型从各个方面都符合某个协议的要求，只是没有明确说明它遵循该协议，可以在extension中指明，下面的结构体Hamster（仓鼠）完全遵循上面定义的TextRepresentable协议（该协议只声明了一个方法<code>asText() -&gt; String</code>），但没有显式指明遵循该协议，通过extension可以处理一下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Hamster</span> </span>{</div><div class="line">    <span class="keyword">var</span> name: <span class="type">String</span></div><div class="line">    <span class="func"><span class="keyword">func</span></span> asText() -&gt; <span class="type">String</span> {</div><div class="line">        <span class="keyword">return</span> <span class="string">"A hamster named <span class="subst">\(name)</span>"</span></div><div class="line">    }</div><div class="line">}</div><div class="line">	</div><div class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Hamster</span>: <span class="title">TextRepresentable</span> </span>{}</div></pre></figure>
+
+<p><strong>注意</strong>：虽然可以在extension中让某个已知类型遵循某个协议，但是对协议是比较挑剔的；必须保证该协议中没有定义「存储型属性」。</p>
+<h2 id="Protocol的继承"><strong>Protocol的继承</strong></h2>
+<p>协议能够继承一到多个其他协议，其语法与类的继承相似，多个协议间用逗号<code>,</code>分隔：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">InheritingProtocol</span>: <span class="title">SomeProtocol</span>, <span class="title">AnotherProtocol</span> </span>{</div><div class="line">    <span class="comment">// protocol definition goes here</span></div><div class="line">}</div></pre></figure>
+
+<h2 id="Class-Only_Protocol"><strong>Class-Only Protocol</strong></h2>
+<p>在Swift中还可以限制某个protocol仅能被类类型遵循，在定义「协议」的时候加上关键字<code>class</code>即可，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">SomeClassOnlyProtocol</span>: <span class="title">class</span>, <span class="title">SomeInheritedProtocol</span> </span>{</div><div class="line">    <span class="comment">// class-only protocol definition goes here</span></div><div class="line">}</div></pre></figure>
+
+<h2 id="协议合成"><strong>协议合成</strong></h2>
+<p>一个协议可由多个协议采用<code>protocol&lt;SomeProtocol, AnotherProtocol&gt;</code>这样的格式进行组合，称为「协议合成」（protocol composition）。</p>
+<p>「协议合成」经常在「协议」作为类型（譬如参数类型）时会使用到，举个栗子：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Named</span> </span>{</div><div class="line">    <span class="keyword">var</span> name: <span class="type">String</span> { <span class="keyword">get</span> }</div><div class="line">}</div><div class="line">	</div><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Aged</span> </span>{</div><div class="line">    <span class="keyword">var</span> age: <span class="type">String</span> { <span class="keyword">get</span> }</div><div class="line">}</div><div class="line">	</div><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Person</span>: <span class="title">Named</span>, <span class="title">Aged</span> </span>{</div><div class="line">    <span class="keyword">var</span> name: <span class="type">String</span></div><div class="line">    <span class="keyword">var</span> age: <span class="type">Int</span></div><div class="line">}</div><div class="line"></div><div class="line"><span class="func"><span class="keyword">func</span></span> wishHappyBirthday(celebrator: <span class="class"><span class="keyword">protocol</span>&lt;<span class="title">Named</span>, <span class="title">Aged</span>&gt;) </span>{</div><div class="line">    <span class="built_in">println</span>(<span class="string">"Happy birthday <span class="subst">\(celebrator.name)</span> - you're <span class="subst">\(celebrator.age)</span>!"</span>)</div><div class="line">}</div><div class="line">	</div><div class="line"><span class="keyword">let</span> birthdayPerson = <span class="type">Person</span>(name: <span class="string">"张不坏"</span>, age: <span class="number">23</span>)</div><div class="line">wishHappyBirthday(birthdayPerson)</div><div class="line"><span class="comment">// print "Happy birthday 张不坏 - you're 23!"</span></div></pre></figure>
+
+<p><strong>注意</strong>：协议合成并不会生成一个新协议类型，而是将多个协议合成为一个临时的协议，超出范围后立即失效。</p>
+<h2 id="检验协议的一致性"><strong>检验协议的一致性</strong></h2>
+<p>使用关键字<code>is</code>检验协议一致性，使用关键字<code>as</code>将协议类型向下转型（downcast）为其他协议类型：</p>
+<ul>
+<li><code>is</code>操作符用来判断某个实例是否遵循某个协议；</li>
+<li><code>as?</code>返回一个optional，当被检查的实例遵循某个协议时，返回该协议类型，否则返回nil；</li>
+<li><code>as!</code>强制转换，若成功，则返回协议类型，否则，抛出runtime错误；</li>
+</ul>
+<h2 id="协议的可选要求"><strong>协议的可选要求</strong></h2>
+<p>OC中协议定义的属性和变量有required和optional（这和可选类型optional不是一个意思哦）之分，required类型资源（属性或者方法），「遵循者」必须要实现；optional类型资源，「遵循者」可选择性实现。</p>
+<p>Swift也不例外，在Swift的「协议」中，它所提出的要求也可以是optional，具体的做法是在定义属性/方法/下标/构造器时加上关键字<code>optional</code>修饰即可。</p>
+<p>Swift文档把这种在「协议」中声明的可选要求（属性、方法、下标等）称之为「optional protocol requirements」。</p>
+<p>根据我的理解，Swift的设计理念是没有「optional protocol requirements」的，但是为了保持与OC兼容性，不得已支持；所以在Swift的「协议」中定义「optional protocol requirements」的前提是该协议被<code>@objc</code>修饰，关于<code>@objc</code>：</p>
+<ul>
+<li><code>@objc</code>指示该协议暴露给OC，即可以为OC代码所用；</li>
+<li>被<code>@objc</code>修饰的协议仅仅可以被类类型遵循；</li>
+</ul>
+<p>举个栗子，定义一个类Counter，它为「外部数据源」提供加法操作，这个「外部数据源」必须要遵循一个协议CounterDataSource，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="preprocessor">@objc</span> <span class="class"><span class="keyword">protocol</span> <span class="title">CounterDataSource</span> </span>{</div><div class="line">    optional <span class="func"><span class="keyword">func</span></span> incrementForCount(<span class="built_in">count</span>: <span class="type">Int</span>) -&gt; <span class="type">Int</span></div><div class="line">    optional <span class="keyword">var</span> fixedIncrement: <span class="type">Int</span> { <span class="keyword">get</span> }</div><div class="line">}</div><div class="line">	</div><div class="line"><span class="preprocessor">@objc</span> <span class="class"><span class="keyword">class</span> <span class="title">Counter</span> </span>{</div><div class="line">    <span class="keyword">var</span> <span class="built_in">count</span> = <span class="number">0</span></div><div class="line">    <span class="keyword">var</span> dataSource: <span class="type">CounterDataSource</span>?</div><div class="line">    <span class="func"><span class="keyword">func</span></span> increment() {</div><div class="line">        <span class="keyword">if</span> <span class="keyword">let</span> amount = dataSource?.incrementForCount?(<span class="built_in">count</span>) {</div><div class="line">            <span class="built_in">count</span> += amount</div><div class="line">        } <span class="keyword">else</span> <span class="keyword">if</span> <span class="keyword">let</span> amount = dataSource?.fixedIncrement {</div><div class="line">            <span class="built_in">count</span> += amount</div><div class="line">        }</div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<p>定义类ThreeSource，该类遵循协议CounterDataSource，并实现了其中一个「optional protocol requirement」 — 属性<code>fixedIncrement</code>：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="preprocessor">@objc</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreeSource</span>: <span class="title">CounterDataSource</span> </span>{</div><div class="line">    <span class="keyword">let</span> fixedIncrement = <span class="number">3</span></div><div class="line">}</div><div class="line">	</div><div class="line"><span class="keyword">var</span> counter = <span class="type">Counter</span>()</div><div class="line">counter.dataSource = <span class="type">ThreeSource</span>()</div><div class="line"><span class="keyword">for</span> <span class="number">_</span> <span class="keyword">in</span> <span class="number">1</span>...<span class="number">4</span> {</div><div class="line">    counter.increment()</div><div class="line">    <span class="built_in">println</span>(<span class="string">"<span class="subst">\(counter.<span class="built_in">count</span>)</span> "</span>)</div><div class="line">}</div><div class="line"><span class="comment">// print:</span></div><div class="line"><span class="comment">// 3 6 9 12</span></div></pre></figure>
+
+<p>作为对比，如下定义类TowardsZeroSource，该类也遵循协议CounterDataSource，只是实现了另一个「optional protocol requirement」 — 方法<code>incrementForCount</code>：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">TowardsZeroSource</span>: <span class="title">CounterDataSource</span> </span>{</div><div class="line">    <span class="func"><span class="keyword">func</span></span> incrementForCount(<span class="built_in">count</span>: <span class="type">Int</span>) -&gt; <span class="type">Int</span> {</div><div class="line">        <span class="keyword">if</span> <span class="built_in">count</span> == <span class="number">0</span> {</div><div class="line">            <span class="keyword">return</span> <span class="number">0</span></div><div class="line">        } <span class="keyword">else</span> <span class="keyword">if</span> <span class="built_in">count</span> &lt; <span class="number">0</span> {</div><div class="line">            <span class="keyword">return</span> <span class="number">1</span></div><div class="line">        } <span class="keyword">else</span> {</div><div class="line">            <span class="keyword">return</span> -<span class="number">1</span></div><div class="line">        }</div><div class="line">    }</div><div class="line">}</div><div class="line">	</div><div class="line"><span class="keyword">var</span> counter = <span class="type">Counter</span>()</div><div class="line">counter.<span class="built_in">count</span> = -<span class="number">4</span></div><div class="line">counter.dataSource = <span class="type">TowardsZeroSource</span>()</div><div class="line"><span class="keyword">for</span> <span class="number">_</span> <span class="keyword">in</span> <span class="number">1</span>...<span class="number">5</span> {</div><div class="line">    counter.increment()</div><div class="line">    <span class="built_in">print</span>(<span class="string">"<span class="subst">\(counter.<span class="built_in">count</span>)</span> "</span>)</div><div class="line">}</div><div class="line"><span class="comment">// print:</span></div><div class="line"><span class="comment">// -3 -2 -1 0 0</span></div></pre></figure>
+
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Swift/">Swift</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/05/14/Swift-Protocols/" data-title="Swift协议 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/05/14/Swift-Generics/" title="Swift泛型">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  Swift泛型</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/05/14/Swift-Extensions/"  title="Swift扩展">
+ <strong>NEXT:</strong><br/> 
+ <span>Swift扩展
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/05/14/Swift-Protocols/" data-title="Swift协议" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#协议的语法"><span class="toc-number">1.</span> <span class="toc-text">协议的语法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#属性要求"><span class="toc-number">2.</span> <span class="toc-text">属性要求</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#方法要求"><span class="toc-number">3.</span> <span class="toc-text">方法要求</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构造器要求"><span class="toc-number">4.</span> <span class="toc-text">构造器要求</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#当类实现协议的构造器时"><span class="toc-number">4.1.</span> <span class="toc-text">当类实现协议的构造器时</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#协议类型"><span class="toc-number">5.</span> <span class="toc-text">协议类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代理设计模式"><span class="toc-number">6.</span> <span class="toc-text">代理设计模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#协议和扩展"><span class="toc-number">7.</span> <span class="toc-text">协议和扩展</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#扩展中让已知类型遵循新协议"><span class="toc-number">7.1.</span> <span class="toc-text">扩展中让已知类型遵循新协议</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#在扩展中添加协议成员"><span class="toc-number">7.2.</span> <span class="toc-text">在扩展中添加协议成员</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Protocol的继承"><span class="toc-number">8.</span> <span class="toc-text">Protocol的继承</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Class-Only_Protocol"><span class="toc-number">9.</span> <span class="toc-text">Class-Only Protocol</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#协议合成"><span class="toc-number">10.</span> <span class="toc-text">协议合成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#检验协议的一致性"><span class="toc-number">11.</span> <span class="toc-text">检验协议的一致性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#协议的可选要求"><span class="toc-number">12.</span> <span class="toc-text">协议的可选要求</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

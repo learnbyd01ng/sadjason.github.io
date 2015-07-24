@@ -1,0 +1,498 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>AFNetworking使用笔记2 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="写在前面
+AFNetworking使用笔记1站在使用的角度对AFNetworking进行了简单分析；然而，对AFNetworking仍然有不少问题，譬如：
+
+AFNetworking网络任务的创建是在哪个线程执行的？
+网络任务的completion handler在哪一个线程被调用？
+
+本文将针对这">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/04/05/AFNetworking使用笔记2/" title="AFNetworking使用笔记2" itemprop="url">AFNetworking使用笔记2</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-04-04T18:04:32.000Z" itemprop="datePublished">2015-04-05</time>
+    更新日期:<time datetime="2015-07-04T09:10:54.000Z" itemprop="dateModified">2015-07-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#发送「请求消息」"><span class="toc-number">2.</span> <span class="toc-text">发送「请求消息」</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#处理「响应消息」"><span class="toc-number">3.</span> <span class="toc-text">处理「响应消息」</span></a></li></ol>
+		</div>
+		
+		<h2 id="写在前面">写在前面</h2>
+<p><a href="/2015/04/05/AFNetworking使用笔记1">AFNetworking使用笔记1</a>站在使用的角度对AFNetworking进行了简单分析；然而，对AFNetworking仍然有不少问题，譬如：</p>
+<ul>
+<li>AFNetworking网络任务的创建是在哪个线程执行的？</li>
+<li>网络任务的completion handler在哪一个线程被调用？</li>
+</ul>
+<p>本文将针对这些问题对AFNetworking进行更深层次的分析。</p>
+<h2 id="发送「请求消息」">发送「请求消息」</h2>
+<p>这一部分内容的着重点在于回答“AFNetworking网络任务的创建是在哪个线程执行的？”这个问题。其实这个问题也可以这样问“AFNetworking网络任务的创建是在main thread中完成的吗”？</p>
+<p>开始分析，AFHTTPSessionManager的POST方法为例，如下：</p>
+<figure class="highlight Objective-C"><pre><div class="line">- (NSURLSessionDataTask *)POST:(<span class="built_in">NSString</span> *)URLString</div><div class="line">                    parameters:(<span class="keyword">id</span>)parameters</div><div class="line">                       success:(<span class="keyword">void</span> (^)(NSURLSessionDataTask *task, <span class="keyword">id</span> responseObject))success</div><div class="line">                       failure:(<span class="keyword">void</span> (^)(NSURLSessionDataTask *task, <span class="built_in">NSError</span> *error))failure</div><div class="line">{</div><div class="line">    NSURLSessionDataTask *dataTask = [<span class="keyword">self</span> dataTaskWithHTTPMethod:<span class="string">@"POST"</span></div><div class="line">                                                        URLString:URLString</div><div class="line">                                                       parameters:parameters</div><div class="line">                                                          success:success</div><div class="line">                                                          failure:failure];</div><div class="line">	</div><div class="line">    [dataTask resume];</div><div class="line">	</div><div class="line">    <span class="keyword">return</span> dataTask;</div><div class="line">}</div></pre></figure>
+
+<p>其所作的事情很简单，创建一个NSURLSessionDataTask实例，并将它激活（resume），然后返回它；</p>
+<p>进入NSURLSessionDataTask实例创建过程，最终进入如下方法：</p>
+<figure class="highlight Objective-C"><pre><div class="line">- (NSURLSessionDataTask *)dataTaskWithRequest:(<span class="built_in">NSURLRequest</span> *)request</div><div class="line">                            completionHandler:(<span class="keyword">void</span> (^)(NSURLResponse *response,</div><div class="line">                                                        <span class="keyword">id</span> responseObject,</div><div class="line">                                                        <span class="built_in">NSError</span> *error))completionHandler</div><div class="line">{</div><div class="line">    __block NSURLSessionDataTask *dataTask = <span class="literal">nil</span>;</div><div class="line">    <span class="built_in">dispatch_sync</span>(url_session_manager_creation_queue(), ^{</div><div class="line">        dataTask = [<span class="keyword">self</span><span class="variable">.session</span> dataTaskWithRequest:request];</div><div class="line">    });</div><div class="line">	</div><div class="line">    [<span class="keyword">self</span> addDelegateForDataTask:dataTask completionHandler:completionHandler];</div><div class="line">	</div><div class="line">    <span class="keyword">return</span> dataTask;</div><div class="line">}</div></pre></figure>
+
+<p>显然是url_session_manager_creation_queue()关键：</p>
+<figure class="highlight Objective-C"><pre><div class="line"><span class="keyword">static</span> <span class="built_in">dispatch_queue_t</span> url_session_manager_creation_queue() {</div><div class="line">    <span class="keyword">static</span> <span class="built_in">dispatch_queue_t</span> af_url_session_manager_creation_queue;</div><div class="line">    <span class="keyword">static</span> <span class="built_in">dispatch_once_t</span> onceToken;</div><div class="line">    <span class="built_in">dispatch_once</span>(&onceToken, ^{</div><div class="line">        af_url_session_manager_creation_queue =</div><div class="line">        dispatch_queue_create(<span class="string">"com.alamofire.networking.session.manager.creation"</span>,</div><div class="line">                              DISPATCH_QUEUE_SERIAL);</div><div class="line">    });</div><div class="line">	</div><div class="line">    <span class="keyword">return</span> af_url_session_manager_creation_queue;</div><div class="line">}</div></pre></figure>
+
+<p>现在应该可以得出答案了：</p>
+<ul>
+<li>根据上述的dataTaskWithRequest:completionHandler:里的代码段dispatch_sync(…)可以知道，创建网络任务的过程是同步完成的；</li>
+<li>根据url_session_manager_creation_queue()的实现代码可以知道，创建网络任务的过程是并不是在main thread中完成的；</li>
+</ul>
+<p>这里分析的是基于POST请求消息的data task，其他task也是差不多，总之，我们可以得出结论，网络任务的创建并不是在main thread中进行的；</p>
+<h2 id="处理「响应消息」">处理「响应消息」</h2>
+<p>这一部分内容的着重点在于回答“网络任务的completion handler在哪一个线程被调用？”。</p>
+<p>依旧以POST请求消息的响应为例，dataTaskWithHTTPMethod:URLString:parameters:success:failure:方法代码如下：</p>
+<figure class="highlight Objective-C"><pre><div class="line">- (<span class="type">NSURLSessionDataTask</span> *)dataTaskWithHTTPMethod:(<span class="type">NSString</span> *)<span class="keyword">method</span></div><div class="line">                                       <span class="type">URLString</span>:(<span class="type">NSString</span> *)<span class="type">URLString</span></div><div class="line">                                      parameters:(id)parameters</div><div class="line">                                         success:(<span class="type">void</span> (^)(<span class="type">NSURLSessionDataTask</span> *, id))success</div><div class="line">                                         failure:(<span class="type">void</span> (^)(<span class="type">NSURLSessionDataTask</span> *, <span class="type">NSError</span> *))failure</div><div class="line">{</div><div class="line">    <span class="type">NSError</span> *serializationError = <span class="keyword">nil</span>;</div><div class="line">    <span class="type">NSMutableURLRequest</span> *request =</div><div class="line">        [self.requestSerializer requestWithMethod:<span class="keyword">method</span></div><div class="line">                                    <span class="type">URLString</span>:[[<span class="type">NSURL</span> <span class="type">URLWithString</span>:<span class="type">URLString</span></div><div class="line">                                                      relativeToURL:self.baseURL] absoluteString]</div><div class="line">                                   parameters:parameters</div><div class="line">                                        error:&serializationError];</div><div class="line">    <span class="keyword">if</span> (serializationError) {</div><div class="line">        <span class="keyword">if</span> (failure) {</div><div class="line">            dispatch_async(self.completionQueue ?: dispatch_get_main_queue(), ^{</div><div class="line">                failure(<span class="keyword">nil</span>, serializationError);</div><div class="line">            });</div><div class="line">        }</div><div class="line">	</div><div class="line">        <span class="keyword">return</span> <span class="keyword">nil</span>;</div><div class="line">    }</div><div class="line">	</div><div class="line">    __block <span class="type">NSURLSessionDataTask</span> *dataTask = <span class="keyword">nil</span>;</div><div class="line">    dataTask = [self dataTaskWithRequest:request</div><div class="line">                       completionHandler:^(<span class="type">NSURLResponse</span> * __unused response,</div><div class="line">                                           id responseObject, <span class="type">NSError</span> *error) {</div><div class="line">        <span class="keyword">if</span> (error) {</div><div class="line">            <span class="keyword">if</span> (failure) {</div><div class="line">                failure(dataTask, error);</div><div class="line">            }</div><div class="line">        } <span class="keyword">else</span> {</div><div class="line">            <span class="keyword">if</span> (success) {</div><div class="line">                success(dataTask, responseObject);</div><div class="line">            }</div><div class="line">        }</div><div class="line">    }];</div><div class="line">	</div><div class="line">    <span class="keyword">return</span> dataTask;</div><div class="line">}</div></pre></figure>
+
+<p>有上述代码可以看到，当构造「请求消息」失败时，会异步在main thread中调用completionHandler block；</p>
+<p>当接收到「响应消息」时，相应的处理在AFURLSessionManager类的<br>URLSession:task:didCompleteWithError:方法中完成，该方法代码如下：</p>
+<figure class="highlight Objective-C"><pre><div class="line">- (<span class="keyword">void</span>)URLSession:(__unused NSURLSession *)session</div><div class="line">              task:(NSURLSessionTask *)task</div><div class="line">didCompleteWithError:(<span class="built_in">NSError</span> *)error</div><div class="line">{</div><div class="line">    <span class="keyword">if</span> (error) {</div><div class="line">        dispatch_group_async(manager<span class="variable">.completionGroup</span> ?: url_session_manager_completion_group(), manager<span class="variable">.completionQueue</span> ?: dispatch_get_main_queue(), ^{</div><div class="line">            <span class="keyword">if</span> (<span class="keyword">self</span><span class="variable">.completionHandler</span>) {</div><div class="line">                <span class="keyword">self</span><span class="variable">.completionHandler</span>(task<span class="variable">.response</span>, responseObject, error);</div><div class="line">            }</div><div class="line">	</div><div class="line">            <span class="built_in">dispatch_async</span>(dispatch_get_main_queue(), ^{</div><div class="line">                [[<span class="built_in">NSNotificationCenter</span> defaultCenter] postNotificationName:AFNetworkingTaskDidCompleteNotification object:task userInfo:userInfo];</div><div class="line">            });</div><div class="line">        });</div><div class="line">    } <span class="keyword">else</span> {</div><div class="line">        <span class="built_in">dispatch_async</span>(url_session_manager_processing_queue(), ^{</div><div class="line">            <span class="built_in">NSError</span> *serializationError = <span class="literal">nil</span>;</div><div class="line">            responseObject = [manager<span class="variable">.responseSerializer</span> responseObjectForResponse:task<span class="variable">.response</span> data:[NSData dataWithData:<span class="keyword">self</span><span class="variable">.mutableData</span>] error:&serializationError];</div><div class="line">	</div><div class="line">            <span class="keyword">if</span> (<span class="keyword">self</span><span class="variable">.downloadFileURL</span>) {</div><div class="line">                responseObject = <span class="keyword">self</span><span class="variable">.downloadFileURL</span>;</div><div class="line">            }</div><div class="line">	</div><div class="line">            <span class="keyword">if</span> (responseObject) {</div><div class="line">                userInfo[AFNetworkingTaskDidCompleteSerializedResponseKey] = responseObject;</div><div class="line">            }</div><div class="line">	</div><div class="line">            <span class="keyword">if</span> (serializationError) {</div><div class="line">                userInfo[AFNetworkingTaskDidCompleteErrorKey] = serializationError;</div><div class="line">            }</div><div class="line">	</div><div class="line">            dispatch_group_async(manager<span class="variable">.completionGroup</span> ?: url_session_manager_completion_group(), manager<span class="variable">.completionQueue</span> ?: dispatch_get_main_queue(), ^{</div><div class="line">                <span class="keyword">if</span> (<span class="keyword">self</span><span class="variable">.completionHandler</span>) {</div><div class="line">                    <span class="keyword">self</span><span class="variable">.completionHandler</span>(task<span class="variable">.response</span>, responseObject, serializationError);</div><div class="line">                }</div><div class="line">	</div><div class="line">                <span class="built_in">dispatch_async</span>(dispatch_get_main_queue(), ^{</div><div class="line">                    [[<span class="built_in">NSNotificationCenter</span> defaultCenter] postNotificationName:AFNetworkingTaskDidCompleteNotification object:task userInfo:userInfo];</div><div class="line">                });</div><div class="line">            });</div><div class="line">        });</div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<p>上述代码中出现了url_session_manager_processing_queue()方法，其定义如下：</p>
+<figure class="highlight Objective-C"><pre><div class="line"><span class="keyword">static</span> <span class="built_in">dispatch_queue_t</span> url_session_manager_processing_queue() {</div><div class="line">    <span class="keyword">static</span> <span class="built_in">dispatch_queue_t</span> af_url_session_manager_processing_queue;</div><div class="line">    <span class="keyword">static</span> <span class="built_in">dispatch_once_t</span> onceToken;</div><div class="line">    <span class="built_in">dispatch_once</span>(&onceToken, ^{</div><div class="line">        af_url_session_manager_processing_queue = dispatch_queue_create(<span class="string">"com.alamofire.networking.session.manager.processing"</span>, DISPATCH_QUEUE_CONCURRENT);</div><div class="line">    });</div><div class="line"></div><div class="line">    <span class="keyword">return</span> af_url_session_manager_processing_queue;</div><div class="line">}</div></pre></figure>
+
+<p>通过这段代码可以看到，当「响应」出现错误时，AFNetworking会在main thread异步调用completionHandler block；若「响应消息」没有错误时，就会以异步并行队列中对「响应消息」进行处理，处理完之后，再在main thread中调用completionHandler block。</p>
+<p>总之，「请求消息」的构建工作是以同步形式在非main thread中进行的；对「响应消息」的处理是以异步形式在非main thread中处理的；无论是哪个步骤的处理失败和成功，都会在main thread中执行completionHandler block。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/AFNetworking/">AFNetworking</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/iOS/">iOS</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/04/05/AFNetworking使用笔记2/" data-title="AFNetworking使用笔记2 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/04/07/让AFNetworking文件上传显示上传进度/" title="让AFNetworking文件上传显示上传进度">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  让AFNetworking文件上传显示上传进度</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/04/05/AFNetworking使用笔记1/"  title="AFNetworking使用笔记1">
+ <strong>NEXT:</strong><br/> 
+ <span>AFNetworking使用笔记1
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/04/05/AFNetworking使用笔记2/" data-title="AFNetworking使用笔记2" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#发送「请求消息」"><span class="toc-number">2.</span> <span class="toc-text">发送「请求消息」</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#处理「响应消息」"><span class="toc-number">3.</span> <span class="toc-text">处理「响应消息」</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

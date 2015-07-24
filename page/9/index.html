@@ -1,0 +1,467 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="张不坏的个人博客">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main">
+
+  <section class="post" itemscope itemprop="blogPost">
+  
+    <a href="/2015/04/12/iOS多线程同步总结/" title="iOS多线程同步总结" itemprop="url">
+  
+    <h1 itemprop="name">iOS多线程同步总结</h1>
+    
+     
+           <p itemprop="description" ></p>
+        
+    
+    <time datetime="2015-04-12T10:17:05.000Z" itemprop="datePublished">2015-04-12</time>
+  </a>
+</section>
+
+
+  <section class="post" itemscope itemprop="blogPost">
+  
+    <a href="/2015/04/12/GCD与生产者-消费者问题/" title="GCD与生产者-消费者问题" itemprop="url">
+  
+    <h1 itemprop="name">GCD与生产者-消费者问题</h1>
+    
+     
+           <p itemprop="description" >“生产者-消费者问题”是多线程中的经典问题。
+《Concurrency Programming Guide》中有一个小节“Changing Producer-Consumer Implementations”中貌似阐述了“生产者-消费者问题”的解决方案，还没看！先别看，先结合其他</p>
+        
+    
+    <time datetime="2015-04-12T10:07:19.000Z" itemprop="datePublished">2015-04-12</time>
+  </a>
+</section>
+
+
+  <section class="post" itemscope itemprop="blogPost">
+  
+    <a href="/2015/04/11/深入理解dispatch_sync/" title="深入理解dispatch_sync" itemprop="url">
+  
+    <h1 itemprop="name">深入理解dispatch_sync</h1>
+    
+     
+           <p itemprop="description" >写在前面
+关于GCD的基础知识，之前写过一篇博客，详见GCD基础知识。虽然之前已经梳理过了，但对很多知识点的理解仍然不够透彻…写这篇博客的原因是在阅读AFNetworking代码时遇到一些奇怪的代码。
+如下：
+- (NSURLSessionDataTask *)dataTaskW</p>
+        
+    
+    <time datetime="2015-04-11T13:09:53.000Z" itemprop="datePublished">2015-04-11</time>
+  </a>
+</section>
+
+
+  <section class="post" itemscope itemprop="blogPost">
+  
+    <a href="/2015/04/07/让AFNetworking文件上传显示上传进度/" title="让AFNetworking文件上传显示上传进度" itemprop="url">
+  
+    <h1 itemprop="name">让AFNetworking文件上传显示上传进度</h1>
+    
+     
+           <p itemprop="description" >写在前面
+目前手头的iOS项目中有一个逻辑功能是“客户端向服务器上传多张图片”，目前服务器处理功能相对来说比较羸弱，所以若图片达到了几兆会花掉相当长时间；为了不让用户重复点击“提交”button，处理方式是以一个类似于风火轮的控件屏蔽当前页面；这种做法是极其糟糕，如果整个过程需要</p>
+        
+    
+    <time datetime="2015-04-07T12:50:59.000Z" itemprop="datePublished">2015-04-07</time>
+  </a>
+</section>
+
+
+  <section class="post" itemscope itemprop="blogPost">
+  
+    <a href="/2015/04/05/AFNetworking使用笔记2/" title="AFNetworking使用笔记2" itemprop="url">
+  
+    <h1 itemprop="name">AFNetworking使用笔记2</h1>
+    
+     
+           <p itemprop="description" >写在前面
+AFNetworking使用笔记1站在使用的角度对AFNetworking进行了简单分析；然而，对AFNetworking仍然有不少问题，譬如：
+
+AFNetworking网络任务的创建是在哪个线程执行的？
+网络任务的completion handler在哪一个线程被调</p>
+        
+    
+    <time datetime="2015-04-04T18:04:32.000Z" itemprop="datePublished">2015-04-05</time>
+  </a>
+</section>
+
+
+  <section class="post" itemscope itemprop="blogPost">
+  
+    <a href="/2015/04/05/AFNetworking使用笔记1/" title="AFNetworking使用笔记1" itemprop="url">
+  
+    <h1 itemprop="name">AFNetworking使用笔记1</h1>
+    
+     
+           <p itemprop="description" >写在前面
+断断续续接触iOS开发也七八个月的时间了，过程中参与两个项目，项目中使用的HTTP库都是AFNetworking；现在再对之前的项目进行整理，发现对AFNetworking的很多方面都是停留在初级使用阶段，很多细节上的东西不甚了解；于是，笔者决定借此机会对相关内容进行梳</p>
+        
+    
+    <time datetime="2015-04-04T18:04:16.000Z" itemprop="datePublished">2015-04-05</time>
+  </a>
+</section>
+
+
+  <section class="post" itemscope itemprop="blogPost">
+  
+    <a href="/2015/04/04/HTTP协议学习笔记/" title="HTTP协议学习笔记" itemprop="url">
+  
+    <h1 itemprop="name">HTTP协议学习笔记</h1>
+    
+     
+           <p itemprop="description" >写在前面
+对于程序员而言，HTTP协议是一个非常熟悉的名词。每个人或多或少都对此有所了解。知道它是Web设计、客户端开发等的基础协议。通过它可以让服务器和客户端进行XML、JSON甚至是二进制数据的传输。笔者近期在对之前的程序（iOS项目）的梳理过程中，发现对HTTP协议的了解程</p>
+        
+    
+    <time datetime="2015-04-04T07:57:35.000Z" itemprop="datePublished">2015-04-04</time>
+  </a>
+</section>
+
+
+  <section class="post" itemscope itemprop="blogPost">
+  
+    <a href="/2015/03/30/当UIScrollView遇到UINavigationController/" title="当UIScrollView遇到UINavigationController" itemprop="url">
+  
+    <h1 itemprop="name">当UIScrollView遇到UINavigationController</h1>
+    
+     
+           <p itemprop="description" >项目中有一个页面的某个部分需要横向滚动显示多张图片。很自然想到使用UIScrollview，具体实现非常容易，最开始做了一个Demo，效果如下：
+
+可是把这个ViewController添加到一个UINavigation中，结果就完全不一样了，如下：
+
+原因也很容易分析出来，无非</p>
+        
+    
+    <time datetime="2015-03-30T07:35:07.000Z" itemprop="datePublished">2015-03-30</time>
+  </a>
+</section>
+
+
+  <section class="post" itemscope itemprop="blogPost">
+  
+    <a href="/2015/03/30/当键盘挡住了输入框1/" title="当键盘挡住了输入框之登录框" itemprop="url">
+  
+    <h1 itemprop="name">当键盘挡住了输入框之登录框</h1>
+    
+     
+           <p itemprop="description" >写在前面
+在iOS开发过程中，经常会遇到键盘挡住“文本框”的问题，解决这种问题的方式有很多，也有很多已封装好的第三方资源，但就笔者的经验而言，这些资源都不是特别好，有的处理效率低，有的封装得比较好，但比较臃肿，所以很少就这个问题使用第三方资源。
+笔者开发的一个项目的登陆框有些类似</p>
+        
+    
+    <time datetime="2015-03-30T03:42:00.000Z" itemprop="datePublished">2015-03-30</time>
+  </a>
+</section>
+
+
+  <section class="post" itemscope itemprop="blogPost">
+  
+    <a href="/2015/03/29/dpi-and-ppi/" title="DPI和PPI" itemprop="url">
+  
+    <h1 itemprop="name">DPI和PPI</h1>
+    
+     
+           <p itemprop="description" >写在前面
+各种手机测频机构或者相关资讯老是谈及一个概念：ppi和dpi，通常总会忽略，只是稍微明白，这参数越高，说明屏幕分辨率越高；很长时间都止步如此；但作为一个iOS开发者，岂能止步如此，万一别人问起，自己答不上来该多丢人啊…
+DPI和PPI
+DPI的全称是“Dots Per </p>
+        
+    
+    <time datetime="2015-03-29T15:01:44.000Z" itemprop="datePublished">2015-03-29</time>
+  </a>
+</section>
+
+
+
+  <nav id="page-nav" class="clearfix">
+    <a class="extend prev" rel="prev" href="/page/8/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/10/">Next &raquo;</a>
+  </nav>
+
+</div>
+      
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+
+
+
+
+
+
+  </body>
+ </html>

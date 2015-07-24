@@ -1,0 +1,578 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Array和算法 第二弹 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="写在前面
+《一些基础Array算法题》中已经对LeetCode中的一些与Array相关的基础性算法做了一些总结，这些算法题相对而言比较简单；除了哪些稍微基础一点的算法题目之外，笔者觉得也有必要对已做过其他Array算法题也做一些汇总。
+Combination Sum系列
+关于组合（combinati">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/07/04/Array-and-Algorithm-II/" title="Array和算法 第二弹" itemprop="url">Array和算法 第二弹</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-07-04T08:12:58.000Z" itemprop="datePublished">2015-07-04</time>
+    更新日期:<time datetime="2015-07-06T01:58:16.000Z" itemprop="dateModified">2015-07-06</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Combination_Sum系列"><span class="toc-number">1.</span> <span class="toc-text">Combination Sum系列</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Combination_Sum"><span class="toc-number">1.1.</span> <span class="toc-text">Combination Sum</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Combination_Sum_II"><span class="toc-number">1.2.</span> <span class="toc-text">Combination Sum II</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Combination_Sum_III"><span class="toc-number">1.3.</span> <span class="toc-text">Combination Sum III</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Unique_Paths系列"><span class="toc-number">2.</span> <span class="toc-text">Unique Paths系列</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Unique_Paths"><span class="toc-number">2.1.</span> <span class="toc-text">Unique Paths</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Unique_Paths_II"><span class="toc-number">2.2.</span> <span class="toc-text">Unique Paths II</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Array_and_Sum系列"><span class="toc-number">3.</span> <span class="toc-text">Array and Sum系列</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Two_Sum"><span class="toc-number">3.1.</span> <span class="toc-text">Two Sum</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3Sum"><span class="toc-number">3.2.</span> <span class="toc-text">3Sum</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3Sum_Closest"><span class="toc-number">3.3.</span> <span class="toc-text">3Sum Closest</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4Sum"><span class="toc-number">3.4.</span> <span class="toc-text">4Sum</span></a></li></ol></li></ol>
+		</div>
+		
+		<p><strong>写在前面</strong></p>
+<p>《<a href="/2015/06/28/Array-and-Algorithm/">一些基础Array算法题</a>》中已经对LeetCode中的一些与Array相关的基础性算法做了一些总结，这些算法题相对而言比较简单；除了哪些稍微基础一点的算法题目之外，笔者觉得也有必要对已做过其他Array算法题也做一些汇总。</p>
+<h2 id="Combination_Sum系列"><strong>Combination Sum系列</strong></h2>
+<p>关于组合（combination）问题，已经在博客<a href="/2015/06/21/permutation-and-combination/#非全组合">排列与组合算法</a>。</p>
+<p>但之前<a href="/2015/06/21/permutation-and-combination/#非全组合">博客</a>中的「组合问题」相对而言更简单一些。LeetCode中还有几道变种问题：</p>
+<ul>
+<li><a href="https://leetcode.com/problems/combination-sum/" target="_blank" rel="external">Combination Sum</a></li>
+<li><a href="https://leetcode.com/problems/combination-sum-ii/" target="_blank" rel="external">Combination Sum II</a></li>
+<li><a href="https://leetcode.com/problems/combination-sum-iii/" target="_blank" rel="external">Combination Sum III</a></li>
+</ul>
+<p>这几道问题在本文中被归类为「Combination Sum系列」，难度上都属于Medium，Accepted概率也还可以，似乎还比较适合我，就做了一下总结。</p>
+<h3 id="Combination_Sum"><strong>Combination Sum</strong></h3>
+<p>题目描述如下：</p>
+<blockquote>
+<p>Given a set of candidate numbers (<strong>C</strong>) and a target number (<strong>T</strong>), find all unique combinations in <strong>C</strong> where the candidate numbers sums to <strong>T</strong>.<br>&nbsp;<br>The <strong>same</strong> repeated number may be chosen from C unlimited number of times.<br>&nbsp;<br>Note:</p>
+<ul>
+<li>All numbers (including target) will be positive integers.</li>
+<li>Elements in a combination (a<sub>1</sub>, a<sub>2</sub>, … , a<sub>k</sub>) must be in non-descending order. (ie, a<sub>1</sub> ≤ a<sub>2</sub> ≤ … ≤ a<sub>k</sub>).</li>
+<li>The solution set must not contain duplicate combinations.</li>
+</ul>
+<p>For example, given candidate set <code>2,3,6,7</code> and target <code>7</code>,<br>A solution set is: <code>[7]``[2, 2, 3]</code></p>
+</blockquote>
+<p>注意，每个元素使用次数不限。采用回溯法，如下是「递归」版本的Solution Python代码：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer[]} candidates</span></div><div class="line">    <span class="comment"># @param {integer} target</span></div><div class="line">    <span class="comment"># @return {integer[][]}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">combinationSum</span><span class="params">(self, candidates, target)</span>:</span></div><div class="line">        candidates.sort()   <span class="comment"># 排序</span></div><div class="line">        ret, stack = [], []</div><div class="line">        self.aux(candidates, <span class="number">0</span>, ret, stack, target)</div><div class="line">        <span class="keyword">return</span> ret</div><div class="line">	</div><div class="line">    <span class="comment"># auxiliary method</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">aux</span><span class="params">(self, candidates, begin, ret, stack, target)</span>:</span></div><div class="line">        <span class="keyword">if</span> target == <span class="number">0</span>:</div><div class="line">            ret.append(stack[::])</div><div class="line">            <span class="keyword">return</span></div><div class="line">	</div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(begin, len(candidates)):</div><div class="line">            <span class="keyword">if</span> candidates[i] &lt;= target:</div><div class="line">                stack.append(candidates[i])</div><div class="line">                self.aux(candidates, i, ret, stack, target-candidates[i])</div><div class="line">                stack.pop()</div></pre></figure>
+
+<p>迭代版本详见我的<a href="https://github.com/sadjason/LeetCode/blob/master/combination-sum.py" target="_blank" rel="external">github</a>。</p>
+<h3 id="Combination_Sum_II"><strong>Combination Sum II</strong></h3>
+<p>题目描述如下：</p>
+<blockquote>
+<p>Given a collection of candidate numbers (C) and a target number (T), find all unique combinations in C where the candidate numbers sums to T.<br>&nbsp;<br>Each number in C may only be used once in the combination.<br>&nbsp;<br>Note:</p>
+<ul>
+<li>All numbers (including target) will be positive integers.</li>
+<li>Elements in a combination (a<sub>1</sub>, a<sub>2</sub>, … , a<sub>k</sub>) must be in non-descending order. (ie, a<sub>1</sub> ≤ a<sub>2</sub> ≤ … ≤ a<sub>k</sub>).</li>
+<li>The solution set must not contain duplicate combinations.</li>
+</ul>
+<p>For example, given candidate set <code>10,1,2,7,6,1,5</code> and target <code>8</code>,<br>A solution set is: <code>[1, 7]</code>，<code>[1, 2, 5]</code>，<code>[2, 6]</code>，<code>[1, 1, 6]</code></p>
+</blockquote>
+<p>和上一道题不太一样，每个元素仅能使用一次。解法几乎一样，唯一需要注意的是「避免重复解」。如何避免重复呢？一般的做法是增加约束：如果两个数相同，我们先用前一个数，只有当前一个数用了，这个数才能使用。<br>譬如对于<code>1 1</code>，基于我们的约束，当要使用第二个<code>1</code>的时候，前提是第一个<code>1</code>已经被使用了，这样就能够避免<code>[1]</code>重复。</p>
+<p>我的Solution Python代码如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer[]} candidates</span></div><div class="line">    <span class="comment"># @param {integer} target</span></div><div class="line">    <span class="comment"># @return {integer[][]}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">combinationSum2</span><span class="params">(self, candidates, target)</span>:</span></div><div class="line">        candidates.sort()   <span class="comment"># 排序</span></div><div class="line">        ret, stack = [], []</div><div class="line">        self.aux(candidates, <span class="number">0</span>, ret, stack, target)</div><div class="line">        <span class="keyword">return</span> ret</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">aux</span><span class="params">(self, candidates, begin, ret, stack, target)</span>:</span></div><div class="line">        <span class="keyword">if</span> target == <span class="number">0</span>:</div><div class="line">            ret.append([candidates[i] <span class="keyword">for</span> i <span class="keyword">in</span> stack])</div><div class="line">            <span class="keyword">return</span></div><div class="line">        </div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(begin, len(candidates)):</div><div class="line">            <span class="keyword">if</span> candidates[i] &lt;= target:</div><div class="line">                <span class="keyword">if</span> i &gt; <span class="number">0</span> <span class="keyword">and</span> candidates[i] == candidates[i-<span class="number">1</span>]:</div><div class="line">                    <span class="keyword">if</span> len(stack) &gt; <span class="number">0</span> <span class="keyword">and</span> stack[-<span class="number">1</span>] == i-<span class="number">1</span>:</div><div class="line">                        stack.append(i)</div><div class="line">                        self.aux(candidates, i+<span class="number">1</span>, ret, stack, target-candidates[i])</div><div class="line">                        stack.pop()</div><div class="line">                <span class="keyword">else</span>:</div><div class="line">                    stack.append(i)</div><div class="line">                    self.aux(candidates, i+<span class="number">1</span>, ret, stack, target-candidates[i])</div><div class="line">                    stack.pop()</div></pre></figure>
+
+<p>迭代版本详见我的<a href="https://github.com/sadjason/LeetCode/blob/master/combination-sum-ii.py" target="_blank" rel="external">github</a>。</p>
+<h3 id="Combination_Sum_III"><strong>Combination Sum III</strong></h3>
+<p>本题描述更啰嗦一些，这里只罗列枝干内容，更详细说明还得参考<a href="https://leetcode.com/problems/combination-sum-iii/" target="_blank" rel="external">LeetCode</a>，如下：</p>
+<blockquote>
+<p>Find all possible combinations of <strong>k</strong> numbers that add up to a number <strong>n</strong>, given that only numbers from 1 to 9 can be used and each combination should be a unique set of numbers.<br>&nbsp;<br>Ensure that numbers within the set are sorted in ascending order.</p>
+</blockquote>
+<p>这道题似乎更简单一些：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer} k</span></div><div class="line">    <span class="comment"># @param {integer} n</span></div><div class="line">    <span class="comment"># @return {integer[][]}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">combinationSum3</span><span class="params">(self, k, n)</span>:</span></div><div class="line">        ret, stack = [], []</div><div class="line">        self.aux(<span class="number">1</span>, ret, stack, k, n)</div><div class="line">        <span class="keyword">return</span> ret</div><div class="line">        </div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">aux</span><span class="params">(self, begin, ret, stack, cnt, target)</span>:</span></div><div class="line">        <span class="keyword">if</span> target == <span class="number">0</span> <span class="keyword">and</span> len(stack) == cnt:</div><div class="line">            ret.append(stack[::])</div><div class="line">            <span class="keyword">return</span></div><div class="line">        </div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(begin, <span class="number">10</span>):</div><div class="line">            <span class="keyword">if</span> len(stack) &lt; cnt <span class="keyword">and</span> i &lt;= target:</div><div class="line">                stack.append(i)</div><div class="line">                self.aux(i+<span class="number">1</span>, ret, stack, cnt, target-i)</div><div class="line">                stack.pop()</div></pre></figure>
+
+<p>迭代版本详见我的<a href="https://github.com/sadjason/LeetCode/blob/master/combination-sum-iii.py" target="_blank" rel="external">github</a>。</p>
+<h2 id="Unique_Paths系列"><strong>Unique Paths系列</strong></h2>
+<p>基于数组（一般是二维数组）的路径问题在各大校园招聘中也会经常出现。LeetCode也收录了两道题：</p>
+<ul>
+<li><a href="https://leetcode.com/problems/unique-paths/" target="_blank" rel="external">Unique Paths</a></li>
+<li><a href="https://leetcode.com/problems/unique-paths-ii/" target="_blank" rel="external">Unique Paths II</a></li>
+</ul>
+<h3 id="Unique_Paths"><strong>Unique Paths</strong></h3>
+<p>题目描述如下：</p>
+<blockquote>
+<p>A robot is located at the top-left corner of a m x n grid (marked ‘Start’ in the diagram below).<br>&nbsp;<br>The robot can only move either down or right at any point in time. The robot is trying to reach the bottom-right corner of the grid (marked ‘Finish’ in the diagram below).<br>&nbsp;<br>How many possible unique paths are there?<br><img style="margin-left:0" src="/img/201507/20150705-01.png" width="200" height="92"></p>
+</blockquote>
+<p>此题是在太简单了，DP问题，代码如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer} m</span></div><div class="line">    <span class="comment"># @param {integer} n</span></div><div class="line">    <span class="comment"># @return {integer}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">uniquePaths</span><span class="params">(self, m, n)</span>:</span></div><div class="line">        <span class="keyword">if</span> m == <span class="number">0</span> <span class="keyword">or</span> n == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> <span class="number">0</span></div><div class="line"></div><div class="line">        paths = [[<span class="number">1</span>] * n <span class="keyword">for</span> x <span class="keyword">in</span> xrange(m)]</div><div class="line"></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">1</span>, m):</div><div class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> xrange(<span class="number">1</span>, n):</div><div class="line">                paths[i][j] = paths[i-<span class="number">1</span>][j] + paths[i][j-<span class="number">1</span>]</div><div class="line"></div><div class="line">        <span class="keyword">return</span> paths[m-<span class="number">1</span>][n-<span class="number">1</span>]</div></pre></figure>
+
+<p>P.S：很显然可以将内存损耗降低到<code>O(m)</code>。</p>
+<h3 id="Unique_Paths_II"><strong>Unique Paths II</strong></h3>
+<p>此题在上一道题的基础上做了一些升级。描述如下：</p>
+<blockquote>
+<p>Follow up for “Unique Paths”:<br>&nbsp;<br>Now consider if some obstacles are added to the grids. How many unique paths would there be?<br>An obstacle and empty space is marked as <code>1</code> and <code>0</code> respectively in the grid.<br>&nbsp;<br>For example,<br>There is one obstacle in the middle of a 3x3 grid as illustrated below.<br>[<br>&nbsp;&nbsp;&nbsp;&nbsp;[0,0,0],<br>&nbsp;&nbsp;&nbsp;&nbsp;[0,1,0],<br>&nbsp;&nbsp;&nbsp;&nbsp;[0,0,0]<br>]<br>The total number of unique paths is 2.</p>
+</blockquote>
+<p>虽然设置了一些「障碍」，仍然是简单的DP问题，多出了一些细节问题罢了。代码如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer[][]} obstacleGrid</span></div><div class="line">    <span class="comment"># @return {integer}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">uniquePathsWithObstacles</span><span class="params">(self, obstacleGrid)</span>:</span></div><div class="line">        m = len(obstacleGrid)</div><div class="line">        <span class="keyword">if</span> m == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> <span class="number">0</span></div><div class="line">        n = len(obstacleGrid[<span class="number">0</span>])</div><div class="line">        <span class="keyword">if</span> n == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> <span class="number">0</span></div><div class="line">        <span class="keyword">if</span> obstacleGrid[<span class="number">0</span>][<span class="number">0</span>] == <span class="number">1</span>:</div><div class="line">            <span class="keyword">return</span> <span class="number">0</span></div><div class="line"></div><div class="line">        paths = [[<span class="number">0</span>] * n <span class="keyword">for</span> x <span class="keyword">in</span> xrange(m)]</div><div class="line">        </div><div class="line">        <span class="comment"># 初始值</span></div><div class="line">        paths[<span class="number">0</span>][<span class="number">0</span>] = <span class="number">1</span></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">1</span>, m):</div><div class="line">            <span class="keyword">if</span> obstacleGrid[i][<span class="number">0</span>] == <span class="number">1</span>:</div><div class="line">                <span class="keyword">break</span></div><div class="line">            paths[i][<span class="number">0</span>] = <span class="number">1</span></div><div class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> xrange(<span class="number">1</span>, n):</div><div class="line">            <span class="keyword">if</span> obstacleGrid[<span class="number">0</span>][j] == <span class="number">1</span>:</div><div class="line">                <span class="keyword">break</span></div><div class="line">            paths[<span class="number">0</span>][j] = <span class="number">1</span></div><div class="line">	</div><div class="line">        <span class="comment"># 状态转换方程</span></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">1</span>, m):</div><div class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> xrange(<span class="number">1</span>, n):</div><div class="line">                <span class="keyword">if</span> obstacleGrid[i][j] == <span class="number">1</span>:</div><div class="line">                    paths[i][j] = <span class="number">0</span></div><div class="line">                <span class="keyword">else</span>:</div><div class="line">                    paths[i][j] = paths[i-<span class="number">1</span>][j] + paths[i][j-<span class="number">1</span>]</div><div class="line">	</div><div class="line">        <span class="keyword">return</span> paths[m-<span class="number">1</span>][n-<span class="number">1</span>]</div></pre></figure>
+
+<h2 id="Array_and_Sum系列"><strong>Array and Sum系列</strong></h2>
+<h3 id="Two_Sum"><strong>Two Sum</strong></h3>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/two-sum/" target="_blank" rel="external">Two Sum</a>，描述如下：</p>
+<blockquote>
+<p>Given an array of integers, find two numbers such that they add up to a specific target number.<br>&nbsp;<br>The function twoSum should return indices of the two numbers such that they add up to the target, where index1 must be less than index2. Please note that your returned answers (both index1 and index2) are not zero-based.<br>&nbsp;<br>You may assume that each input would have exactly one solution.<br>&nbsp;<br>Input: numbers=<code>{2, 7, 11, 15}</code>, target=9<br>Output: index1=1, index2=2</p>
+</blockquote>
+<p>虽然题目所给的tags包括关键字「Hash Table」，意味着你可以使用散列表解决问题。但我在处理算法问题时向来不喜欢使用高级数据结构，因此笔者把它当成一道综合题（有多个过程组成）解决：</p>
+<ol>
+<li>对数组进行排序，并记录排序前各个元素的位置；</li>
+<li>「Two Pointers」处理；</li>
+</ol>
+<p>所谓的「Two Pointers」处理指的是：初始化左指针left指向数组起始，初始化右指针right指向数组结尾，对于已排序数组：</p>
+<ol>
+<li>若nums[left]与nums[right]的和sums小于target，说明应该增加sums，因此left右移指向一个较大的值；</li>
+<li>若nums[left]与nums[right]的和sums大于target，说明应该减小sums，因此right左移指向一个较大的值；</li>
+<li>若nums[left]与nums[right]的和sums等于target，game over！</li>
+</ol>
+<p>步骤1时间复杂度为<code>O(nlgn)</code>，「Two Pointers处理」时间复杂度为<code>O(n)</code>，总体复杂度为<code>O(nlgn)</code>。Solution代码比较长，详见我的<a href="https://github.com/sadjason/LeetCode/blob/master/two-sum.py" target="_blank" rel="external">github</a>。</p>
+<h3 id="3Sum"><strong>3Sum</strong></h3>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/3sum/" target="_blank" rel="external">3Sum</a>，描述如下：</p>
+<blockquote>
+<p>Given an array S of n integers, are there elements a, b, c in S such that a + b + c = 0? Find all unique triplets in the array which gives the sum of zero.<br>&nbsp;<br>Note:</p>
+<ul>
+<li>Elements in a triplet (a,b,c) must be in non-descending order. (ie, a ≤ b ≤ c)</li>
+<li>The solution set must not contain duplicate triplets.</li>
+</ul>
+<p>For example, given array S = <code>{-1 0 1 2 -1 -4}</code>,<br>A solution set is: <code>(-1, 0, 1)</code>，<code>(-1, -1, 2)</code></p>
+</blockquote>
+<p>这仍然是K Sum Problem。暴力解法是每个人都能想到的，三层for循环，时间复杂度为O(n<sup>3</sup>)。</p>
+<p>存在O(n<sup>2</sup>)的Solution。解决问题方法很直接，先排序，然后对数组遍历，挨个取出每个元素后，基于后面的元素退化处理Two Sums Problem，我的Solution代码详见<a href="https://github.com/sadjason/LeetCode/blob/master/3sum.py" target="_blank" rel="external">github</a>.</p>
+<h3 id="3Sum_Closest"><strong>3Sum Closest</strong></h3>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/3sum-closest/" target="_blank" rel="external">3Sum Closest</a>，描述如下：</p>
+<blockquote>
+<p>Given an array S of n integers, find three integers in S such that the sum is closest to a given number, target. Return the sum of the three integers. You may assume that each input would have exactly one solution.</p>
+<p>For example, given array S = <code>{-1 2 1 -4}</code>, and target = 1.<br>The sum that is closest to the target is 2. <code>(-1 + 2 + 1 = 2)</code>.</p>
+</blockquote>
+<p>相对于上一道题，这道题的题意虽然更复杂一些，但其实更简单一些。思路很明了：先排序，然后左右夹逼，复杂度O(n<sup>2</sup>)。</p>
+<h3 id="4Sum"><strong>4Sum</strong></h3>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/4sum/" target="_blank" rel="external">4Sum</a>，描述如下：</p>
+<blockquote>
+<p>Given an array S of n integers, are there elements a, b, c, and d in S such that a + b + c + d = target? Find all unique quadruplets in the array which gives the sum of target.<br>&nbsp;<br>Note:</p>
+<ul>
+<li>Elements in a quadruplet (a,b,c,d) must be in non-descending order. (ie, <em>a ≤ b ≤ c ≤ d</em>)</li>
+<li>The solution set must not contain duplicate quadruplets.</li>
+</ul>
+<p>For example, given array S = {1 0 -1 0 -2 2}, and target = 0.<br>A solution set is:<br><code>(-1,  0, 0, 1)</code><br><code>(-2, -1, 1, 2)</code><br><code>(-2,  0, 0, 2)</code></p>
+</blockquote>
+<p>和3Sum问题一样，先排序，然后左右夹逼，复杂度O(n<sup>3</sup>)，代码详见<a href="https://github.com/sadjason/LeetCode/blob/master/4sum.py" target="_blank" rel="external">github</a>。不被<code>Accepted</code>，应该是时间复杂度太高了吧，要想降低时间复杂度最直接的办法就是「空间换时间」了。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Array/">Array</a><a href="/tags/LeetCode/">LeetCode</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/07/04/Array-and-Algorithm-II/" data-title="Array和算法 第二弹 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/07/06/merge-intervals-and-insert-interval/" title="Merge Intervals and Insert Interval">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  Merge Intervals and Insert Interval</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/06/28/Array-and-Algorithm/"  title="Array和算法 第一弹">
+ <strong>NEXT:</strong><br/> 
+ <span>Array和算法 第一弹
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/07/04/Array-and-Algorithm-II/" data-title="Array和算法 第二弹" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Combination_Sum系列"><span class="toc-number">1.</span> <span class="toc-text">Combination Sum系列</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Combination_Sum"><span class="toc-number">1.1.</span> <span class="toc-text">Combination Sum</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Combination_Sum_II"><span class="toc-number">1.2.</span> <span class="toc-text">Combination Sum II</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Combination_Sum_III"><span class="toc-number">1.3.</span> <span class="toc-text">Combination Sum III</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Unique_Paths系列"><span class="toc-number">2.</span> <span class="toc-text">Unique Paths系列</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Unique_Paths"><span class="toc-number">2.1.</span> <span class="toc-text">Unique Paths</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Unique_Paths_II"><span class="toc-number">2.2.</span> <span class="toc-text">Unique Paths II</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Array_and_Sum系列"><span class="toc-number">3.</span> <span class="toc-text">Array and Sum系列</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Two_Sum"><span class="toc-number">3.1.</span> <span class="toc-text">Two Sum</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3Sum"><span class="toc-number">3.2.</span> <span class="toc-text">3Sum</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3Sum_Closest"><span class="toc-number">3.3.</span> <span class="toc-text">3Sum Closest</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4Sum"><span class="toc-number">3.4.</span> <span class="toc-text">4Sum</span></a></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

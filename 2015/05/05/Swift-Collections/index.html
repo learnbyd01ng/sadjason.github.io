@@ -1,0 +1,522 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Swift集合类型 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="Swift集合类型介绍
+和OC类似，Swift也提供了三种集合类型：Array、Set以及Dictionary。Arrays用于顺序存储数据；Sets用于无序存储不同值；Dictionaries用于存储无序键值对。
+但Swift的collections和OC中的collections在要存储的元素类">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/05/05/Swift-Collections/" title="Swift集合类型" itemprop="url">Swift集合类型</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-05-05T13:28:35.000Z" itemprop="datePublished">2015-05-05</time>
+    更新日期:<time datetime="2015-07-04T09:01:40.000Z" itemprop="dateModified">2015-07-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Swift集合类型介绍"><span class="toc-number">1.</span> <span class="toc-text">Swift集合类型介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数组"><span class="toc-number">2.</span> <span class="toc-text">数组</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#定义数组"><span class="toc-number">2.1.</span> <span class="toc-text">定义数组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建一个空数组"><span class="toc-number">2.2.</span> <span class="toc-text">创建一个空数组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#访问和修改数组"><span class="toc-number">2.3.</span> <span class="toc-text">访问和修改数组</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#字典"><span class="toc-number">3.</span> <span class="toc-text">字典</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#定义字典"><span class="toc-number">3.1.</span> <span class="toc-text">定义字典</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建一个空字典"><span class="toc-number">3.2.</span> <span class="toc-text">创建一个空字典</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#字典字面值"><span class="toc-number">3.3.</span> <span class="toc-text">字典字面值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Access_Key-Value"><span class="toc-number">3.4.</span> <span class="toc-text">Access Key-Value</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Modify_Key-Value"><span class="toc-number">3.5.</span> <span class="toc-text">Modify Key-Value</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Remove_Key-Value"><span class="toc-number">3.6.</span> <span class="toc-text">Remove Key-Value</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#遍历字典"><span class="toc-number">3.7.</span> <span class="toc-text">遍历字典</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol>
+		</div>
+		
+		<h2 id="Swift集合类型介绍"><strong>Swift集合类型介绍</strong></h2>
+<p>和OC类似，Swift也提供了三种集合类型：Array、Set以及Dictionary。Arrays用于顺序存储数据；Sets用于无序存储不同值；Dictionaries用于存储无序键值对。</p>
+<p>但Swift的collections和OC中的collections在要存储的元素类型要求是不同。</p>
+<p>Swift collections明确了元素类型。在OC中，collections（譬如array、dictionary、set）对存储的元素的类型只有一个要求：是类实例即可；但在Swift中，collections存储的元素类型必须明确，这意味着我们不能把不正确的数据类型插入到collections中；当然在另外一个方面，这保证了我们完全可以对获取出的数据类型非常自信。Swift对显式类型集合的使用确保了我们的代码对工作所需要的类型非常清楚，也让我们在开发阶段就能发现任何的类型不匹配错误。</p>
+<p>Swift collections可以用来存储值类型数据。正如上所述，在OC中，collections中的元素必须是类实例，不能是int之类的基本数据类型或枚举，这点对于Swift就不成立了。Swift的collections对元素类型无挑剔，既可以是值类型，也可以是引用类型。（但同一个collection元素类型必须是一样的）。</p>
+<p><strong>mutable和immutable</strong></p>
+<p>在OC中，每种类型的collection分别对应immutable版本和mutable版本，譬如字典类型的NSDictionary和NSMutableDictionary。</p>
+<p>在Swift中，collection的mutablility性质由关键字<code>var</code>和<code>let</code>决定，如果定义collection对象时使用<code>var</code>修饰，则说明是该collection类型对象是mutable的，意味着你可以对该collection对象施以增删查处理；反之，若定义collection对象时使用<code>let</code>修饰，则说明是该collection类型对象是immutable的，意味着该collection的contents和size不能被改变；</p>
+<p>P.S：这也可以看出，Swift中的<code>let</code>和<code>var</code>比C语言中的<code>const</code>要强大得多，因此不能把<code>var</code>和<code>let</code>的作用简单类比为<code>const</code>。</p>
+<h2 id="数组"><strong>数组</strong></h2>
+<h3 id="定义数组"><strong>定义数组</strong></h3>
+<p>数组构造语句有两种写法：<code>Array&lt;SomeType&gt;</code>或者<code>[SomeType]</code>，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">var</span> shoppingList: [<span class="type">String</span>] = [<span class="string">"Eggs"</span>, <span class="string">"Milk"</span>]</div><div class="line"><span class="keyword">var</span> myGirlFriends: <span class="type">Array</span>&lt;<span class="type">String</span>&gt; = [<span class="string">"Lily"</span>, <span class="string">"Lucy"</span>]</div></pre></figure>
+
+<h3 id="创建一个空数组"><strong>创建一个空数组</strong></h3>
+<p>在OC中，创建一个空数组的方式有多种：<code>[[NSMutableArray alloc] init]</code>或者<code>[NSMutableArray array]</code>。</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="comment">// 声明并初始化</span></div><div class="line"><span class="keyword">var</span> <span class="type">Ints</span> = [<span class="type">Int</span>]()</div><div class="line">	</div><div class="line"><span class="comment">// 先声明后初始化</span></div><div class="line"><span class="keyword">var</span> <span class="type">Strings</span>: [<span class="type">String</span>]</div><div class="line"><span class="type">Strings</span> = []     <span class="comment">// 等价于Strings = [String]()</span></div></pre></figure>
+
+<h3 id="访问和修改数组"><strong>访问和修改数组</strong></h3>
+<p>OC中的数组支持的操作在Swift基本也都支持，只是很多方法的名称不太一样。</p>
+<p><strong>判断数组是否为空</strong></p>
+<p>在OC中，判断数组是否为空的做法是访问其count属性，在Swift中，<code>isEmpty</code>提供了更为便捷的方式。</p>
+<p><strong>插入元素</strong></p>
+<p>譬如在OC中添加元素使用方法<code>addObject:</code>，在Swift中对应<code>append</code>；除了<code>append</code>方法之外，Swift还提供了<code>+=</code>操作（<code>+=</code>算是语法糖吧），它用来添加一个N个元素。如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">var</span> myGirlFriends = [<span class="type">String</span>]()</div><div class="line">myGirlFriends.append(<span class="string">"张二丫"</span>)</div><div class="line">myGirlFriends.append(<span class="string">"李翠花"</span>)</div><div class="line">myGirlFriends += [<span class="string">"王小莉"</span>, <span class="string">"陈美美"</span>]</div></pre></figure>
+
+<p><code>append</code>和<code>+=</code>都是在数组的末尾添加元素，如果在指定index插入，则使用<code>insert</code>方法。</p>
+<p><strong>子数组操作</strong></p>
+<p>OC中有针对子数组的操作接口，譬如<code>subarrayWithRange:</code>，在Swift中提供了更简便的访问方式 — 使用<code>...</code>和<code>..&lt;</code>操作符，譬如<code>myGirlFriends[1..&lt;3]</code>访问index=1,2的元素，<code>myGirlFriends[1...3]</code>访问index=1,2,3的元素。</p>
+<h2 id="字典"><strong>字典</strong></h2>
+<p>在OC中，字典要求key和value都是实例，所以一般情况下，key值都是NSString类型（虽然也可以使用其他类型对象作为key值）。在Swift中，因为没有这方面的要求，key值和value值可以是任意类型数据，但和数组一样，必须保证一致性，也即某个特定字典中可以存储的键和值必须提前定义清楚。</p>
+<p>注意：字典对Key type的唯一要求是：</p>
+<blockquote>
+<p>A dictionary <code>Key</code> type must be conform to be <code>Hashable</code> protocol.<br>确保KeyType可哈希，这样才能保证它是独一无二的，方便hash嘛！所有的Swift基本类型（譬如String/Int/Double）都是默认可哈希的，这些基本类型都可以作为Key Type。</p>
+</blockquote>
+<h3 id="定义字典"><strong>定义字典</strong></h3>
+<p>在OC中，数组对应的符号是<code>[]</code>，字典对应的是符号是<code>{}</code>；但在Swift中，和数组一样，字典对应的符号也是<code>[]</code>。</p>
+<p>字典的类型声明同样有两种：<code>Dictionary&lt;KeyType, ValueType&gt;</code>或<code>[KeyType: ValueType]</code>。</p>
+<h3 id="创建一个空字典"><strong>创建一个空字典</strong></h3>
+<figure class="highlight Swift"><pre><div class="line"><span class="comment">// 声明并初始化</span></div><div class="line"><span class="keyword">var</span> nameOfIntegers = [<span class="type">Int</span>: <span class="type">String</span>]()</div><div class="line"><span class="comment">// 先声明，后初始化</span></div><div class="line"><span class="keyword">var</span> httpStatusMessage: <span class="type">Dictionary</span>&lt;<span class="type">Int</span>, <span class="type">String</span>&gt;</div><div class="line">httpStatusMessage = [:]     <span class="comment">// 等价于httpStatusMessage = [Int: String]()</span></div></pre></figure>
+
+<h3 id="字典字面值"><strong>字典字面值</strong></h3>
+<p>Swift中的字典字面值和OC中的字典字面值差不多，key-value都是使用<code>key: value</code>结构，key-value之间都采用<code>,</code>分隔。但有两点不同：一是前者使用的是<code>[]</code>，后者使用的是<code>{}</code>；二是后者还是用到了<code>@</code>；如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">var</span> families = [<span class="string">"Father"</span>: <span class="string">"Sad Jason"</span>, <span class="string">"Son"</span>: <span class="string">"Zhang Buhuai"</span>]</div></pre></figure>
+
+<h3 id="Access_Key-Value"><strong>Access Key-Value</strong></h3>
+<p>所谓『Access Key-Value』无非是根据key读取某个value，Swift目前为止只定义了一种方式：通过subscript访问，如<code>families[&quot;Father&quot;]</code>。</p>
+<ul>
+<li>subscript的key类型必须和该dictionary在定义时指定的key type一致，否则报错；</li>
+<li>通过subscript访问dictionary的value的返回值是一个optional，optional包含一个有效value值或者nil；</li>
+</ul>
+<h3 id="Modify_Key-Value"><strong>Modify Key-Value</strong></h3>
+<p>『Modify Key-Value』指的是往Dictionary中添加一个key-value或者更改key-value。Swift迄今为止提供了两种方式：基于subscript以及<code>update</code>方法，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">var</span> families = [<span class="string">"Father"</span>: <span class="string">"Sad Jason"</span>, <span class="string">"Son"</span>: <span class="string">"Zhang Buhuai"</span>]</div><div class="line">families.updateValue(<span class="string">"Liu"</span>, forKey: <span class="string">"Mother"</span>)    <span class="comment">// 等价于families["Mother"] = "Liu"</span></div></pre></figure>
+
+<p>显然，<code>families[&quot;Mother&quot;] = &quot;Liu&quot;</code>有两种结果：</p>
+<ul>
+<li>字典<code>families</code>中不存在key为<code>&quot;Mother&quot;</code>的key-value，处理结果是<code>families</code>中多了一对key-value<code>&quot;Mother&quot;: &quot;Liu&quot;</code>；</li>
+<li>字典<code>families</code>中存在key为<code>&quot;Mother&quot;</code>的key-value，处理结果是<code>families</code>中key为<code>&quot;Mother&quot;</code>的键值对的value值为<code>&quot;Liu&quot;</code>。</li>
+</ul>
+<p><code>updateValue(forKey:)</code>和subscript略有不同，它会返回一个包含字典值类型的optional，其值为该key-value更新之前的value值。</p>
+<h3 id="Remove_Key-Value"><strong>Remove Key-Value</strong></h3>
+<p>『Remove Key-Value』指的是删除dictionary中可能存在的某个key-value。和『Modify Key-Value』一样，Swift为『Remove Key-Value』提供了两种操作方式：<code>dictionary[key] = nil</code>或<code>dictionary. removeValueForKey(key)</code>，如下：</p>
+<figure class="highlight Swift"><pre><div class="line">families.removeValueForKey(<span class="string">"Father"</span>)</div><div class="line">families[<span class="string">"Son"</span>] = <span class="built_in">nil</span></div></pre></figure>
+
+<p>不同的是，<code>removeValueForKey</code>返回一个optional，可能包含被remove的键值对的value，也可能是nil；</p>
+<h3 id="遍历字典"><strong>遍历字典</strong></h3>
+<p>Swift中遍历dictionary比OC要优雅太多，其方式比较类似Python，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">var</span> families = [<span class="string">"Father"</span>: <span class="string">"Sad Jason"</span>, <span class="string">"Son"</span>: <span class="string">"Zhang Buhuai"</span>]</div><div class="line"><span class="keyword">for</span> (member, name) <span class="keyword">in</span> families {</div><div class="line">    <span class="built_in">println</span>(<span class="string">"<span class="subst">\(member)</span>: <span class="subst">\(name)</span>"</span>)</div><div class="line">}</div></pre></figure>
+
+<h2 id="总结"><strong>总结</strong></h2>
+<p>Swift中针对collection的操作比OC优雅多了，譬如：遍历字典，使用<code>..&lt;</code>访问子数组，提供isEmpty属性判断集合是否为空等等。但个人不是很喜欢<code>...</code>这个操作符，尽量少用吧。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Swift/">Swift</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/05/05/Swift-Collections/" data-title="Swift集合类型 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/05/05/Swift-Control-Flow/" title="Swift控制语句">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  Swift控制语句</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/05/05/Swift-Basics/"  title="Swift初见">
+ <strong>NEXT:</strong><br/> 
+ <span>Swift初见
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/05/05/Swift-Collections/" data-title="Swift集合类型" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Swift集合类型介绍"><span class="toc-number">1.</span> <span class="toc-text">Swift集合类型介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数组"><span class="toc-number">2.</span> <span class="toc-text">数组</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#定义数组"><span class="toc-number">2.1.</span> <span class="toc-text">定义数组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建一个空数组"><span class="toc-number">2.2.</span> <span class="toc-text">创建一个空数组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#访问和修改数组"><span class="toc-number">2.3.</span> <span class="toc-text">访问和修改数组</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#字典"><span class="toc-number">3.</span> <span class="toc-text">字典</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#定义字典"><span class="toc-number">3.1.</span> <span class="toc-text">定义字典</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建一个空字典"><span class="toc-number">3.2.</span> <span class="toc-text">创建一个空字典</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#字典字面值"><span class="toc-number">3.3.</span> <span class="toc-text">字典字面值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Access_Key-Value"><span class="toc-number">3.4.</span> <span class="toc-text">Access Key-Value</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Modify_Key-Value"><span class="toc-number">3.5.</span> <span class="toc-text">Modify Key-Value</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Remove_Key-Value"><span class="toc-number">3.6.</span> <span class="toc-text">Remove Key-Value</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#遍历字典"><span class="toc-number">3.7.</span> <span class="toc-text">遍历字典</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

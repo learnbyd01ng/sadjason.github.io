@@ -1,0 +1,511 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>归并排序 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="写在前面
+目前，再做leetcode过程中，碰到了两道可以用归并排序解决的题目，其中有一道题（另外一道题后文也会提到）：
+
+Sort List
+
+Sort a linked list in O(n log n) time using constant space complexity.
+
+
+题意给的">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/03/29/merge-sort/" title="归并排序" itemprop="url">归并排序</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-03-29T09:15:03.000Z" itemprop="datePublished">2015-03-29</time>
+    更新日期:<time datetime="2015-07-22T15:56:15.000Z" itemprop="dateModified">2015-07-22</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#归并排序介绍"><span class="toc-number">1.1.</span> <span class="toc-text">归并排序介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#归并排序处理链表"><span class="toc-number">1.2.</span> <span class="toc-text">归并排序处理链表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#归并排序解决“Largest_Number”问题"><span class="toc-number">1.3.</span> <span class="toc-text">归并排序解决“Largest Number”问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#There_are_more"><span class="toc-number">1.4.</span> <span class="toc-text">There are more</span></a></li></ol></li></ol>
+		</div>
+		
+		<h1 id="写在前面">写在前面</h1>
+<p>目前，再做leetcode过程中，碰到了两道可以用归并排序解决的题目，其中有一道题（另外一道题后文也会提到）：</p>
+<blockquote>
+<p>Sort List</p>
+<blockquote>
+<p>Sort a linked list in O(n log n) time using constant space complexity.</p>
+</blockquote>
+</blockquote>
+<p>题意给的信息还是蛮充分的，时间复杂度为O(nlogn)的排序有快速排序、堆排序以及归并排序（或许还有更多，以后再补充吧）序，对于对这几种排序比较熟练的人而言，很容易就明白前两者显然不太适合用于对链表进行排序，所以定位到归并排序。笔者对归并排序似乎有些忘了，借这个机会复习复习吧。</p>
+<p>题意非常简单：采用插入排序的防护四对一个链表进行排序。插入排序算是除了冒泡排序之外最简单的排序方式了，为了解决这个问题，顺便复习一下插入排序相关的知识，遂成此文。</p>
+<h2 id="归并排序介绍">归并排序介绍</h2>
+<p>说起归并，先得讲分治。许多有用的算法在结构上都是递归的：为了解决一个给定的问题，算法一次或多次递归地调用其自身以解决紧密相关的子问题。这些算法典型地遵循分治法的思想：将原问题分解为几个规模较小但类似于原问题的子问题，递归地求解这些子问题，然后再合并这些子问题的解来建立原问题的解。</p>
+<p>就大框架而言，归并排序非常简单，逻辑清晰，Python代码如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="comment"># 假设begin &lt; end</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">merge_sort</span><span class="params">(A, begin, end)</span>:</span></div><div class="line">    <span class="comment"># 不能写成：</span></div><div class="line">    <span class="comment">#   if begin &lt; end:</span></div><div class="line">    <span class="comment"># 因为[x, x+1)总会得到[x, x)和[x, x+1)两个分解值，显然这个值会造成死循环</span></div><div class="line">    <span class="comment"># 况且，如果end-begin = 1，即只有一个元素，merge_sort也么有啥意义</span></div><div class="line">    <span class="keyword">if</span> begin &lt; (end - <span class="number">1</span>):</div><div class="line">    	<span class="comment"># begin &lt; end - 1能够确保begin &lt; mid &lt; end</span></div><div class="line">        mid = (begin + end) / <span class="number">2</span></div><div class="line">        merge_sort(A, begin, mid)</div><div class="line">        merge_sort(A, mid, end)</div><div class="line">        merge(A, begin, mid, end)</div></pre></figure>
+
+<p>值得一提的是，分治递归很重要的一件事情就是要非常清楚何时递归完毕，否则容易造成死循环。对于本文的归并排序，merge_sort处理的数组的至少包括两个元素，如果只有一个元素甚至没有元素就没处理的必要了。</p>
+<p>merge_sort所做的事情无非是分治，非常简单，重点是归并处理，Python代码如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="comment"># 归并处理</span></div><div class="line"><span class="comment"># 对A[begin:mid]和A[mid:end]进行合并</span></div><div class="line"><span class="comment"># [begin, mid)和[mid, end)</span></div><div class="line"><span class="comment"># begin&lt;mid&lt;end</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">merge</span><span class="params">(A, begin, mid, end)</span>:</span></div><div class="line">    A_aux = A[begin:end]</div><div class="line">    i = begin</div><div class="line">    j = mid</div><div class="line">    k = begin</div><div class="line">    <span class="keyword">while</span> i &lt; mid <span class="keyword">and</span> j &lt; end:</div><div class="line">        <span class="keyword">if</span> A_aux[i-begin] &gt; A_aux[j-begin]:</div><div class="line">            A[k] = A_aux[j-begin]</div><div class="line">            j += <span class="number">1</span></div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            A[k] = A_aux[i-begin]</div><div class="line">            i += <span class="number">1</span></div><div class="line">        k += <span class="number">1</span></div><div class="line">	</div><div class="line">    <span class="keyword">if</span> i == mid:</div><div class="line">        <span class="keyword">for</span> p <span class="keyword">in</span> range(j, end):</div><div class="line">            A[k] = A_aux[p-begin]</div><div class="line">            k += <span class="number">1</span></div><div class="line">	</div><div class="line">    <span class="keyword">if</span> j == end:</div><div class="line">        <span class="keyword">for</span> p <span class="keyword">in</span> range(i, mid):</div><div class="line">            A[k] = A_aux[p-begin]</div><div class="line">            k += <span class="number">1</span></div></pre></figure>
+
+<p>归并排序的在于理解merge过程，merge的过程说白了就是将两个已经排好序的“堆”进行合并，合并过程也很容易想象：两摞牌，上面小，下面大，从这两摞牌种取牌，每次拣较小者…</p>
+<p>相对于插入排序，归并排序更稳定一些，时间复杂度一般为nlog(n)。其实，考虑到归并排序和快速排序的平均时间复杂度都是nlog(n)，并且它们都体现了分治思想，所以常常会将它们进行对比，总得来说，快速排序是比归并排序更好的排序算法，关于它们之间的对比，以后在分析快速排序的时候再谈吧。</p>
+<p>至少：归并排序不具备空间源址性。</p>
+<h2 id="归并排序处理链表">归并排序处理链表</h2>
+<p>如果谈及归并排序相对于快速排序的优势的话，那么“快速排序处理链表”算一个，在我的认知里，快速排序处理链表是不太可能的。</p>
+<p>回到leetcode题目：Sort a linked list in O(n log n) time using constant space。笔者是用归并排序解决这个问题的。</p>
+<p>merge_sort的实现和上述差不多：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">merge_sort</span><span class="params">(head)</span>:</span></div><div class="line">    <span class="comment"># head最少有两个node才有merge_sort的意义</span></div><div class="line">    <span class="keyword">if</span> head <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span> <span class="keyword">and</span> head.next <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">        mid = Solution.findMid(head)    <span class="comment"># head至少有两个node</span></div><div class="line">        head1 = Solution.merge_sort(head)</div><div class="line">        head2 = Solution.merge_sort(mid)</div><div class="line">        newHead = Solution.merge(head1, head2)</div><div class="line">        <span class="keyword">return</span> newHead</div><div class="line">    <span class="keyword">else</span>:</div><div class="line">        <span class="keyword">return</span> head</div></pre></figure>
+
+<p>处理链表时，归并算法计算mid不太一样，因为毕竟不能像数组一样直接通过(begin+end)/2计算嘛，所以也得实现一个方法专门用来寻找“中间节点”，其实现如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="comment"># 要求：head对应的链表至少有两个node</span></div><div class="line"><span class="comment"># 返回：找到head链表的“中点”</span></div><div class="line"><span class="comment"># 结果：findMid的处理结果是将head引导的链表给切割成两半</span></div><div class="line"><span class="comment"># 注意：最后得到的两条链表的最后一个node的next都指向None</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">findMid</span><span class="params">(head)</span>:</span></div><div class="line">    list_len = <span class="number">0</span>    <span class="comment"># head所引导的链表的长度</span></div><div class="line">    temp = head</div><div class="line">	</div><div class="line">    <span class="comment"># 计算链表长度</span></div><div class="line">    <span class="keyword">while</span> temp <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">        list_len += <span class="number">1</span></div><div class="line">        temp = temp.next</div><div class="line">	</div><div class="line">    i = <span class="number">0</span></div><div class="line">    mid_pre = head      <span class="comment"># mid_pre是mid前驱指针</span></div><div class="line">	</div><div class="line">    <span class="comment"># 得到mid的前驱节点</span></div><div class="line">    <span class="keyword">while</span> i &lt; (list_len / <span class="number">2</span> - <span class="number">1</span>):</div><div class="line">        mid_pre = mid_pre.next</div><div class="line">        i += <span class="number">1</span></div><div class="line">	</div><div class="line">    mid = mid_pre.next</div><div class="line">    mid_pre.next = <span class="keyword">None</span> <span class="comment"># 将前半条链表的尾节点的next指针设置为None</span></div><div class="line">    <span class="keyword">return</span> mid</div></pre></figure>
+
+<p>最后就是归并处理了：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="comment"># 要求head1和head2都不是空节点</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">merge</span><span class="params">(head1, head2)</span>:</span></div><div class="line">    newHead = <span class="keyword">None</span></div><div class="line">    temp1 = head1</div><div class="line">    temp2 = head2</div><div class="line">	</div><div class="line">    <span class="comment"># 初始化newHead</span></div><div class="line">    <span class="keyword">if</span> temp1.val &gt; temp2.val:</div><div class="line">        newHead = temp2</div><div class="line">        temp2 = temp2.next</div><div class="line">    <span class="keyword">else</span>:</div><div class="line">        newHead = temp1</div><div class="line">        temp1 = temp1.next</div><div class="line">	</div><div class="line">    <span class="comment"># 初始化tailNode</span></div><div class="line">    tailNode = newHead</div><div class="line">	</div><div class="line">    <span class="keyword">while</span> temp1 <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span> <span class="keyword">and</span> temp2 <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">        <span class="keyword">if</span> temp1.val &gt; temp2.val:</div><div class="line">            tailNode.next = temp2</div><div class="line">            temp2 = temp2.next</div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            tailNode.next = temp1</div><div class="line">            temp1 = temp1.next</div><div class="line">        tailNode = tailNode.next</div><div class="line">	</div><div class="line">    <span class="keyword">if</span> temp1 <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">        tailNode.next = temp1</div><div class="line">    <span class="keyword">if</span> temp2 <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">        tailNode.next = temp2</div><div class="line">	</div><div class="line">    <span class="keyword">return</span> newHead</div></pre></figure>
+
+<p>可以看到“链表的归并处理”比“数组的归并处理”要简单一些。</p>
+<p>P.S：写到这里，我感觉，上述代码中findMid处理是在太丑陋了，不晓得有冇得更好的解决方案；此外，我对“快速排序不适合链表”这个说法产生了怀疑，有时间用快速排序做一下这道题吧。</p>
+<h2 id="归并排序解决“Largest_Number”问题">归并排序解决“Largest Number”问题</h2>
+<p>除了“写在前面”中提到的题目之外，leetcode另外一道可以用归并排序解决的题目如下：</p>
+<blockquote>
+<p>Largest Number </p>
+<blockquote>
+<p>Given a list of non negative integers, arrange them such that they form the largest number.<br>For example, given [3, 30, 34, 5, 9], the largest formed number is 9534330.<br>Note: The result may be very large, so you need to return a string instead of an integer.</p>
+</blockquote>
+</blockquote>
+<p>在碰到这道题的时候，我的下意识是使用“贪心算法”或者“动态规划”来解决这道题，可是弄了好久，发现都搞不定，反而发现问题越想越复杂。最后受人点拨发现问题很简答，我们只需要搞清楚一个问题“对于两个整数x1和x2，在最终的结果中，x1放在前面还是x2放在前面？”，只要认识到了这一点，就很快意识到这个问题归根到底是“排序问题”。</p>
+<p>最终代码如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param num, a list of integers</span></div><div class="line">    <span class="comment"># @return a string</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">largestNumber</span><span class="params">(self, num)</span>:</span></div><div class="line">        len_num = len(num)</div><div class="line">        <span class="keyword">if</span> len_num == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> str(<span class="number">0</span>)</div><div class="line">        <span class="keyword">if</span> len_num == <span class="number">1</span>:</div><div class="line">            <span class="keyword">return</span> str(num[<span class="number">0</span>])</div><div class="line">	</div><div class="line">        Solution.merge_sort(num, <span class="number">0</span>, len_num)</div><div class="line">        result = <span class="string">''</span></div><div class="line">        <span class="keyword">for</span> item <span class="keyword">in</span> num:</div><div class="line">            result += str(item)</div><div class="line">	</div><div class="line">        <span class="keyword">if</span> result[<span class="number">0</span>] == <span class="string">'0'</span>:</div><div class="line">            result = <span class="string">'0'</span></div><div class="line">	</div><div class="line">        <span class="keyword">return</span> result</div><div class="line">	</div><div class="line">	</div><div class="line">    <span class="decorator">@staticmethod</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">merge_sort</span><span class="params">(A, begin, end)</span>:</span></div><div class="line">        <span class="keyword">if</span> begin &lt; (end - <span class="number">1</span>):</div><div class="line">            mid = (begin + end) / <span class="number">2</span>;</div><div class="line">            Solution.merge_sort(A, begin, mid)</div><div class="line">            Solution.merge_sort(A, mid, end)</div><div class="line">            Solution.merge(A, begin, mid, end)</div><div class="line">	</div><div class="line">    <span class="decorator">@staticmethod</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">merge</span><span class="params">(A, begin, mid, end)</span>:</span></div><div class="line">        A_aux = A[begin:end]</div><div class="line">	</div><div class="line">        index1 = begin</div><div class="line">        index2 = mid</div><div class="line">        index3 = begin</div><div class="line">	</div><div class="line">        <span class="keyword">while</span> index1 &lt; mid <span class="keyword">and</span> index2 &lt; end:</div><div class="line">            item1 = A_aux[index1-begin]</div><div class="line">            item2 = A_aux[index2-begin]</div><div class="line">	</div><div class="line">            <span class="keyword">if</span> Solution.isOK(item1, item2):</div><div class="line">                A[index3] = item1</div><div class="line">                index1 += <span class="number">1</span></div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                A[index3] = item2</div><div class="line">                index2 += <span class="number">1</span></div><div class="line">            index3 += <span class="number">1</span></div><div class="line">	</div><div class="line">        <span class="keyword">if</span> index1 == mid:</div><div class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> range(index2, end):</div><div class="line">                A[index3] = A_aux[i-begin]</div><div class="line">                i += <span class="number">1</span></div><div class="line">                index3 += <span class="number">1</span></div><div class="line">	</div><div class="line">        <span class="keyword">if</span> index2 == end:</div><div class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> range(index1, mid):</div><div class="line">                A[index3] = A_aux[i-begin]</div><div class="line">                i += <span class="number">1</span></div><div class="line">                index3 += <span class="number">1</span></div><div class="line">	</div><div class="line">    <span class="comment"># 如果num1_num2比num2_num1小，则返回False，否则返回True</span></div><div class="line">    <span class="comment"># eg：isOK(3, 21)返回True，因为321比321大</span></div><div class="line">    <span class="decorator">@staticmethod</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">isOK</span><span class="params">(num1, num2)</span>:</span></div><div class="line">        <span class="comment"># 分别计算num1和num2的位数</span></div><div class="line">	</div><div class="line">        <span class="keyword">if</span> num1 == <span class="number">0</span> <span class="keyword">and</span> num2 == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> <span class="keyword">True</span></div><div class="line">        <span class="keyword">elif</span> num1 == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line">        <span class="keyword">elif</span> num2 == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> <span class="keyword">True</span></div><div class="line">	</div><div class="line">        bit1 = <span class="number">0</span></div><div class="line">        bit2 = <span class="number">0</span></div><div class="line">	</div><div class="line">        temp1 = num1</div><div class="line">        multiplier1 = <span class="number">1</span></div><div class="line">        <span class="keyword">while</span> temp1 &gt; <span class="number">0</span>:</div><div class="line">            bit1 += <span class="number">1</span></div><div class="line">            temp1 = temp1 / <span class="number">10</span></div><div class="line">            multiplier1 *= <span class="number">10</span></div><div class="line">	</div><div class="line">        temp2 = num2</div><div class="line">        multiplier2 = <span class="number">1</span></div><div class="line">        <span class="keyword">while</span> temp2 &gt; <span class="number">0</span>:</div><div class="line">            bit2 += <span class="number">1</span></div><div class="line">            temp2 = temp2 / <span class="number">10</span></div><div class="line">            multiplier2 *= <span class="number">10</span></div><div class="line">	</div><div class="line">        <span class="keyword">if</span> (multiplier2 * num1  + num2) &lt; (multiplier1 * num2 + num1):</div><div class="line">            <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line">	</div><div class="line">        <span class="keyword">return</span> <span class="keyword">True</span></div></pre></figure>
+
+<h2 id="There_are_more">There are more</h2>
+<p>在笔试或技术面试时，针对这种归并处理，一般还有更多的要求，譬如“对递归进行去皮，变成迭代排序”“多线程处理归并”，以后有机会专门对这部分内容进行补充吧。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Sort/">Sort</a><a href="/tags/LeetCode/">LeetCode</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/03/29/merge-sort/" data-title="归并排序 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/03/29/heap-sort/" title="堆排序">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  堆排序</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/03/29/insertion-sort/"  title="插入排序">
+ <strong>NEXT:</strong><br/> 
+ <span>插入排序
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/03/29/merge-sort/" data-title="归并排序" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#归并排序介绍"><span class="toc-number">1.1.</span> <span class="toc-text">归并排序介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#归并排序处理链表"><span class="toc-number">1.2.</span> <span class="toc-text">归并排序处理链表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#归并排序解决“Largest_Number”问题"><span class="toc-number">1.3.</span> <span class="toc-text">归并排序解决“Largest Number”问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#There_are_more"><span class="toc-number">1.4.</span> <span class="toc-text">There are more</span></a></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

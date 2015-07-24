@@ -1,0 +1,510 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Swift方法和下标 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="本文将同时阐述Swift的方法和下标，因为根据我的理解，从某种程度上讲，下标的本质也是方法。
+方法
+众所周知，在支持面向对象的语言里，方法一般分为两种：实例方法和类方法（在有的语言中，「类方法」被称为「静态方法」）。P.S：Python比较奇葩，它将方法分为三类：实例方法、静态方法、类方法。
+Swi">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/05/12/Swift-Methods-and-Subscripts/" title="Swift方法和下标" itemprop="url">Swift方法和下标</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-05-12T07:07:48.000Z" itemprop="datePublished">2015-05-12</time>
+    更新日期:<time datetime="2015-07-04T09:01:03.000Z" itemprop="dateModified">2015-07-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#方法"><span class="toc-number">1.</span> <span class="toc-text">方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#实例方法"><span class="toc-number">1.1.</span> <span class="toc-text">实例方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#实例方法的形参名"><span class="toc-number">1.1.1.</span> <span class="toc-text">实例方法的形参名</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#self属性"><span class="toc-number">1.1.2.</span> <span class="toc-text">self属性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Mutable方法"><span class="toc-number">1.1.3.</span> <span class="toc-text">Mutable方法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#类型方法"><span class="toc-number">1.2.</span> <span class="toc-text">类型方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#下标"><span class="toc-number">2.</span> <span class="toc-text">下标</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#下标语法"><span class="toc-number">2.1.</span> <span class="toc-text">下标语法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用下标"><span class="toc-number">2.2.</span> <span class="toc-text">使用下标</span></a></li></ol></li></ol>
+		</div>
+		
+		<p>本文将同时阐述Swift的方法和下标，因为根据我的理解，从某种程度上讲，下标的本质也是方法。</p>
+<h2 id="方法"><strong>方法</strong></h2>
+<p>众所周知，在支持面向对象的语言里，方法一般分为两种：实例方法和类方法（在有的语言中，「类方法」被称为「静态方法」）。<br>P.S：Python比较奇葩，它将方法分为三类：实例方法、静态方法、类方法。</p>
+<p>Swift也不例外，只是考虑到类、结构体和枚举都可以定义这两种方法，所以「类方法」这个名词在Swift中不太实用了，Swift方法分为「实例方法」和「类型方法」。</p>
+<h3 id="实例方法"><strong>实例方法</strong></h3>
+<h4 id="实例方法的形参名"><strong>实例方法的形参名</strong></h4>
+<p>实例方法和函数差不多（实例方法本来就是函数，只是这个函数与某个类型相关联），细节方面的东西就不赘述了（具体的参考<a href="/2015/05/05/Swift-Functions/">Swift Functions</a>）；但有两点不同：</p>
+<ul>
+<li>相对于函数，Swift对实例方法的形参名要求更多；</li>
+<li>在实例方法中，常常会用到一个关键的属性<code>self</code>；</li>
+</ul>
+<p>举个栗子，如下Counter类定义了三个实例方法：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Counter</span> </span>{</div><div class="line">    <span class="keyword">var</span> <span class="built_in">count</span> = <span class="number">0</span></div><div class="line">    <span class="func"><span class="keyword">func</span></span> increment() {</div><div class="line">        ++<span class="built_in">count</span></div><div class="line">    }</div><div class="line">    <span class="func"><span class="keyword">func</span></span> incrementBy(amount: <span class="type">Int</span>) {</div><div class="line">        <span class="built_in">count</span> += amount</div><div class="line">    }</div><div class="line">    <span class="func"><span class="keyword">func</span></span> reset() {</div><div class="line">        <span class="built_in">count</span> = <span class="number">0</span></div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<p>Swift中的方法和OC中的方法极其相似。像在OC中一样，Swift中方法的名称通常用一个介词指向方法的第一个参数，比如：with，for，by等等。前面的Counter类的例子中incrementBy方法就是这样的，介词的使用让方法在被调用时能像一个句子一样被解读。和函数参数不同，对于方法的参数，Swift使用不同的默认处理方式，这可以让方法命名规范更容易写。</p>
+<p>具体来说，<strong>Swift默认仅给方法的第一个参数提供一个内部参数名；默认同时给第二个和后续的参数提供内部参数名和外部参数名</strong>。这个约定与典型的命名和调用约定相适应，与你在写OC的方法时很相似。这个约定还让表达式方法在调用时不需要再限定参数名称。</p>
+<p>简单来说，Swift为实例方法提供的默认处理是：</p>
+<ul>
+<li>为第一个参数仅提供内部参数名（local parameter name）；</li>
+<li>为第二个以及之后的参数同时提供外部参数名和内部参数名；</li>
+</ul>
+<p>如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Counter</span> </span>{</div><div class="line">    <span class="keyword">var</span> <span class="built_in">count</span>: <span class="type">Int</span> = <span class="number">0</span></div><div class="line">    <span class="func"><span class="keyword">func</span></span> incrementBy(amount: <span class="type">Int</span>, numberOfTimes: <span class="type">Int</span>) {</div><div class="line">        <span class="built_in">count</span> += amount * numberOfTimes</div><div class="line">    }</div><div class="line">}</div><div class="line">	</div><div class="line"><span class="comment">// 使用</span></div><div class="line"><span class="keyword">let</span> counter = <span class="type">Counter</span>()</div><div class="line">counter.incrementBy(<span class="number">5</span>, numberOfTimes: <span class="number">3</span>)</div><div class="line"><span class="comment">// counter value is now 15</span></div></pre></figure>
+
+<p>可以看到，不必为第一个参数再定义一个外部变量名：因为从函数名incrementBy已经能很清楚地看出它的作用。但是第二个参数，就要被一个外部参数名称所限定，以便在方法被调用时明确它的作用。</p>
+<p>这种默认的行为能够有效的处理方法（method），类似于在参数numberOfTimes前写一个<code>#</code>：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="func"><span class="keyword">func</span></span> incrementBy(amount: <span class="type">Int</span>, #numberOfTimes: <span class="type">Int</span>) {</div><div class="line">    <span class="built_in">count</span> += amount * numberOfTimes</div><div class="line">}</div></pre></figure>
+
+<p>这种默认行为使上面代码意味着：在Swift中定义方法使用了与OC同样的语法风格，并且方法将以自然表达式的方式被调用。</p>
+<p>但有时候我们不想使用Swift对实例方法参数名的处理方式，解决方法：</p>
+<ul>
+<li>为第一个参数提供外部参数名，直接添加一个外部参数名即可，或者直接添加<code>#</code>；</li>
+<li>取消index&gt;1的参数的外部参数名，在参数名前加上一个<code>_</code>即可；</li>
+</ul>
+<h4 id="self属性"><strong>self属性</strong></h4>
+<p>类型的每一个实例都有一个隐含属性叫做<code>self</code>，<code>self</code>完全等同于该实例本身。你可以在一个实例的实例方法中使用这个隐含的<code>self</code>属性来引用当前实例。</p>
+<p><code>self</code>的使用比较简单，不赘述了。</p>
+<h4 id="Mutable方法"><strong>Mutable方法</strong></h4>
+<p>对于值类型（即枚举、结构体）实例而言，默认情况下，是不允许在实例方法中修改属性值的（对于引用类型实例则不存在这个问题）。如果实在有需要修改呢？在值类型的实例方法定义式中加上前缀<code>mutating</code>修饰即可。如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Point</span> </span>{</div><div class="line">    <span class="keyword">var</span> x = <span class="number">0.0</span>, y = <span class="number">0.0</span></div><div class="line">    <span class="func"><span class="keyword">func</span></span> isToTheRightOfX(x: <span class="type">Double</span>) -&gt; <span class="type">Bool</span> {</div><div class="line">        <span class="keyword">return</span> <span class="keyword">self</span>.x &gt; x</div><div class="line">    }</div><div class="line">}</div><div class="line"><span class="keyword">let</span> somePoint = <span class="type">Point</span>(x: <span class="number">4.0</span>, y: <span class="number">5.0</span>)</div><div class="line"><span class="keyword">if</span> somePoint.isToTheRightOfX(<span class="number">1.0</span>) {</div><div class="line">    <span class="built_in">println</span>(<span class="string">"This point is to the right of the line where x == 1.0"</span>)</div><div class="line">}</div><div class="line"><span class="comment">// prints "This point is to the right of the line where x == 1.0"</span></div></pre></figure>
+
+<h3 id="类型方法"><strong>类型方法</strong></h3>
+<p>实例方法是被类型的某个实例调用的方法。你也可以定义类型本身调用的方法，这种方法就叫做「类型方法」。</p>
+<p><strong>类型方法的定义</strong></p>
+<p>和Swift的「类型属性」类似，对于值类型，定义「类型方法」时使用关键字<code>static</code>修饰；对于引用类型，修饰「类型方法」既可以使用<code>static</code>又可以使用<code>class</code>，只是前者不允许子类override该方法，后者允许该「类型方法」被子类overridden。</p>
+<p>除了定义使用的关键字之外，「类型方法」的其他信息没啥特别的，本文略过！</p>
+<h2 id="下标"><strong>下标</strong></h2>
+<p>在Swift中，类、结构体和枚举中都可以定义「下标」（subscripts），可以认为「下标」是访问对象、集合或序列的快捷方式。使用「下标」，你可以基于index设置和读取指定的实例数据，而不需要另外编写其他的逻辑代码。举例来说，用「下标」访问一个数组（Array）实例中的元素可以这样写<code>someArray[index]</code>，访问字典（Dictionary）实例中的元素可以这样写<code>someDictionary[key]</code>。</p>
+<p>类型可以定义多个subscripts，通过索引值类型的不同来进行重载，而且索引值可以是多个。</p>
+<h3 id="下标语法"><strong>下标语法</strong></h3>
+<p>Swift中的「下标」允许你通过在实例后面的方括号中传入一个或者多个的索引值来对实例的指定数据进行访问和赋值。语法类似于「实例方法」和「计算型属性」的混合，与定义「实例方法」类似，「下标」使用<code>subscript</code>关键字，显式声明传入参数（一个或多个）和返回类型；与「实例方法」不同的是「下标」可以设定为读写或只读，这种方式又有点像计算型属性的getter和setter，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">subscript</span>(index: <span class="type">Int</span>) -&gt; <span class="type">Int</span> {</div><div class="line">    <span class="keyword">get</span> {</div><div class="line">        <span class="comment">// return an appropriate subscript value here</span></div><div class="line">    }</div><div class="line">    <span class="keyword">set</span>(newValue) {</div><div class="line">        <span class="comment">// perform a suitable setting action here</span></div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<h3 id="使用下标"><strong>使用下标</strong></h3>
+<p>根据使用场景不同「下标」也具有不同的含义。通常使用「下标」用来访问集合、列表或序列中元素的快捷方式。你可以在你自己特定的类或结构体中自由地实现「下标」来提供合适的功能。例如，Swift的字典实现了通过「下标」来对其实例中存放的值进行存取操作。在「下标」中使用和字典索引相同类型的值，并且把一个字典值类型的值赋值给这个「下标」来为字典设值：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">var</span> numberOfLegs = [<span class="string">"spider"</span>: <span class="number">8</span>, <span class="string">"ant"</span>: <span class="number">6</span>, <span class="string">"cat"</span>: <span class="number">4</span>]</div><div class="line">numberOfLegs[<span class="string">"bird"</span>] = <span class="number">2</span></div></pre></figure>
+
+<p>注意：Swift中字典的「下标」实现中，在get部分返回值是Int?，上例中的numberOfLegs字典通过下边返回的是一个<code>Int?</code>或者说「可选的Int」，毕竟不是每个字典的索引都能得到一个整型值，对于没有设过值的索引的访问返回的结果就是nil；同样想要从字典实例中删除某个索引下的值也只需要给这个索引赋值为nil即可。</p>
+<p>Swift的「下标」的类似于C++中「运算符重载」，相对于OC，它算是Swift语言的一个重要特性了，但其使用并不复杂。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Swift/">Swift</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/05/12/Swift-Methods-and-Subscripts/" data-title="Swift方法和下标 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/05/12/Swift-Initialization/" title="Swift构造过程">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  Swift构造过程</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/05/11/Swift-Properties/"  title="Swift属性">
+ <strong>NEXT:</strong><br/> 
+ <span>Swift属性
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/05/12/Swift-Methods-and-Subscripts/" data-title="Swift方法和下标" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#方法"><span class="toc-number">1.</span> <span class="toc-text">方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#实例方法"><span class="toc-number">1.1.</span> <span class="toc-text">实例方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#实例方法的形参名"><span class="toc-number">1.1.1.</span> <span class="toc-text">实例方法的形参名</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#self属性"><span class="toc-number">1.1.2.</span> <span class="toc-text">self属性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Mutable方法"><span class="toc-number">1.1.3.</span> <span class="toc-text">Mutable方法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#类型方法"><span class="toc-number">1.2.</span> <span class="toc-text">类型方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#下标"><span class="toc-number">2.</span> <span class="toc-text">下标</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#下标语法"><span class="toc-number">2.1.</span> <span class="toc-text">下标语法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用下标"><span class="toc-number">2.2.</span> <span class="toc-text">使用下标</span></a></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

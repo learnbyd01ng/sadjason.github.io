@@ -1,0 +1,494 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>一些优秀的iOS第三方资源 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="Kits
+RegexKitRegexKit是一个正则表达式工具类。
+JSONKitJSONKit是一个比较高效的JSON解析库（又说是“号称效率最高的JSON解析器”）。唐巧之前比较过各大JSON解析库的性能文章在此。
+ProgressHUD
+MBProgressHUDMBProgressHUD是一">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/02/11/一些优秀的iOS第三方资源/" title="一些优秀的iOS第三方资源" itemprop="url">一些优秀的iOS第三方资源</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-02-11T08:04:35.000Z" itemprop="datePublished">2015-02-11</time>
+    更新日期:<time datetime="2015-07-18T08:35:20.000Z" itemprop="dateModified">2015-07-18</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Kits"><span class="toc-number">1.</span> <span class="toc-text">Kits</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ProgressHUD"><span class="toc-number">2.</span> <span class="toc-text">ProgressHUD</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#加载与刷新"><span class="toc-number">3.</span> <span class="toc-text">加载与刷新</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#图像"><span class="toc-number">4.</span> <span class="toc-text">图像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#引导页"><span class="toc-number">5.</span> <span class="toc-text">引导页</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Views"><span class="toc-number">6.</span> <span class="toc-text">Views</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Others"><span class="toc-number">7.</span> <span class="toc-text">Others</span></a></li></ol>
+		</div>
+		
+		<h2 id="Kits">Kits</h2>
+<p><strong>RegexKit</strong><br><a href="http://regexkit.sourceforge.net/" target="_blank" rel="external">RegexKit</a>是一个正则表达式工具类。</p>
+<p><strong>JSONKit</strong><br><a href="https://github.com/johnezang/JSONKit" target="_blank" rel="external">JSONKit</a>是一个比较高效的JSON解析库（又说是“号称效率最高的JSON解析器”）。唐巧之前比较过各大JSON解析库的性能<a href="http://blog.devtang.com/blog/2012/05/05/do-not-use-sbjson/" target="_blank" rel="external">文章在此</a>。</p>
+<h2 id="ProgressHUD">ProgressHUD</h2>
+<p><strong>MBProgressHUD</strong><br><a href="https://github.com/jdg/MBProgressHUD" target="_blank" rel="external">MBProgressHUD</a>是一个用于显示灰色的加载进度或结果的类。与系统自带的UIAlertView相比，MBProgressHUD由于背影是黑色的，所以视觉上不是那么强烈。我们主要用它来显示一些加载中的提示，以及一些自已会消失的操作结果（例如网络失败等）。功能强大但有些“重”。</p>
+<p><strong>SVProgressHUD</strong><br><a href="https://github.com/TransitApp/SVProgressHUD" target="_blank" rel="external">SVProgressHUD</a> is a clean and easy-to-use HUD meant to display the progress of an ongoing task. 我最常用。</p>
+<p><strong>ProgressHUD</strong><br><a href="https://github.com/relatedcode/ProgressHUD" target="_blank" rel="external">ProgressHUD</a> is a lightweight and easy-to-use HUD. 还不错，但总个人感觉没做完的样子。</p>
+<h2 id="加载与刷新">加载与刷新</h2>
+<p><strong>EGOTableViewPullRefresh</strong><br><a href="https://github.com/enormego/EGOTableViewPullRefresh" target="_blank" rel="external">EGOTableViewPullRefresh</a>一个开源的下拉刷新组件；这个使用起来比较麻烦，需要实现其各种协议。</p>
+<p><strong>LoadMoreTableFooterView</strong><br><a href="https://github.com/sishen/LoadMoreTableFooterView" target="_blank" rel="external">LoadMoreTableFooterView</a>一个开源的上拉加载更多的组件。跟EGOTableViewPullRefresh有点渊源。</p>
+<p><strong>SVPullToRefresh</strong><br><a href="https://github.com/samvermette/SVPullToRefresh" target="_blank" rel="external">SVPullToRefresh</a>同时兼有“下拉刷新”和“下拉更多”功能，相对于EGOTableViewPullRefresh更好用，更直观，我更喜欢。</p>
+<h2 id="图像">图像</h2>
+<p><strong>SDWebImage</strong><br><a href="https://github.com/rs/SDWebImage" target="_blank" rel="external">SDWebImage</a>异步图片加载、缓存，功能强大。</p>
+<h2 id="引导页">引导页</h2>
+<p><strong>EAIntroView</strong><br><a href="https://github.com/ealeksandrov/EAIntroView" target="_blank" rel="external">EAIntroView</a>可高度自定义的引导页。</p>
+<p><strong>MYBlurIntroductionView</strong><br><a href="https://github.com/MatthewYork/MYBlurIntroductionView" target="_blank" rel="external">MYBlurIntroductionView</a>, A super-charged version of MYIntroductionView for building custom app introductions and tutorials.</p>
+<p><strong>GHWalkThrough</strong><br><a href="https://github.com/GnosisHub/GHWalkThrough" target="_blank" rel="external">GHWalkThrough</a>, A UICollectionView backed drop-in component for introduction views.</p>
+<p><strong>ICETutorial</strong><br><a href="https://github.com/icepat/ICETutorial" target="_blank" rel="external">ICETutorial</a>，仿照Path 3.x引导页。</p>
+<h2 id="Views">Views</h2>
+<p><strong>MTStatusBarOverlay</strong><br><a href="https://github.com/myell0w/MTStatusBarOverlay" target="_blank" rel="external">MTStatusBarOverlay</a>是一个在iphone的顶部status bar显示消息的开源库。</p>
+<p><strong>ActionSheetPicker-3.0</strong><br><a href="https://github.com/skywinder/ActionSheetPicker-3.0/" target="_blank" rel="external">ActionSheetPicker-3.0</a>，相当于UIPickerView + UIActionSheet，是一个非常棒的选择器。</p>
+<p><strong>JVFloatLabeledTextField</strong><br><a href="https://github.com/jverdi/JVFloatLabeledTextField" target="_blank" rel="external">JVFloatLabeledTextField</a>，提供了非常优雅的TextField输入体验。</p>
+<p><strong>SSBouncyButton</strong><br><a href="https://github.com/StyleShare/SSBouncyButton" target="_blank" rel="external">SSBouncyButton</a>，iOS7+风格的弹性button。</p>
+<p><strong>JSQMessagesViewController</strong><br><a href="https://github.com/jessesquires/JSQMessagesViewController" target="_blank" rel="external">JSQMessagesViewController</a>，即时通讯对话框，看起来非常棒。</p>
+<p><strong>TSMessages</strong><br><a href="https://github.com/KrauseFx/TSMessages" target="_blank" rel="external">TSMessages</a>，顶部消息框。</p>
+<p><strong>NZAlertView</strong><br><a href="https://github.com/NZN/NZAlertView" target="_blank" rel="external">NZAlertView</a>，漂亮的消息框。</p>
+<p><strong>MGSwipeTableCell</strong><br><a href="https://github.com/MortimerGoro/MGSwipeTableCell" target="_blank" rel="external">MGSwipeTableCell</a>，可滑动的TableViewCell。</p>
+<p><strong>TGCameraViewController</strong><br><a href="https://github.com/tdginternet/TGCameraViewController" target="_blank" rel="external">TGCameraViewController</a>，轻量级camera view controller。</p>
+<p><strong>ParallaxTableViewHeader</strong><br><a href="https://github.com/Vinodh-G/ParallaxTableViewHeader" target="_blank" rel="external">ParallaxTableViewHeader</a>，table view header滚动中的酷炫效果。</p>
+<h2 id="Others">Others</h2>
+<p><strong>Reachability</strong><br><a href="https://github.com/tonymillion/Reachability" target="_blank" rel="external">Reachability</a>网络连通测试组件。</p>
+<p>参考：</p>
+<ol>
+<li><a href="http://blog.devtang.com/blog/2012/10/09/3rd-libs-used-in-fenbi-app/" target="_blank" rel="external">粉笔网iPhone端使用的第三方开源库</a></li>
+<li><a href="http://blog.rpplusplus.me/blog/2014/02/11/facebook-paper-used-3rd/" target="_blank" rel="external">Facebook Paper使用的第三方库</a></li>
+<li><a href="https://github.com/vsouza/awesome-ios" target="_blank" rel="external">Awesome iOS</a></li>
+</ol>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/常用/">常用</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/iOS/">iOS</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/02/11/一些优秀的iOS第三方资源/" data-title="一些优秀的iOS第三方资源 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/02/11/不要在init和dealloc函数中使用accessor/" title="不要在init和dealloc函数中使用accessor">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  不要在init和dealloc函数中使用accessor</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/02/11/unstanding-uiwindow/"  title="使用UIWindow">
+ <strong>NEXT:</strong><br/> 
+ <span>使用UIWindow
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/02/11/一些优秀的iOS第三方资源/" data-title="一些优秀的iOS第三方资源" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Kits"><span class="toc-number">1.</span> <span class="toc-text">Kits</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ProgressHUD"><span class="toc-number">2.</span> <span class="toc-text">ProgressHUD</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#加载与刷新"><span class="toc-number">3.</span> <span class="toc-text">加载与刷新</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#图像"><span class="toc-number">4.</span> <span class="toc-text">图像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#引导页"><span class="toc-number">5.</span> <span class="toc-text">引导页</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Views"><span class="toc-number">6.</span> <span class="toc-text">Views</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Others"><span class="toc-number">7.</span> <span class="toc-text">Others</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

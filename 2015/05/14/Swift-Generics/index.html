@@ -1,0 +1,571 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Swift泛型 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="关于泛型
+「泛型」（Generic Code）也许是Swift相对于OC的最大特性之一吧！基于Swift的「泛型」特性，你能够写出扩展性更强、复用性更强的方法、类型，它可以让你尽可能避免重复代码，用一种清晰和抽象的方式来表达代码的意图。
+许多的Swift标准库是基于「泛型」够构建的。譬如，Swift">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/05/14/Swift-Generics/" title="Swift泛型" itemprop="url">Swift泛型</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-05-14T03:11:49.000Z" itemprop="datePublished">2015-05-14</time>
+    更新日期:<time datetime="2015-07-04T09:00:00.000Z" itemprop="dateModified">2015-07-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#关于泛型"><span class="toc-number">1.</span> <span class="toc-text">关于泛型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#泛型所解决的问题"><span class="toc-number">2.</span> <span class="toc-text">泛型所解决的问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#泛型函数"><span class="toc-number">3.</span> <span class="toc-text">泛型函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#泛型类型"><span class="toc-number">4.</span> <span class="toc-text">泛型类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#扩展一个泛型类型"><span class="toc-number">5.</span> <span class="toc-text">扩展一个泛型类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#类型约束"><span class="toc-number">6.</span> <span class="toc-text">类型约束</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#类型约束语法"><span class="toc-number">6.1.</span> <span class="toc-text">类型约束语法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#类型约束实战"><span class="toc-number">6.2.</span> <span class="toc-text">类型约束实战</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#关联类型"><span class="toc-number">7.</span> <span class="toc-text">关联类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#关联类型实战"><span class="toc-number">7.1.</span> <span class="toc-text">关联类型实战</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#扩展已存在类型为关联类型"><span class="toc-number">7.2.</span> <span class="toc-text">扩展已存在类型为关联类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Where语句"><span class="toc-number">7.3.</span> <span class="toc-text">Where语句</span></a></li></ol></li></ol>
+		</div>
+		
+		<h2 id="关于泛型"><strong>关于泛型</strong></h2>
+<p>「泛型」（Generic Code）也许是Swift相对于OC的最大特性之一吧！基于Swift的「泛型」特性，你能够写出扩展性更强、复用性更强的方法、类型，它可以让你尽可能避免重复代码，用一种清晰和抽象的方式来表达代码的意图。</p>
+<p>许多的Swift标准库是基于「泛型」够构建的。譬如，Swift中的集合类型都是泛型集，你可以创建一个<code>Int</code>数组，也可以创建一个<code>String</code>数组，甚至任意其他任何类型的数组，这其实就是「泛型」。</p>
+<h2 id="泛型所解决的问题"><strong>泛型所解决的问题</strong></h2>
+<p>泛型解决什么样的问题呢？如下是一个常见的、非泛型的函数swapTwoInts，用来交换两个Int值：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="func"><span class="keyword">func</span></span> swapTwoInts(<span class="keyword">inout</span> a: <span class="type">Int</span>, <span class="keyword">inout</span> b: <span class="type">Int</span>) {</div><div class="line">    <span class="keyword">let</span> temp = a</div><div class="line">    a = b</div><div class="line">    b = temp</div><div class="line">}</div></pre></figure>
+
+<p>这个函数使用<code>inout</code>参数来交换a和b的值：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">var</span> a: <span class="type">Int</span> = <span class="number">4</span></div><div class="line"><span class="keyword">var</span> b: <span class="type">Int</span> = <span class="number">2</span></div><div class="line"><span class="built_in">println</span>(<span class="string">"a = <span class="subst">\(a)</span>, b = <span class="subst">\(b)</span>"</span>)</div><div class="line"><span class="comment">// prints "a = 4, b = 2"</span></div><div class="line">swapTwoInts(&a, &b)</div><div class="line"><span class="built_in">println</span>(<span class="string">"a = <span class="subst">\(a)</span>, b = <span class="subst">\(b)</span>"</span>)</div><div class="line"><span class="comment">// prints "a = 2, b = 4"</span></div></pre></figure>
+
+<p>这个函数非常有用，但可惜的是它只能用来交换两个Int值，如果你想交换两个String或Double，就不得不写更多的函数，如swapTwoStrings和swapTwoDoubles函数，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="comment">// 交换两个String实例的值</span></div><div class="line"><span class="func"><span class="keyword">func</span></span> swapTwoStrings(<span class="keyword">inout</span> a: <span class="type">String</span>, <span class="keyword">inout</span> b: <span class="type">String</span>) {</div><div class="line">    <span class="keyword">let</span> temp = a</div><div class="line">    a = b</div><div class="line">    b = temp</div><div class="line">}</div><div class="line">	</div><div class="line"><span class="comment">// 交换两个Double实例的值</span></div><div class="line"><span class="func"><span class="keyword">func</span></span> swapTwoDoubles(<span class="keyword">inout</span> a: <span class="type">Double</span>, <span class="keyword">inout</span> b: <span class="type">Double</span>) {</div><div class="line">    <span class="keyword">let</span> temp = a</div><div class="line">    a = b</div><div class="line">    b = temp</div><div class="line">}</div></pre></figure>
+
+<p>很容易注意到swapTwoInts、swapTwoStrings和swapTwoDoubles函数功能都是相同的，唯一不同之处在于传入的变量类型不同，分别是Int、String和Double。但实际应用中通常需要一个用处更大并且尽可能的考虑到更多的灵活性函数，可以用来交换两个任意类型值，「泛型」正好可以用来解决这种问题。</p>
+<h2 id="泛型函数"><strong>泛型函数</strong></h2>
+<p>泛型函数可以工作于任何类型，如下是上述swapTwoInts函数的一个泛型版本，也用于交换两个值：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="func"><span class="keyword">func</span></span> swapTwoValues&lt;<span class="type">T</span>&gt;(<span class="keyword">inout</span> a: <span class="type">T</span>, <span class="keyword">inout</span> b: <span class="type">T</span>) {</div><div class="line">    <span class="keyword">let</span> temp = a</div><div class="line">    a = b</div><div class="line">    b = temp</div><div class="line">}</div></pre></figure>
+
+<p>swapTwoValues函数body和swapTwoInts函数body完全一样，只是函数声明行不太一样：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="func"><span class="keyword">func</span></span> swapTwoInts(<span class="keyword">inout</span> a: <span class="type">Int</span>, <span class="keyword">inout</span> b: <span class="type">Int</span>)</div><div class="line"><span class="func"><span class="keyword">func</span></span> swapTwoValues&lt;<span class="type">T</span>&gt;(<span class="keyword">inout</span> a: <span class="type">T</span>, <span class="keyword">inout</span> b: <span class="type">T</span>)</div></pre></figure>
+
+<p>可以看到，「泛型」版本swapTwoValues使用「类型名占位符」<code>T</code>（<code>T</code>不是必须的，可以使用其他字符代替）代替了真正的类型。在Swift中和其他语言一样，使用尖括号<code>&lt;&gt;</code>来包含函数中会使用到的「类型名占位符」，这样编译器在编译时就不会去审查<code>T</code>的合法性了。「类型名占位符」没有提示T必须是什么类型，但是它提示 了形参a和b必须是同一种类型，而不管T表示什么类型。只有swapTwoValues函数在每次被调用时所传入实际类型才能确定T所代表的类型。</p>
+<p>「泛型」函数swapTwoValues的使用示例如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">var</span> intA = <span class="number">4</span></div><div class="line"><span class="keyword">var</span> intB = <span class="number">2</span></div><div class="line"><span class="built_in">println</span>(<span class="string">"a = <span class="subst">\(intA)</span>, b = <span class="subst">\(intB)</span>"</span>)</div><div class="line"><span class="comment">// prints "a = 4, b = 2"</span></div><div class="line">swapTwoValues(&intA, &intB)</div><div class="line"><span class="built_in">println</span>(<span class="string">"a = <span class="subst">\(intA)</span>, b = <span class="subst">\(intB)</span>"</span>)</div><div class="line"><span class="comment">// prints "a = 2, b = 4"</span></div><div class="line">	</div><div class="line"><span class="keyword">var</span> stringA = <span class="string">"4"</span></div><div class="line"><span class="keyword">var</span> stringB = <span class="string">"2"</span></div><div class="line"><span class="built_in">println</span>(<span class="string">"a = <span class="subst">\(intA)</span>, b = <span class="subst">\(intB)</span>"</span>)</div><div class="line"><span class="comment">// prints "a = 4, b = 2"</span></div><div class="line">swapTwoValues(&intA, &intB)</div><div class="line"><span class="built_in">println</span>(<span class="string">"a = <span class="subst">\(intA)</span>, b = <span class="subst">\(intB)</span>"</span>)</div><div class="line"><span class="comment">// prints "a = 2, b = 4"</span></div></pre></figure>
+
+<h2 id="泛型类型"><strong>泛型类型</strong></h2>
+<p>除了「泛型函数」，Swift还允许你定义自己的「泛型类型」。这些「泛型类型」可以适应任意类型，就像Array/Set/Dictionary那样。</p>
+<p>这一部分会展示如何写一个泛型集类型 — Stack（栈）。一个栈是一系列值域的集合，和Array类似，但是比Swift的Array有更多的限制。一个数组允许向其中任何位置执行插入/删除操作，而Stack，只允许在集合的末端添加新的元素（即所谓的push操作），也只能从末端移除元素（即所谓的pop操作）。</p>
+<p>栈的概念已被UINavigationController类使用来模拟控制器的导航结构。你可以通过调用UINavigationController的<code>pushViewController:animation:</code>方法来为导航控制器添加新的视图控制器；而通过<code>popViewControllerAnimation:</code>方法来从导航栈中pop某个视图控制器。每当你需要一个严格的后进先出方式来管理集合时，栈都是最实用的模型。</p>
+<p>下图展示了栈的push和pop行为：</p>
+<p><img src="/img/201505/QQ20150515-1.png" width="660" height="270/"></p>
+<p>如图，有5个过程：</p>
+<ol>
+<li>有三个元素在栈中；</li>
+<li>第四个元素正在被push到栈的顶部；</li>
+<li>有四个元素在栈中；</li>
+<li>栈中的最顶部元素正在被移除；</li>
+<li>有三个元素在栈中；</li>
+</ol>
+<p>先来写一个非泛型版本的栈，这个栈只盛装Int型元素：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">IntStack</span> </span>{</div><div class="line">    <span class="keyword">var</span> items = [<span class="type">Int</span>]()</div><div class="line">    <span class="keyword">mutating</span> <span class="func"><span class="keyword">func</span></span> push(item: <span class="type">Int</span>) {</div><div class="line">        items.append(item)</div><div class="line">    }</div><div class="line">    </div><div class="line">    <span class="keyword">mutating</span> <span class="func"><span class="keyword">func</span></span> pop() -&gt; <span class="type">Int</span> {</div><div class="line">        <span class="keyword">return</span> items.removeLast()</div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<p>上面所展示的IntStack类型只能用于存储Int元素，不过，参考它，来定义一个泛型版本的：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Stack</span>&lt;<span class="title">T</span>&gt; </span>{</div><div class="line">    <span class="keyword">var</span> items = [<span class="type">T</span>]()</div><div class="line">    <span class="keyword">mutating</span> <span class="func"><span class="keyword">func</span></span> push(item: <span class="type">T</span>) {</div><div class="line">        items.append(item)</div><div class="line">    }</div><div class="line">    </div><div class="line">    <span class="keyword">mutating</span> <span class="func"><span class="keyword">func</span></span> pop() -&gt; <span class="type">T</span> {</div><div class="line">        <span class="keyword">return</span> items.removeLast()</div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<p>其实也蛮简单的，不多说了！</p>
+<h2 id="扩展一个泛型类型"><strong>扩展一个泛型类型</strong></h2>
+<p>和其他类型一样，我们也可以对一个泛型类型进行扩展，语法也差不多，如下对上文的Stack扩展了一个方法topItem。注意，在「泛型类型」的扩展中，可能也会使用到「类型名占位符」，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Stack</span> </span>{</div><div class="line">    <span class="keyword">var</span> topItem: <span class="type">T</span>? {</div><div class="line">        <span class="keyword">return</span> items.isEmpty ? <span class="built_in">nil</span> : items[items.<span class="built_in">count</span> - <span class="number">1</span>]</div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<p>值得注意的是，扩展中不再需要定义参数表。很显然感觉到，我们可能是没办法对一个我们看不到源码的「泛型类型」进行扩展的，因为我们不知道人家的「类型名占位符」。</p>
+<h2 id="类型约束"><strong>类型约束</strong></h2>
+<p>上文中的泛型函数swapTwoValues函数和泛型类型Stack都可以作用于任何类型，不过有时候，我们需要对泛型函数和泛型类型中的泛类型做些限制，譬如定义某个函数，传入的参数必须是可迭代类型，或者参数必须遵循某个协议。</p>
+<p>Swift的泛型类型Dictionary对作用域key的类型做了些限制，要求key类型必须是可哈希的。因此Dictionary要求key类型必须遵循Hashable协议（Swift标准库中定义的一个协议）。<br>P.S：Swift的基本类型，如Int、String、Bool等都是可哈希的。</p>
+<p>当你创建自定义「泛型类型」时，你可以定义你自己的「类型约束」。「类型约束」加强了泛型编程的威力。</p>
+<h3 id="类型约束语法"><strong>类型约束语法</strong></h3>
+<p>Swift规定在「类型名占位符」后面添加「类型约束」，通过冒号分隔，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="func"><span class="keyword">func</span></span> someFunction&lt;<span class="type">T</span>: <span class="type">SomeClass</span>, <span class="type">U</span>: <span class="type">SomeProtocol</span>&gt;(someT: <span class="type">T</span>, someU: <span class="type">U</span>) {</div><div class="line">    <span class="comment">// function body goes here</span></div><div class="line">}</div></pre></figure>
+
+<h3 id="类型约束实战"><strong>类型约束实战</strong></h3>
+<p>如下定义了一个名为findStringIndex的非泛型函数，该函数的功能是去查找包含一个给定String值的数组。若找到匹配的字符串，该函数返回该字符串在数组中的index，反之返回nil：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="func"><span class="keyword">func</span></span> findStringIndex(array: [<span class="type">String</span>], valueToFind: <span class="type">String</span>) -&gt; <span class="type">Int</span>? {</div><div class="line">    <span class="keyword">for</span> (index, value) <span class="keyword">in</span> <span class="class"><span class="keyword">enum</span><span class="title">erate</span>(<span class="title">array</span>) </span>{</div><div class="line">        <span class="keyword">if</span> value == valueToFind {</div><div class="line">            <span class="keyword">return</span> index</div><div class="line">        }</div><div class="line">    }</div><div class="line">    <span class="keyword">return</span> <span class="built_in">nil</span></div><div class="line">}</div><div class="line">	</div><div class="line"><span class="keyword">let</span> strings = [<span class="string">"cat"</span>, <span class="string">"dog"</span>, <span class="string">"llama"</span>, <span class="string">"parakeet"</span>, <span class="string">"terrapin"</span>]</div><div class="line"><span class="keyword">if</span> <span class="keyword">let</span> foundIndex = findStringIndex(strings, <span class="string">"llama"</span>) {</div><div class="line">    <span class="built_in">println</span>(<span class="string">"The index of llama is <span class="subst">\(foundIndex)</span>"</span>)</div><div class="line">}</div><div class="line"><span class="comment">// prints "The index of llama is 2"</span></div></pre></figure>
+
+<p>如果只是针对字符串而言查找在数组中的某个值的索引，用处不是很大，不过，你可以写出相同功能的泛型函数findIndex，用某个类型<code>T</code>值替换掉提到的字符串。</p>
+<p>OK，参考这个findStringIndex函数写一个泛型函数findIndex，该函数的作用类似，只不过适用于更多类型（而不仅仅是<code>[String]</code>和<code>String</code>）。</p>
+<p>某人可能这样编码：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="func"><span class="keyword">func</span></span> findIndex&lt;<span class="type">T</span>&gt;(array: [<span class="type">T</span>], valueToFind: <span class="type">T</span>) -&gt; <span class="type">Int</span>? {</div><div class="line">    <span class="keyword">for</span> (index, value) <span class="keyword">in</span> <span class="class"><span class="keyword">enum</span><span class="title">erate</span>(<span class="title">array</span>) </span>{</div><div class="line">        <span class="keyword">if</span> value == valueToFind {</div><div class="line">            <span class="keyword">return</span> index</div><div class="line">        }</div><div class="line">    }</div><div class="line">    <span class="keyword">return</span> <span class="built_in">nil</span></div><div class="line">}</div></pre></figure>
+
+<p>但是很快就会发现Xcode报错：Binary operator ‘==’ cannot be applied to two T operands.</p>
+<p>简单来说，编译器无法知道「类型名占位符」<code>T</code>所表示的类型是否支持<code>==</code>操作符。</p>
+<p>找到问题就好办了，添加一个「类型约束」就可以解决这问题了。Swift标准库中有一个名为<code>Equatable</code>的协议，遵循该协议的类型都得支持<code>==</code>操作。所以上述泛型函数findIndex定义如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="func"><span class="keyword">func</span></span> findIndex&lt;<span class="type">T</span>: <span class="type">Equatable</span>&gt;(array: [<span class="type">T</span>], valueToFind: <span class="type">T</span>) -&gt; <span class="type">Int</span>? {</div><div class="line">    <span class="keyword">for</span> (index, value) <span class="keyword">in</span> <span class="class"><span class="keyword">enum</span><span class="title">erate</span>(<span class="title">array</span>) </span>{</div><div class="line">        <span class="keyword">if</span> value == valueToFind {</div><div class="line">            <span class="keyword">return</span> index</div><div class="line">        }</div><div class="line">    }</div><div class="line">    <span class="keyword">return</span> <span class="built_in">nil</span></div><div class="line">}</div></pre></figure>
+
+<h2 id="关联类型"><strong>关联类型</strong></h2>
+<p>在《<a href="/2015/05/14/Swift-Protocols/">Swift协议</a>》中总结了Swift协议的相关知识点。</p>
+<p>之前阐述的「协议」里的所有类型都是确切的；但强大的Swift定义的「协议」不限于此，换句话说，你可以将泛型思想融入到「协议」中。</p>
+<p>简单来说，Swift允许你在protocol中使用类似于「泛型函数」「泛型类型」的泛类型，这被Swift文档称为「关联类型」（Associated Types）。</p>
+<h3 id="关联类型实战"><strong>关联类型实战</strong></h3>
+<p>如下定义一个名为Container的协议，理论上Swift中的内置collection应该遵循该协议，定义如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Container</span> </span>{</div><div class="line">    <span class="keyword">typealias</span> <span class="type">ItemType</span></div><div class="line">    <span class="keyword">mutating</span> <span class="func"><span class="keyword">func</span></span> append(item: <span class="type">ItemType</span>)</div><div class="line">    <span class="keyword">var</span> <span class="built_in">count</span>: <span class="type">Int</span> { <span class="keyword">get</span> }</div><div class="line">    <span class="keyword">subscript</span>(i: <span class="type">Int</span>) -&gt; <span class="type">ItemType</span> { <span class="keyword">get</span> }</div><div class="line">}</div></pre></figure>
+
+<p>似乎有些奇怪，我还以为Container应该这么定义：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Container</span>&lt;<span class="title">T</span>&gt; </span>{</div><div class="line">    <span class="keyword">mutating</span> <span class="func"><span class="keyword">func</span></span> append(item: <span class="type">T</span>)</div><div class="line">    <span class="keyword">var</span> <span class="built_in">count</span>: <span class="type">Int</span> { <span class="keyword">get</span> }</div><div class="line">    <span class="keyword">subscript</span>(i: <span class="type">Int</span>) -&gt; <span class="type">T</span> { <span class="keyword">get</span> }</div><div class="line">}</div></pre></figure>
+
+<p>暂时先不理会哪种定义方式更好，总之，Container协议定义了三个任何容器必须支持的兼容要求：</p>
+<ul>
+<li>必须定义append方法用来添加新元素；</li>
+<li>必须定义count属性用来获取元素数量，返回类型是Int；</li>
+<li>必须定义下标，支持通过Int索引值检索到某个元素；</li>
+</ul>
+<p>这个Container协议没有指定容器中的元素是如何存储的，也没有指定容器可以存储的元素类型，但是限制了「append方法的形参类型必须和subscript返回值类型一致。这种限制构成所谓的「关联类型」。</p>
+<p>OK，我们让上文的非泛型类型IntStack遵循Container协议，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">IntStack</span>: <span class="title">Container</span> </span>{</div><div class="line">    <span class="keyword">var</span> items = [<span class="type">Int</span>]()</div><div class="line">    <span class="keyword">mutating</span> <span class="func"><span class="keyword">func</span></span> push(item: <span class="type">Int</span>) {</div><div class="line">        items.append(item)</div><div class="line">    }</div><div class="line">    </div><div class="line">    <span class="keyword">mutating</span> <span class="func"><span class="keyword">func</span></span> pop() -&gt; <span class="type">Int</span> {</div><div class="line">        <span class="keyword">return</span> items.removeLast()</div><div class="line">    }</div><div class="line">    </div><div class="line">    <span class="comment">// conformance to the Container protocol</span></div><div class="line">    <span class="keyword">mutating</span> <span class="func"><span class="keyword">func</span></span> append(item: <span class="type">Int</span>) {</div><div class="line">        items.append(item)</div><div class="line">    }</div><div class="line">    </div><div class="line">    <span class="keyword">var</span> <span class="built_in">count</span>: <span class="type">Int</span> {</div><div class="line">        <span class="keyword">return</span> items.<span class="built_in">count</span></div><div class="line">    }</div><div class="line">    </div><div class="line">    <span class="keyword">subscript</span>(i: <span class="type">Int</span>) -&gt; <span class="type">Int</span> {</div><div class="line">        <span class="keyword">return</span> items[i]</div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<p>更好的方式是写成下面这样：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">IntStack</span>: <span class="title">Container</span> </span>{</div><div class="line">    <span class="keyword">var</span> items = [<span class="type">Int</span>]()</div><div class="line">    <span class="keyword">mutating</span> <span class="func"><span class="keyword">func</span></span> push(item: <span class="type">Int</span>) {</div><div class="line">        items.append(item)</div><div class="line">    }</div><div class="line">    </div><div class="line">    <span class="keyword">mutating</span> <span class="func"><span class="keyword">func</span></span> pop() -&gt; <span class="type">Int</span> {</div><div class="line">        <span class="keyword">return</span> items.removeLast()</div><div class="line">    }</div><div class="line">    </div><div class="line">    <span class="comment">// conformance to the Container protocol</span></div><div class="line">    <span class="keyword">typealias</span> <span class="type">ItemType</span> = <span class="type">Int</span></div><div class="line">    </div><div class="line">    <span class="keyword">mutating</span> <span class="func"><span class="keyword">func</span></span> append(item: <span class="type">ItemType</span>) {</div><div class="line">        items.append(item)</div><div class="line">    }</div><div class="line">    </div><div class="line">    <span class="keyword">var</span> <span class="built_in">count</span>: <span class="type">Int</span> {</div><div class="line">        <span class="keyword">return</span> items.<span class="built_in">count</span></div><div class="line">    }</div><div class="line">    </div><div class="line">    <span class="keyword">subscript</span>(i: <span class="type">Int</span>) -&gt; <span class="type">ItemType</span> {</div><div class="line">        <span class="keyword">return</span> items[i]</div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<p>IntStack类型实现了Container协议的所有三个要求，在IntStack类型的每个包含部分的功能都满足这些要求。此外，IntStack指定了Container的实现，定义<code>typealias ItemType = Int</code>，将抽象的ItemType类型转换为具体的Int类型。</p>
+<p>对于泛型类型Stack，可以更简洁一点：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Stack</span>&lt;<span class="title">T</span>&gt;: <span class="title">Container</span> </span>{</div><div class="line">    <span class="keyword">var</span> items = [<span class="type">T</span>]()</div><div class="line">    <span class="keyword">mutating</span> <span class="func"><span class="keyword">func</span></span> push(item: <span class="type">T</span>) {</div><div class="line">        items.append(item)</div><div class="line">    }</div><div class="line">    </div><div class="line">    <span class="keyword">mutating</span> <span class="func"><span class="keyword">func</span></span> pop() -&gt; <span class="type">T</span> {</div><div class="line">        <span class="keyword">return</span> items.removeLast()</div><div class="line">    }</div><div class="line">    </div><div class="line">    <span class="comment">// conformance to the Container protocol</span></div><div class="line">    <span class="keyword">mutating</span> <span class="func"><span class="keyword">func</span></span> append(item: <span class="type">T</span>) {</div><div class="line">        items.append(item)</div><div class="line">    }</div><div class="line">    </div><div class="line">    <span class="keyword">var</span> <span class="built_in">count</span>: <span class="type">Int</span> {</div><div class="line">        <span class="keyword">return</span> items.<span class="built_in">count</span></div><div class="line">    }</div><div class="line">    </div><div class="line">    <span class="keyword">subscript</span>(i: <span class="type">Int</span>) -&gt; <span class="type">T</span> {</div><div class="line">        <span class="keyword">return</span> items[i]</div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<h3 id="扩展已存在类型为关联类型"><strong>扩展已存在类型为关联类型</strong></h3>
+<p>Swift的Array已经提供「append方法」，「count属性」以及「通过下标来查找一个自己的元素」。这三个功能都达到Container协议的要求，也就意味着你可以扩展Array去遵循Container协议，只要通过简单声明Array遵循该协议而已。声明一个已有类型遵循某个协议非常简单：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Array</span>: <span class="title">Container</span> </span>{}</div></pre></figure>
+
+<h3 id="Where语句"><strong>Where语句</strong></h3>
+<p>「类型约束」使得Swift的泛型更加强大，但是还不够灵活。想象一个应用场景。某个函数接受两个参数，这两个参数都要求遵循Container协议，除此之外，还都要求这两个参数（集合类型）的元素类型相同，这该怎么弄？单纯的「类型约束」是办不到的，好在Swift为我们带来了<code>where</code>语句。</p>
+<p><code>where</code>语句的目的很直接，增强了「泛型」的威力。根据我的理解，<code>where</code>应该属于那种「约束少」「灵活大」的语言特性，关于它的使用想必非常繁杂。</p>
+<p>下面举个栗子引出<code>where</code>的应用场景。定义一个名为allItemsMatch的泛型函数，顾名思义，该函数用来检查两个Container是否包含相同顺序的相同元素，如果所有元素顺序相同且值相同，则返回true，否则返回false，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="func"><span class="keyword">func</span></span> allItemsMatch&lt;</div><div class="line">    <span class="type">C1</span>: <span class="type">Container</span>, <span class="type">C2</span>: <span class="type">Container</span></div><div class="line">    <span class="keyword">where</span> <span class="type">C1</span>.<span class="type">ItemType</span> == <span class="type">C2</span>.<span class="type">ItemType</span>, <span class="type">C1</span>.<span class="type">ItemType</span>: <span class="type">Equatable</span>&gt;</div><div class="line">    (someContainer: <span class="type">C1</span>, anotherContainer: <span class="type">C2</span>) -&gt; <span class="type">Bool</span> {</div><div class="line">	</div><div class="line">    <span class="comment">// check that both containers contain the same number of items</span></div><div class="line">    <span class="keyword">if</span> someContainer.<span class="built_in">count</span> != anotherContainer.<span class="built_in">count</span> {</div><div class="line">        <span class="keyword">return</span> <span class="built_in">false</span></div><div class="line">    }</div><div class="line">    </div><div class="line">    <span class="comment">// check each pair of items to see if they are equivalent</span></div><div class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="number">0</span>..&lt;someContainer.<span class="built_in">count</span> {</div><div class="line">        <span class="keyword">if</span> someContainer[i] != anotherContainer[i] {</div><div class="line">            <span class="keyword">return</span> <span class="built_in">false</span></div><div class="line">        }</div><div class="line">    }</div><div class="line">    </div><div class="line">    <span class="comment">// all items match, so return true</span></div><div class="line">    <span class="keyword">return</span> <span class="built_in">true</span></div><div class="line">}</div></pre></figure>
+
+<p>泛型函数allItemsMatch头部信息告诉我们：</p>
+<ul>
+<li>该函数定义了两个参数，这两个参数的类型都遵循Container协议；</li>
+<li>该函数的两个参数（容器）中元素的类型一致；</li>
+<li>该函数的两个参数中的元素遵循Equatable协议；</li>
+</ul>
+<p>OK，我们来演示了allItemsMatch函数运算的使用：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">var</span> stackOfStrings = <span class="type">Stack</span>&lt;<span class="type">String</span>&gt;()</div><div class="line">stackOfStrings.push(<span class="string">"张不坏"</span>)</div><div class="line">stackOfStrings.push(<span class="string">"张无忌"</span>)</div><div class="line">stackOfStrings.push(<span class="string">"张全蛋"</span>)</div><div class="line"> </div><div class="line"><span class="keyword">var</span> arrayOfStrings = [<span class="string">"张不坏"</span>, <span class="string">"张无忌"</span>, <span class="string">"张全蛋"</span>]</div><div class="line"> </div><div class="line"><span class="keyword">if</span> allItemsMatch(stackOfStrings, arrayOfStrings) {</div><div class="line">    <span class="built_in">println</span>(<span class="string">"All items match."</span>)</div><div class="line">} <span class="keyword">else</span> {</div><div class="line">    <span class="built_in">println</span>(<span class="string">"Not all items match."</span>)</div><div class="line">}</div><div class="line"><span class="comment">// prints "All items match."</span></div></pre></figure>
+
+<p>上面的例子创建一个Stack单例来存储String，然后push三个字符串进栈。然后创建了一个Array实例，并初始化三个同样顺序同样值的字符串。这样，即便栈和数组属于不同的类型，但他们都遵循Container协议，而且它们都包含同样的类型值，完全满足allItemsMatch对参数的要求。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Swift/">Swift</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/05/14/Swift-Generics/" data-title="Swift泛型 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/05/15/Swift-Access-Control/" title="Swift Access Control">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  Swift Access Control</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/05/14/Swift-Protocols/"  title="Swift协议">
+ <strong>NEXT:</strong><br/> 
+ <span>Swift协议
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/05/14/Swift-Generics/" data-title="Swift泛型" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#关于泛型"><span class="toc-number">1.</span> <span class="toc-text">关于泛型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#泛型所解决的问题"><span class="toc-number">2.</span> <span class="toc-text">泛型所解决的问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#泛型函数"><span class="toc-number">3.</span> <span class="toc-text">泛型函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#泛型类型"><span class="toc-number">4.</span> <span class="toc-text">泛型类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#扩展一个泛型类型"><span class="toc-number">5.</span> <span class="toc-text">扩展一个泛型类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#类型约束"><span class="toc-number">6.</span> <span class="toc-text">类型约束</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#类型约束语法"><span class="toc-number">6.1.</span> <span class="toc-text">类型约束语法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#类型约束实战"><span class="toc-number">6.2.</span> <span class="toc-text">类型约束实战</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#关联类型"><span class="toc-number">7.</span> <span class="toc-text">关联类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#关联类型实战"><span class="toc-number">7.1.</span> <span class="toc-text">关联类型实战</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#扩展已存在类型为关联类型"><span class="toc-number">7.2.</span> <span class="toc-text">扩展已存在类型为关联类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Where语句"><span class="toc-number">7.3.</span> <span class="toc-text">Where语句</span></a></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

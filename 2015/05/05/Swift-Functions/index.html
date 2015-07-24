@@ -1,0 +1,563 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Swift函数 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="Function概述
+Swift中的function和其余语言（譬如C）中的function组成部分差不多，都包括：返回类型（若无返回值，则为void）、函数名、形参、函数体（逻辑代码）。只是Swift中function的长相和其他语言不太一样，它把返回值放在定义行的尾部，如下是一个包含包含返回值、">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/05/05/Swift-Functions/" title="Swift函数" itemprop="url">Swift函数</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-05-05T13:31:31.000Z" itemprop="datePublished">2015-05-05</time>
+    更新日期:<time datetime="2015-07-04T09:01:33.000Z" itemprop="dateModified">2015-07-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Function概述"><span class="toc-number">1.</span> <span class="toc-text">Function概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Function的返回值和参数"><span class="toc-number">2.</span> <span class="toc-text">Function的返回值和参数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Function可以有多个返回值"><span class="toc-number">2.1.</span> <span class="toc-text">Function可以有多个返回值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#External_Parameter_Name"><span class="toc-number">2.2.</span> <span class="toc-text">External Parameter Name</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#默认形参值"><span class="toc-number">2.3.</span> <span class="toc-text">默认形参值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#可变形参"><span class="toc-number">2.4.</span> <span class="toc-text">可变形参</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常数形参和变量形参"><span class="toc-number">2.5.</span> <span class="toc-text">常数形参和变量形参</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#In-Out形参"><span class="toc-number">2.6.</span> <span class="toc-text">In-Out形参</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Function类型"><span class="toc-number">3.</span> <span class="toc-text">Function类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#使用函数类型"><span class="toc-number">3.1.</span> <span class="toc-text">使用函数类型</span></a></li></ol></li></ol>
+		</div>
+		
+		<h2 id="Function概述"><strong>Function概述</strong></h2>
+<p>Swift中的function和其余语言（譬如C）中的function组成部分差不多，都包括：返回类型（若无返回值，则为void）、函数名、形参、函数体（逻辑代码）。只是Swift中function的长相和其他语言不太一样，它把返回值放在定义行的尾部，如下是一个包含包含返回值、形参的function：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="func"><span class="keyword">func</span></span> welcome(name: <span class="type">String</span>) -&gt; <span class="type">String</span> {</div><div class="line">    <span class="keyword">let</span> ret = <span class="string">"Welcome, "</span> + name + <span class="string">"!"</span></div><div class="line">    <span class="built_in">println</span>(ret)</div><div class="line">    <span class="keyword">return</span> ret;</div><div class="line">}</div></pre></figure>
+
+<h2 id="Function的返回值和参数"><strong>Function的返回值和参数</strong></h2>
+<h3 id="Function可以有多个返回值"><strong>Function可以有多个返回值</strong></h3>
+<p>相对于OC，Swift中有一个新成员叫<code>Tuple</code>，它的主要应用场景就是作为函数/方法的参数或返回值。当function的返回值是一个tuple类型时，就意味着函数/方法可以同时返回多个值（这在OC中一般使用NSDictionary或struct），定义和使用含有多个返回值的函数比较容易，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="func"><span class="keyword">func</span></span> minMax(array: [<span class="type">Int</span>]) -&gt; (<span class="built_in">min</span>: <span class="type">Int</span>, <span class="built_in">max</span>: <span class="type">Int</span>) {</div><div class="line">    <span class="keyword">var</span> cMin = array[<span class="number">0</span>]</div><div class="line">    <span class="keyword">var</span> cMax = array[<span class="number">0</span>]</div><div class="line">    <span class="keyword">for</span> index <span class="keyword">in</span> <span class="number">1</span>..&lt;array.<span class="built_in">count</span> {</div><div class="line">        <span class="keyword">let</span> value = array[index]</div><div class="line">        <span class="keyword">if</span> value &lt; cMin {</div><div class="line">            cMin = value</div><div class="line">        } <span class="keyword">else</span> <span class="keyword">if</span> (value &gt; cMax) {</div><div class="line">            cMax = value</div><div class="line">        }</div><div class="line">    }</div><div class="line">   </div><div class="line">    <span class="keyword">return</span> (cMin, cMax)</div><div class="line">}</div></pre></figure>
+
+<h3 id="External_Parameter_Name"><strong>External Parameter Name</strong></h3>
+<p>上文出现的几个函数实体都含有参数，各个参数都有自己的名字，但是这些参数名都只能在函数内部使用（C语言中叫这个为<code>实参</code>），在调用时，这些参数对于调用者来说是没有意义的，调用者只要保证传入的参数值和定义式中的值意义对应即可，譬如上文的welcome函数的调用式可以是<code>welcome(&quot;张不坏&quot;)</code>，minMax函数的调用式可以是<code>let (xMin, xMax) = minMax([7,8,9,3,4,5])</code>。</p>
+<p>但是，在调用函数时保持传入的参数次序和函数定义式中的参数次序的一致性是一件挺麻烦的事情，不够优雅，并且不直观，譬如对于这样的调用<code>welcome(&quot;张不坏&quot;)</code>，一段时间之后再看这行代码，会想『卧槽，welcome中的参数是干嘛的』；且参数越多，可读性越差，不得不去查看函数原型才能理解各个参数各自的用处；再回到OC上，会很快发现OC中根本不存在这样的问题，因为在OC中，参数名已经成为了函数名的一部分，非常直观（呃，虽然导致函数名很长），即便不看函数原型，我们也能直观知道每个参数的作用。</p>
+<p>Swift继承了OC的优点（可能有人认为这是缺点，那么可以理解为这是OC给Swift带来的历史包袱），对welcome函数定义式稍作修改，我们在调用上述的welcome函数时就变成了<code>welcome(name: &quot;张不坏&quot;)</code>，welcome定义式修改如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="func"><span class="keyword">func</span></span> welcome(name name: <span class="type">String</span>) -&gt; <span class="type">String</span> {</div><div class="line">    <span class="keyword">let</span> ret = <span class="string">"Welcome, "</span> + name + <span class="string">"!"</span></div><div class="line">    <span class="built_in">println</span>(ret)</div><div class="line">    <span class="keyword">return</span> ret;</div><div class="line">}</div></pre></figure>
+
+<p>其中，参数列表<code>name name: String</code>中的第一个<code>name</code>是<code>external parameter name</code>，第二个<code>name</code>是<code>local parameter name</code>，抽象描述如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="func"><span class="keyword">func</span></span> someFunction(externalParameterName localParameterName: <span class="type">SomeType</span>) {</div><div class="line">    <span class="comment">// function body goes here, and can use localParameterName</span></div><div class="line">    <span class="comment">// to refer to the argument value for that parameter</span></div><div class="line">}</div></pre></figure>
+
+<p>Swift要求，如果在函数/方法定义式中为某个参数定义了external parameter name，那么在调用时就必须使用它，也就是说，经过这么一折腾后，welcome的调用式不能再写成这样<code>welcome(&quot;张不坏&quot;)</code>，必须写成<code>welcome(name: &quot;张不坏&quot;)</code>，一段时间之后回头再看，会心一笑：『嗯，这个参数是表示「名字」』。</p>
+<p><strong>Shorthand External Parameter Names</strong></p>
+<p>有时候，external parameter name和local parameter name是一样的，譬如上述的welcome函数，在这种情况下，有一种快捷的写法：参数名只用写一遍，然后在参数名前加上一个<code>#</code>作为前缀，这就告诉Swift为该参数使用相同的external parameter name和local parameter name。如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="func"><span class="keyword">func</span></span> welcome(#name: <span class="type">String</span>) -&gt; <span class="type">String</span> {</div><div class="line">    <span class="keyword">let</span> ret = <span class="string">"Welcome, "</span> + name + <span class="string">"!"</span></div><div class="line">    <span class="built_in">println</span>(ret)</div><div class="line">    <span class="keyword">return</span> ret;</div><div class="line">}</div></pre></figure>
+
+<p>到了这里就自然产生了一个问题：如何看待external parameter name呢？在什么场合下使用，在什么场合下不宜使用呢？希望以后能回答这个问题吧！</p>
+<h3 id="默认形参值"><strong>默认形参值</strong></h3>
+<p>默认形参值并不是Swift的特性，在其他很多语言（譬如Python）中早已经用到了。可以为任意形参定义默认值以作为函数定义的一部分。如果定义了默认值，那么调用函数时就可以省略该形参。默认形参的定义原则一般是『把具有默认值的形参放置在形参列表末尾』，这样将确保所有函数调用都是用顺序相同的无默认值实参，并让每种情况下清晰地调用相同的函数。譬如：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="comment">// 连接两个字符串并返回</span></div><div class="line"><span class="func"><span class="keyword">func</span></span> <span class="built_in">join</span>(string s1: <span class="type">String</span>, <span class="built_in">toString</span> s2: <span class="type">String</span>, withJoiner joiner: <span class="type">String</span> = <span class="string">" "</span>) -&gt; <span class="type">String</span> {</div><div class="line">    <span class="keyword">return</span> s1 + joiner + s2</div><div class="line">}</div></pre></figure>
+
+<p>上述join函数的第三个参数joiner具有默认值，其调用式如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="comment">// 不使用默认参数</span></div><div class="line"><span class="keyword">let</span> newStr1 = <span class="built_in">join</span>(string: <span class="string">"张"</span>, <span class="built_in">toString</span>: <span class="string">"不坏"</span>, withJoiner: <span class="string">"-"</span>)</div><div class="line"><span class="comment">// 使用默认参数</span></div><div class="line"><span class="keyword">let</span> newStr2 = <span class="built_in">join</span>(string: <span class="string">"张"</span>, <span class="built_in">toString</span>: <span class="string">"不坏"</span>)</div></pre></figure>
+
+<p>在对待『具有默认值的形参』时，Swift认为：</p>
+<blockquote>
+<p>In most cases, it is useful to provide an external name of any parameter with a default value. This ensures that the argument for that parameter is clear in purpose if a value provided when the function is called.</p>
+</blockquote>
+<p>简而言之，Swift认为，一般的形参是否有external parameter name它不管，但是对于具有默认值的形参，它认为具有一个external parameter name是非常有必要的，因为这样会让逻辑更清晰。也因此，你若不手动为『具有默认值的形参』指明external parameter name，Swift会自动帮你补上（补上一个与local parameter name一样的external parameter name）。</p>
+<p>个人认为，Swift说得有道理！<br>P.S：试想一下，当函数中有多个『具有默认值的形参』但它们都没有external parameter name时会发生什么？</p>
+<h3 id="可变形参"><strong>可变形参</strong></h3>
+<p>一个<code>可变形参</code>可接受零个或多个指定类型的值。Swift的function中定义形参简单得令人发指，只需要在形参的类型后面插入<code>...</code>即可。关于函数的可变形参，说明如下：</p>
+<ul>
+<li>一个函数最多只能有一个<code>可变形参</code>；</li>
+<li><code>可变形参</code>可以对应任意多个输入值，但这些输入值必须和指定的类型一致；</li>
+<li>传递至<code>可变形参</code>的值在函数body里是以适当形式的数组存在的；</li>
+<li>当一个函数既包括<code>可变形参</code>又包括<code>具有默认值的形参</code>时，参数列表的参数排列必须是<code>普通形参 -- 具有默认值的形参 -- 可变形参</code></li>
+</ul>
+<p>如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="func"><span class="keyword">func</span></span> welcome(header: <span class="type">String</span> = <span class="string">"welcome"</span>, #names: <span class="type">String</span>...) {</div><div class="line">    <span class="keyword">var</span> str = header + <span class="string">","</span></div><div class="line">    <span class="keyword">for</span> name <span class="keyword">in</span> names {</div><div class="line">        str += <span class="string">" "</span></div><div class="line">        str += name</div><div class="line">    }</div><div class="line">    <span class="built_in">println</span>(str)</div><div class="line">}</div><div class="line">welcome(names:<span class="string">"张无忌"</span>, <span class="string">"张不坏"</span>, <span class="string">"张全蛋"</span>)</div><div class="line"><span class="comment">// 输出：welcome, 张无忌, 张不坏, 张全蛋</span></div></pre></figure>
+
+<p>虽然Swift文档没有说明，但经过个人使用体验发现，当函数中同时含有<code>可变形参</code>和<code>具有默认值的形参</code>时，最好为<code>可变参数</code>指明external parameter name，否则可能会产生一些问题。</p>
+<h3 id="常数形参和变量形参"><strong>常数形参和变量形参</strong></h3>
+<p><strong>函数的形参默认是常量</strong>。即任何试图在函数body内改变函数形参的值的行为都会引发编译错误。</p>
+<p>P.S：根据我的理解，函数处理形参都会有一个拷贝的过程，对于值类型，进行值拷贝，对于引用类型，进行引用拷贝；但无论如何，默认情况下拷贝得到的都是『常量副本』；</p>
+<p>但是有时候，函数有一个形参值的『变量副本』是非常有用的。您可以指定一个或多个形参作为变量形参，从而避免在函数内部为自己定义一个新的变量，具体做法是在参数名称前用关键字var定义变量参数，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="func"><span class="keyword">func</span></span> addPrefix(<span class="keyword">var</span> string: <span class="type">String</span>, <span class="keyword">prefix</span>: <span class="type">String</span>) -&gt; <span class="type">String</span> {</div><div class="line">    string = <span class="keyword">prefix</span> + string</div><div class="line">    <span class="keyword">return</span> string</div><div class="line">}</div><div class="line">     </div><div class="line"><span class="comment">// 调用addPrefix</span></div><div class="line"><span class="keyword">let</span> str1 = <span class="string">"不坏"</span></div><div class="line"><span class="keyword">var</span> str2 = addPrefix(str1, <span class="string">"张"</span>)</div><div class="line"><span class="built_in">println</span>(str1)       <span class="comment">// 输出：不坏</span></div><div class="line"><span class="built_in">println</span>(str2)       <span class="comment">// 输出：张不坏</span></div></pre></figure>
+
+<h3 id="In-Out形参"><strong>In-Out形参</strong></h3>
+<p>上文讨论了『变量形参』，『变量形参』的本质是对传入的参数进行拷贝（至于值拷贝还是引用拷贝先不谈），得到的拷贝是变量值，也就是它是可以修改的，可以为它赋上别的值，也只是在函数内部修改，不会改变形参本身的值。</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span>: <span class="title">NSObject</span> </span>{</div><div class="line">    <span class="keyword">var</span> name: <span class="type">String</span>?</div><div class="line">    <span class="keyword">init</span>(name: <span class="type">String</span>) {</div><div class="line">        <span class="keyword">self</span>.name = name</div><div class="line">    }</div><div class="line">}</div><div class="line">	</div><div class="line"><span class="func"><span class="keyword">func</span></span> changeName(<span class="keyword">var</span> student: <span class="type">Student</span>) {</div><div class="line">    student = <span class="type">Student</span>(name: <span class="string">"no-one"</span>)    <span class="comment">// student是一个变量（指针），可以修改</span></div><div class="line">}</div><div class="line">	</div><div class="line"><span class="keyword">let</span> jason = <span class="type">Student</span>(name: <span class="string">"Jason"</span>)</div><div class="line">changeName(jason)</div><div class="line"><span class="built_in">println</span>(<span class="string">"name of the student: <span class="subst">\(jason.name!)</span>"</span>)</div><div class="line"><span class="comment">// 输出： name of the student: Jason</span></div><div class="line"><span class="comment">// jason没有改变</span></div></pre></figure>
+
+<p>但有时候我们希望<code>jason</code>被修改，处理完后它不再是原来的对象；</p>
+<p>这就要引入<code>in-out</code>形参，在定义形参时添加<code>inout</code>关键字即可指明in-out形参，in-out形参有一个传递至函数的值，由函数修改，并从函数返回来替换原来的值。</p>
+<p>值得一提的是，in-out参数不能有默认值，如果标记参数为inout，则该参数不能被同时标记为var或let；并且只能传递一个变量作为in-out形参对应的实参。不能传递一个常量或者字面量作为实参，因为常量和字面量不能被修改。此外，当把变量作为实参传递给in-out形参时，需要在变量前添加<code>&amp;</code>符号，以表明它可以被函数修改。</p>
+<p>举个栗子，定义一个函数，用来产生NSError对象：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="comment">// 产生一个NSError对象</span></div><div class="line"><span class="func"><span class="keyword">func</span></span> generateError(<span class="keyword">inout</span> error: <span class="type">NSError</span>?) {</div><div class="line">    error = <span class="type">NSError</span>(domain: <span class="string">"test-domain"</span>, code: <span class="number">404</span>, userInfo: <span class="built_in">nil</span>)</div><div class="line">}</div><div class="line">   </div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">ViewController</span>: <span class="title">UIViewController</span> </span>{</div><div class="line">     </div><div class="line">    <span class="keyword">override</span> <span class="func"><span class="keyword">func</span></span> viewDidLoad() {</div><div class="line">        <span class="keyword">super</span>.viewDidLoad()</div><div class="line">       </div><div class="line">        <span class="comment">// 调用generateError</span></div><div class="line">        <span class="keyword">var</span> error: <span class="type">NSError</span>?</div><div class="line">        generateError(&error)</div><div class="line">       </div><div class="line">        <span class="keyword">if</span> error != <span class="built_in">nil</span> {</div><div class="line">            <span class="built_in">println</span>(<span class="string">"error domain: <span class="subst">\(error!.domain)</span>"</span>)</div><div class="line">            <span class="comment">// 输出：error domain: test-domain</span></div><div class="line">        }</div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<p>是不是有种熟悉的感觉呢？呵呵，这类似的代码在OC中太常见了，如果用OC将上述代码写一遍，则是这样的：</p>
+<figure class="highlight Objective-C"><pre><div class="line"><span class="comment">// 产生一个NSError对象</span></div><div class="line"><span class="keyword">void</span> generateError(<span class="built_in">NSError</span> **error) {</div><div class="line">    *error = [<span class="built_in">NSError</span> errorWithDomain:<span class="string">@"test-domain"</span> code:<span class="number">404</span> userInfo:<span class="literal">nil</span>];</div><div class="line">}</div><div class="line">   </div><div class="line">- (<span class="keyword">void</span>)viewDidLoad {</div><div class="line">   </div><div class="line">    [<span class="keyword">super</span> viewDidLoad];</div><div class="line">    <span class="built_in">NSError</span> *error;</div><div class="line">    generateError(&error);</div><div class="line">    <span class="keyword">if</span> (error) {</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"error domain: %@"</span>, error<span class="variable">.domain</span>);</div><div class="line">        <span class="comment">// 输出：error domain: test-domain</span></div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<p>通过这个示例，应该可以明白Swift中in-out形参的存在意义了吧！</p>
+<h2 id="Function类型"><strong>Function类型</strong></h2>
+<p>每一个函数都有特定的类型，函数的类型由函数的形参和返回类型决定，如下有两个函数：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="func"><span class="keyword">func</span></span> addTwoInts(a: <span class="type">Int</span>, b: <span class="type">Int</span>) -&gt; <span class="type">Int</span> {</div><div class="line">    <span class="keyword">return</span> a + b</div><div class="line">}</div><div class="line">   </div><div class="line"><span class="func"><span class="keyword">func</span></span> multiplyTwoInts(<span class="built_in">c</span>: <span class="type">Int</span>, d: <span class="type">Int</span>) -&gt; <span class="type">Int</span> {</div><div class="line">    <span class="keyword">return</span> <span class="built_in">c</span> * d</div><div class="line">}</div></pre></figure>
+
+<p>显然，这两个函数的形参和返回值完全一样，都是<code>(Int, Int)-&gt;Int</code>，所以可以说这两个函数是一个类型的参数。</p>
+<p>返回值类型一样还比较容易理解，形参一样如何理解呢？</p>
+<p><strong>形参类型</strong></p>
+<p><code>(a: Int, b: Int)</code>和<code>(c: Int, d: Int)</code>显然属于同类型形参了；那么<code>(#a: Int, #b: Int)</code>和<code>(#c: Int, #d: Int)</code>呢？示例演示表明：Swift认为它们仍然是同一种类型，仍然是<code>(Int, Int)-&gt;Int</code>类型，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="comment">// 两个整数相加</span></div><div class="line"><span class="func"><span class="keyword">func</span></span> addTwoInts(#a: <span class="type">Int</span>, #b: <span class="type">Int</span>) -&gt; <span class="type">Int</span> {</div><div class="line">    <span class="keyword">return</span> a + b</div><div class="line">}</div><div class="line"><span class="comment">// 两个整数相乘</span></div><div class="line"><span class="func"><span class="keyword">func</span></span> multiplyTwoInts(#<span class="built_in">c</span>: <span class="type">Int</span>, #d: <span class="type">Int</span>) -&gt; <span class="type">Int</span> {</div><div class="line">    <span class="keyword">return</span> <span class="built_in">c</span> * d</div><div class="line">}</div><div class="line">     </div><div class="line"><span class="comment">// 测试</span></div><div class="line"><span class="keyword">let</span> aFunction1:(<span class="type">Int</span>, <span class="type">Int</span>)-&gt;<span class="type">Int</span> = addTwoInts</div><div class="line"><span class="keyword">let</span> result1 = aFunction1(<span class="number">4</span>, <span class="number">5</span>)</div><div class="line">     </div><div class="line"><span class="keyword">let</span> aFunction2:(<span class="type">Int</span>, <span class="type">Int</span>)-&gt;<span class="type">Int</span> =  multiplyTwoInts</div><div class="line"><span class="keyword">let</span> result2 = aFunction2(<span class="number">4</span>, <span class="number">5</span>)</div><div class="line">     </div><div class="line"><span class="built_in">println</span>(<span class="string">"result1 = <span class="subst">\(result1)</span>"</span>)     <span class="comment">// 输出：result1 = 9</span></div><div class="line"><span class="built_in">println</span>(<span class="string">"result2 = <span class="subst">\(result2)</span>"</span>)     <span class="comment">// 输出：result2 = 20</span></div></pre></figure>
+
+<p>我比较疑惑的是Swift是如何处理<code>函数重名</code>问题的。同一个作用域下的函数重名的情况可能有两种：</p>
+<ul>
+<li>函数名相同，但类型不同；</li>
+<li>函数名相同，且类型相同；</li>
+</ul>
+<p><strong>『名字相同，但类型不同』的重名函数</strong></p>
+<figure class="highlight Swift"><pre><div class="line"><span class="comment">// 定义三个函数，它们的『函数名相同，但类型不同』</span></div><div class="line"></div><div class="line"><span class="comment">// 1号sayHello</span></div><div class="line"><span class="func"><span class="keyword">func</span></span> sayHello() {</div><div class="line">    <span class="built_in">println</span>(<span class="string">"Hello"</span>)</div><div class="line">}</div><div class="line">     </div><div class="line"><span class="comment">// 2号sayHello</span></div><div class="line"><span class="func"><span class="keyword">func</span></span> sayHello() -&gt; <span class="type">Bool</span> {</div><div class="line">    <span class="built_in">println</span>(<span class="string">"Hello"</span>)</div><div class="line">    <span class="keyword">return</span> <span class="built_in">true</span></div><div class="line">}</div><div class="line">     </div><div class="line"><span class="comment">// 3号sayHello</span></div><div class="line"><span class="func"><span class="keyword">func</span></span> sayHello(name: <span class="type">String</span>) {</div><div class="line">    <span class="built_in">println</span>(<span class="string">"Hello, <span class="subst">\(name)</span>"</span>)</div><div class="line">}</div></pre></figure>
+
+<p>如此定义不会有任何编译器错误，Swift是允许『名字相同，但类型不同』的重名函数存在同一个作用域内的；</p>
+<p>不过调用『名字相同，但类型不同』的函数有一点点问题，上面的<code>3号sayHello</code>函数相对来说比较清晰，执行<code>sayHello(&quot;张不坏&quot;)</code>这条语句时Swift只会去调用<code>3号sayHello</code>；但对于<code>1号sayHello</code>和<code>2号sayHello</code>函数的调用就不是那么清晰了，执行<code>sayHello()</code>时Swift会调用哪个呢？<code>1号sayHello</code>还是<code>2号sayHello</code>？编译器也不知道，所以会产生这样的编译错误：<code>Ambiguous use of &#39;sayHello&#39;</code>。就没有办法了吗？No，有办法，换个姿势即可：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">let</span> sayHello1: (<span class="type">Void</span>)-&gt;<span class="type">Void</span> = sayHello</div><div class="line"><span class="keyword">let</span> sayHello2: (<span class="type">Void</span>)-&gt;<span class="type">Bool</span> = sayHello</div><div class="line"><span class="comment">// 调用1号sayHello</span></div><div class="line">sayHello1()</div><div class="line"><span class="comment">// 调用2号sayHello</span></div><div class="line"><span class="keyword">let</span> ret = sayHello2()</div></pre></figure>
+
+<p>但这无非是给用户（函数使用者）带来麻烦。所以笔者认为，虽然Swift对函数定义的名称限制比较少，但在同一作用域的定义函数时，尽量不要定义『调用式可能相同』的重名函数，否则会给用户造成困惑。</p>
+<p><strong>『名字相同，且类型相同』的重名函数</strong></p>
+<p>显然，<code>func sayHello(name: String) {}</code>和<code>func sayHello(welcomeWord: String) {}</code>这两个函数是没办法在同一个作用域同时定义的，但是<code>func sayHello(name: String) {}</code>却可以和<code>func sayHello(#name2: String) {}</code>同时出现在一个作用域。如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="comment">// 3号sayHello</span></div><div class="line"><span class="func"><span class="keyword">func</span></span> sayHello(name: <span class="type">String</span>) {</div><div class="line">    <span class="built_in">println</span>(<span class="string">"Hello, <span class="subst">\(name)</span>"</span>)</div><div class="line">}</div><div class="line">     </div><div class="line"><span class="comment">// 4号sayHello</span></div><div class="line"><span class="func"><span class="keyword">func</span></span> sayHello(#name2: <span class="type">String</span>) {</div><div class="line">    <span class="built_in">println</span>(<span class="string">"Hello,"</span>)</div><div class="line">}</div></pre></figure>
+
+<p>虽然，<code>3号sayHello</code>和<code>4号sayHello</code>的函数类型都是<code>(String)-&gt;void</code>，但是考虑到它们的调用式不同，Swift也允许它们同时出现在同一个作用域内，但这依然带来了一些问题，譬如如下这几行代码无法通过编译：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">let</span> sayHello3:(<span class="type">String</span>)-&gt;<span class="type">Void</span> = sayHello</div><div class="line">sayHello(<span class="string">"张不坏"</span>)  <span class="comment">// 调用「3号sayHello」</span></div></pre></figure>
+
+<p>这几行代码同样会产生编译错误：<code>Ambiguous use of &#39;sayHello&#39;</code>。</p>
+<p><strong>总结</strong>：虽然Swift对函数命名非常宽容，但在定义重名函数时一定要注意<code>Ambiguous use of &#39;xxoo方法&#39;</code>这个问题。</p>
+<h3 id="使用函数类型"><strong>使用函数类型</strong></h3>
+<p>在Swift中可以像任何其他类型一样使用『函数类型』，譬如可以定义一个常量或变量为『函数类型』（其实上文中已经多次使用了『函数类型』）。</p>
+<p><strong>使用「函数类型」定义变量</strong></p>
+<p>举一个稍微复杂一点的栗子，当函数类型中含有可变参数时：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="comment">// 5号sayHello</span></div><div class="line"><span class="func"><span class="keyword">func</span></span> sayHello(welcomeWord: <span class="type">String</span> = <span class="string">"Hello"</span>, toWho names: <span class="type">String</span>...) {</div><div class="line">    <span class="keyword">var</span> words = welcomeWord</div><div class="line">    <span class="keyword">for</span> name <span class="keyword">in</span> names {</div><div class="line">        words += <span class="string">", "</span></div><div class="line">        words += name</div><div class="line">    }</div><div class="line">    <span class="built_in">println</span>(words)</div><div class="line">}</div><div class="line"><span class="comment">// 使用「5号sayHello」</span></div><div class="line"><span class="keyword">let</span> sayHello5: (<span class="type">String</span>, <span class="type">String</span>...) -&gt; <span class="type">Void</span> = sayHello</div><div class="line">sayHello5(<span class="string">"早上好"</span>, <span class="string">"张无忌"</span>, <span class="string">"张不坏"</span>, <span class="string">"张全蛋"</span>)</div><div class="line"><span class="comment">// 输出：早上好，张无忌，张不坏，张全蛋</span></div></pre></figure>
+
+<p>除此之外，还可以：</p>
+<ul>
+<li>使用「函数类型」修饰形参；</li>
+<li>使用「函数类型」修饰返回值；</li>
+</ul>
+<p>这个比较简单，暂时没有啥使用上的困惑，暂时略过吧，以后有疑问再补充！</p>
+<p>除此之外，Swift中还有「嵌套函数」这个概念，这个概念在很多其他方法中也存在，使用比较简单，只是尚且不清楚在Swift中有啥「最佳实践」？</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Swift/">Swift</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/05/05/Swift-Functions/" data-title="Swift函数 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/05/05/Swift-Closures/" title="Swift闭包">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  Swift闭包</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/05/05/Swift-Control-Flow/"  title="Swift控制语句">
+ <strong>NEXT:</strong><br/> 
+ <span>Swift控制语句
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/05/05/Swift-Functions/" data-title="Swift函数" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Function概述"><span class="toc-number">1.</span> <span class="toc-text">Function概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Function的返回值和参数"><span class="toc-number">2.</span> <span class="toc-text">Function的返回值和参数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Function可以有多个返回值"><span class="toc-number">2.1.</span> <span class="toc-text">Function可以有多个返回值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#External_Parameter_Name"><span class="toc-number">2.2.</span> <span class="toc-text">External Parameter Name</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#默认形参值"><span class="toc-number">2.3.</span> <span class="toc-text">默认形参值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#可变形参"><span class="toc-number">2.4.</span> <span class="toc-text">可变形参</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常数形参和变量形参"><span class="toc-number">2.5.</span> <span class="toc-text">常数形参和变量形参</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#In-Out形参"><span class="toc-number">2.6.</span> <span class="toc-text">In-Out形参</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Function类型"><span class="toc-number">3.</span> <span class="toc-text">Function类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#使用函数类型"><span class="toc-number">3.1.</span> <span class="toc-text">使用函数类型</span></a></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

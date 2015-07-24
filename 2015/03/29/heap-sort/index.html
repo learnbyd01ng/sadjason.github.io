@@ -1,0 +1,501 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>堆排序 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="写在前面
+堆排序中“堆”和编译器中的“堆栈”的“堆”不是一个概念，堆排序的处理对象一般是数组（应该只有数组吧）。本文的标题虽然是“堆排序”，但围绕的核心是“堆”，换句话说，本文不仅仅涉及堆排序，还涉及“堆”的其他应用，譬如最大优先队列。
+堆的介绍
+堆排序（heapsort），与归并排序一样，但不同于">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/03/29/heap-sort/" title="堆排序" itemprop="url">堆排序</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-03-29T11:06:06.000Z" itemprop="datePublished">2015-03-29</time>
+    更新日期:<time datetime="2015-07-22T15:58:30.000Z" itemprop="dateModified">2015-07-22</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#堆的介绍"><span class="toc-number">2.</span> <span class="toc-text">堆的介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#堆排序"><span class="toc-number">3.</span> <span class="toc-text">堆排序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最大优先队列"><span class="toc-number">4.</span> <span class="toc-text">最大优先队列</span></a></li></ol>
+		</div>
+		
+		<h2 id="写在前面">写在前面</h2>
+<p>堆排序中“堆”和编译器中的“堆栈”的“堆”不是一个概念，堆排序的处理对象一般是数组（应该只有数组吧）。本文的标题虽然是“堆排序”，但围绕的核心是“堆”，换句话说，本文不仅仅涉及堆排序，还涉及“堆”的其他应用，譬如最大优先队列。</p>
+<h2 id="堆的介绍">堆的介绍</h2>
+<p>堆排序（heapsort），与归并排序一样，但不同于插入排序的是，堆排序的时间复杂度也是O(nlogn)；而与插入排序一样，但不同于归并排序的是，堆排序也具备源址性，即任何时候只需要常数个额外的元素空间存储临时数据。因此，堆排序比“归并排序”和“插入排序”都要好。</p>
+<p>P.S：也许其唯一的劣势在于“不能用来对链表进行排序”吧。</p>
+<p>关于堆的更多知识点，尤其是原理相关的，《算法导论》上有相当详细的介绍，此处不再赘述。</p>
+<p>叙述本文主要围绕以下几个问题：</p>
+<ol>
+<li>最大/最小堆的应用场景？</li>
+<li>最大/最小堆的应用场景分别要实现哪些逻辑？</li>
+</ol>
+<p>最大堆和最小堆的内容几乎一样，下文就仅以最大堆为参考。</p>
+<p>就笔者目前所知，最大堆的应用场景至少有两个：堆排序和最大优先队列的实现。</p>
+<p>无论是“堆排序”还是“最大优先队列”，都必然少不了路径索引相关的操作：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="comment"># 根据index返回parent index，不存在则返回-1</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">parent</span><span class="params">(index)</span>:</span></div><div class="line">    <span class="keyword">if</span> index &lt; <span class="number">1</span>:</div><div class="line">        <span class="keyword">return</span> -<span class="number">1</span></div><div class="line">    <span class="keyword">else</span>:</div><div class="line">        <span class="keyword">return</span> (index - <span class="number">1</span>) / <span class="number">2</span></div><div class="line">	</div><div class="line"><span class="comment"># 根据index返回left node的index，不存在则返回-1</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">left</span><span class="params">(index, heap_size)</span>:</span></div><div class="line">    temp = (index + <span class="number">1</span>) * <span class="number">2</span> -<span class="number">1</span></div><div class="line">    <span class="keyword">if</span> temp &gt;= heap_size:</div><div class="line">        <span class="keyword">return</span> -<span class="number">1</span></div><div class="line">    <span class="keyword">return</span> temp</div><div class="line">	</div><div class="line"><span class="comment"># 根据index返回right node的index，不存在则返回-1</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">right</span><span class="params">(index, heap_size)</span>:</span></div><div class="line">    temp = (index + <span class="number">1</span>) * <span class="number">2</span></div><div class="line">    <span class="keyword">if</span> temp &gt;= heap_size:</div><div class="line">        <span class="keyword">return</span> -<span class="number">1</span></div><div class="line">    <span class="keyword">return</span> temp</div></pre></figure>
+
+<h2 id="堆排序">堆排序</h2>
+<p>相较而言，堆排序的操作更简单一些，因为所处理的对象是静态的数组，而不涉及增、删、改。</p>
+<p>堆排序的过程是：创建最大堆 — 将最大元素与堆的最后叶子结点互换位置 — 缩减堆大小 — 维持最大堆性质 — 将最大元素与堆的最后叶子结点互换位置 — 缩减堆大小 — 维持最大堆性质…</p>
+<p>上述涉及四个过程，“缩减堆大小”一行代码解决，“将最大元素与堆的最后叶子结点互换位置”也比较简单。所以为了实现堆排序，我们主要需要实现两个逻辑块：创建最大堆、维持最大堆。</p>
+<p>先说“维持最大堆性质”的实现。说明如下：已知堆的root节点是新的节点，root节点的左右子树都具备最大堆性质，所需要做的事情是通过一定的修改确保整棵数都是一个最大堆。</p>
+<p>维持最大堆的Python实现如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="comment"># 维持最大堆性质</span></div><div class="line"><span class="comment"># rootIndex表示root node所对应的index</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">max_heapify</span><span class="params">(A, rootIndex, heap_size)</span>:</span></div><div class="line">    <span class="keyword">if</span> rootIndex &lt; <span class="number">0</span> <span class="keyword">or</span> rootIndex &gt;= heap_size:</div><div class="line">        <span class="keyword">return</span></div><div class="line">	</div><div class="line">    lIndex = left(rootIndex, heap_size)    <span class="comment"># the index of left child ndoe</span></div><div class="line">    rIndex = right(rootIndex, heap_size)   <span class="comment"># the index of right child node</span></div><div class="line">	</div><div class="line">    largestIndex = rootIndex</div><div class="line">	</div><div class="line">    <span class="keyword">if</span> lIndex != -<span class="number">1</span> <span class="keyword">and</span> A[lIndex] &gt; A[largestIndex]:</div><div class="line">        largestIndex = lIndex</div><div class="line">	</div><div class="line">    <span class="keyword">if</span> rIndex != -<span class="number">1</span> <span class="keyword">and</span> A[rIndex] &gt; A[largestIndex]:</div><div class="line">        largestIndex = rIndex</div><div class="line">	</div><div class="line">    <span class="keyword">if</span> largestIndex != rootIndex:</div><div class="line">        temp = A[rootIndex]</div><div class="line">        A[rootIndex] = A[largestIndex]</div><div class="line">        A[largestIndex] = temp</div><div class="line">	</div><div class="line">        max_heapify(A, largestIndex, heap_size)</div></pre></figure>
+
+<p>然后是“创建最大堆”，我们可以用自底向上的方法利用过程max_heapify把一个大小为A.length的数组A[0..n-1]转化为最大堆。很容易计算出，子数组A[n/2..n-1]都是叶子节点，每个叶子节点都可以看成只包含一个元素的堆。所以过程build_max_heap的实质是对树中的其他节点都调用一次max_heapify，Python实现如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="comment"># 创建最大堆</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">build_max_heap</span><span class="params">(A)</span>:</span></div><div class="line">    len_A = len(A)</div><div class="line">    heap_size = len_A</div><div class="line">    <span class="keyword">for</span> rootIndex <span class="keyword">in</span> range(<span class="number">0</span>, len_A/<span class="number">2</span>)[::-<span class="number">1</span>]:</div><div class="line">        max_heapify(A, rootIndex, heap_size)</div></pre></figure>
+
+<p>OK，有了max_heapify和build_max_heap的实现，堆排序的代码就非常容易了，如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="comment"># 堆排序</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">heap_sort</span><span class="params">(A)</span>:</span></div><div class="line">    build_max_heap(A)</div><div class="line">    heap_size = len(A)</div><div class="line">    <span class="keyword">while</span> heap_size &gt; <span class="number">0</span>:</div><div class="line">        <span class="comment"># 将最大元素搬到堆的末尾</span></div><div class="line">        temp = A[<span class="number">0</span>]</div><div class="line">        A[<span class="number">0</span>] = A[heap_size-<span class="number">1</span>]</div><div class="line">        A[heap_size-<span class="number">1</span>] = temp</div><div class="line">        <span class="comment"># 缩减堆大小</span></div><div class="line">        heap_size -= <span class="number">1</span></div><div class="line">        <span class="comment"># 维持最大堆性质</span></div><div class="line">        max_heapify(A, <span class="number">0</span>, heap_size)</div></pre></figure>
+
+<h2 id="最大优先队列">最大优先队列</h2>
+<p>堆排序是一个优先的算法，但是在实际应用中，快速排序的性能一般会优于堆排序。尽管如此，堆这一数据结构仍然有很多应用。优先队列是一种用来维护一组元素构成的集合S的数据结构，其中的每一个元素都有一个相关的值，称为<strong>关键字（key）</strong>。一个最大优先队列支持以下操作：</p>
+<ul>
+<li>INSERT(S, x): 把元素x插入集合S中，等效于S = S ∪ {x}；</li>
+<li>MAXIMUM(S): 返回S中最大键字的元素；</li>
+<li>EXTRACT-MAX(S): 去掉并返回S中的具有最大键字的元素；</li>
+<li>INCREASE-KEY(S, x, k): 将元素x的关键字增加到k，这里假设的k的值不小于x的原key值；</li>
+</ul>
+<p>显然，相对于堆排序而言，实现最大优先队列要复杂得多，因为还得考虑对堆的增、删、改操作。</p>
+<p>最大优先队列只谈实现，不贴代码，有上述的“堆排序”做基础，最大优先队列的实现也比较简单。</p>
+<p>MAXIMUM操作，这个操作比较简单，略过。</p>
+<p>先说INSERT操作，具体策略是：将x添加到S中，heap_size = heap_size+1，然后从heap尾部开始上溯处理新增元素，以便维持最大堆性质。</p>
+<p>然后是EXTRACT-KEY操作，具体策略是：将root对应元素与heap尾部元素交换 — 缩减堆大小 — 调用max_heapify维持最大堆性质 — 返回处理前的root节点对应的值。</p>
+<p>最后是INCREASE-KEY操作，具体策略是修改x节点的值，然后不停上溯与父node比较，直到父node的key值比newKey大。</p>
+<p>总之，相对于“堆排序”，“最大优先队列”的实现仅多了一个步骤：上溯。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Sort/">Sort</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/03/29/heap-sort/" data-title="堆排序 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/03/29/quick-sort/" title="快速排序">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  快速排序</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/03/29/merge-sort/"  title="归并排序">
+ <strong>NEXT:</strong><br/> 
+ <span>归并排序
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/03/29/heap-sort/" data-title="堆排序" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#堆的介绍"><span class="toc-number">2.</span> <span class="toc-text">堆的介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#堆排序"><span class="toc-number">3.</span> <span class="toc-text">堆排序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最大优先队列"><span class="toc-number">4.</span> <span class="toc-text">最大优先队列</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

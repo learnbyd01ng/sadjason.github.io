@@ -1,0 +1,512 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Swift类和结构体 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="在C++中，相信不会有太多人去详细考究结构体和类的区别，因为二者关系实在不大。但在Swift中，结构体和类的关系非常大，它们的组成部分都包括：初始化器、实例方法、实例属性、类型属性、类型方法等等；二者也自然有很多的不同点，最大的不同点要数「类是引用类型，结构体是值类型」。本文着重对比阐述类和结构体的">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/05/11/Swift-Classes-and-Structures/" title="Swift类和结构体" itemprop="url">Swift类和结构体</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-05-11T11:21:55.000Z" itemprop="datePublished">2015-05-11</time>
+    更新日期:<time datetime="2015-07-04T09:01:20.000Z" itemprop="dateModified">2015-07-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#类和结构体对比"><span class="toc-number">1.</span> <span class="toc-text">类和结构体对比</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#类和结构体的定义"><span class="toc-number">1.1.</span> <span class="toc-text">类和结构体的定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实例以及属性访问"><span class="toc-number">1.2.</span> <span class="toc-text">实例以及属性访问</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#结构体的逐一成员构造器"><span class="toc-number">1.3.</span> <span class="toc-text">结构体的逐一成员构造器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#值类型和引用类型"><span class="toc-number">1.4.</span> <span class="toc-text">值类型和引用类型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#类和结构体的选择"><span class="toc-number">2.</span> <span class="toc-text">类和结构体的选择</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#集合类型的赋值和拷贝行为"><span class="toc-number">3.</span> <span class="toc-text">集合类型的赋值和拷贝行为</span></a></li></ol>
+		</div>
+		
+		<p>在C++中，相信不会有太多人去详细考究结构体和类的区别，因为二者关系实在不大。但在Swift中，结构体和类的关系非常大，它们的组成部分都包括：初始化器、实例方法、实例属性、类型属性、类型方法等等；二者也自然有很多的不同点，最大的不同点要数「类是引用类型，结构体是值类型」。本文着重对比阐述类和结构体的本质区别和它们的使用。</p>
+<h2 id="类和结构体对比"><strong>类和结构体对比</strong></h2>
+<p>在Swift中，类和结构体有很多的共同点，包括：</p>
+<ul>
+<li>Define properties to store values.</li>
+<li>Define methods to provide functionality.</li>
+<li>Define subscripts to provide access to their values using subscript syntax.</li>
+<li>Define initializers to set up their initial state.</li>
+<li>Be extended to expend their functionality beyond a default implementation.</li>
+<li>Conform to protocols to provide standard functionality of a certain kind.</li>
+</ul>
+<p>和结构体相比，类还具有一些结构体不具备的特性：</p>
+<ul>
+<li>Inheritance enables one class to inherit the characteristics of another.（结构体是不允许继承或被继承的）</li>
+<li>Type casting enables you to check and interpret the type of a class instance at runtime.（结构体不存在多态，自然不存在所谓的「类型转换」了）</li>
+<li>Deinitializers enable an instance of a class to free up any resources it has assigned.</li>
+<li>Reference counting allows more than one reference to a class instance.</li>
+</ul>
+<h3 id="类和结构体的定义"><strong>类和结构体的定义</strong></h3>
+<p>类和结构体有着类似的定义方式。我们通过关键字class和struct来分别表示类和结构体，并在一对大括号<code>{}</code>中定义它们的具体内容，如下定义了一个结构体类型Resolution（用来描述一个显示器的像素分辨率）和一个类类型VideoMode（用来描述一个视频显示器的特定模式）：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Resolution</span> </span>{</div><div class="line">    <span class="keyword">var</span> width = <span class="number">0</span></div><div class="line">    <span class="keyword">var</span> height = <span class="number">0</span></div><div class="line">}</div><div class="line">	</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">VideoMode</span> </span>{</div><div class="line">    <span class="keyword">var</span> resolution = <span class="type">Resolution</span>()</div><div class="line">    <span class="keyword">var</span> interlaced = <span class="built_in">false</span></div><div class="line">    <span class="keyword">var</span> frameRate = <span class="number">0.0</span></div><div class="line">    <span class="keyword">var</span> name: <span class="type">String</span>?</div><div class="line">}</div></pre></figure>
+
+<h3 id="实例以及属性访问"><strong>实例以及属性访问</strong></h3>
+<p>定义结构体和类实例语法几乎一样：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">let</span> someResolution = <span class="type">Resolution</span>()</div><div class="line"><span class="keyword">let</span> someVideoMode = <span class="type">VideoMode</span>()</div></pre></figure>
+
+<p>和其他大多数语言一样，访问实例的属性使用<code>.</code>操作符。但是与OC不同的是，Swift允许直接设置结构体属性的子属性（在OC中可不允许），如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="built_in">println</span>(<span class="string">"The width of someVideoMode is <span class="subst">\(someVideoMode.resolution.widt</span></span></div><div class="line">h)")</div><div class="line"><span class="comment">// 输出 "The width of someVideoMode is 0"</span></div><div class="line">someVideo.resolution.width = <span class="number">12880</span></div><div class="line"><span class="built_in">println</span>(<span class="string">"The width of someVideoMode is now <span class="subst">\(someVideoMode.resolution.</span></span></div><div class="line">width)")</div><div class="line"><span class="comment">// 输出 "The width of someVideoMode is now 1280"</span></div></pre></figure>
+
+<h3 id="结构体的逐一成员构造器"><strong>结构体的逐一成员构造器</strong></h3>
+<p>Swift为类和结构体都提供了默认的初始化构造器，其中有一个为结构体特别提供的默认构造器叫「逐一成员构造器」（memberwise initializer）。简而言之，使用该构造器，在创建实例时可以通过属性的名称设置它们的属性值，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">let</span> vga = resolution(width:<span class="number">640</span>, height:<span class="number">480</span>)</div></pre></figure>
+
+<p>更多关于结构体的「逐一成员构造器」信息，参考<a href="/2015/05/11/Swift-Initialization/#结构体的逐一成员构造器">这里</a>。</p>
+<h3 id="值类型和引用类型"><strong>值类型和引用类型</strong></h3>
+<p><strong>类是引用类型</strong></p>
+<p>众所周知，类类型是「引用类型」。换句话说，对类类型变量赋值（譬如函数/方法的参数传值、返回值、变量赋值等），实际上操作的只是对象指针的拷贝。</p>
+<p><strong>结构体和枚举都是值类型</strong></p>
+<p>与「引用类型」对应的是「值类型」。￼值类型被赋予给一个变量，常数或者本身被传递给一个函数的时候，实际上操作的是对其进行拷贝。</p>
+<p><strong>在Swift中，所有的基本类型都是值类型</strong>。换句话说，整型、浮点型、布尔值、字符串、数组、set、字典都是值类型，更进一步说，它们都是「结构体」类型。</p>
+<p><strong>恒等运算符</strong></p>
+<p>考虑到类是引用类型，有可能有多个常量或变量在后台同时引用同一个实例（当然，这对属于值类型的结构体和枚举而言是不成立的）。所以在很多时候需要判断两个常量或者变量是否引用同一个类实例，Swift为我们提供了两个运算符<code>===</code>和<code>!==</code>，它们被称为「恒等运算符」（Identity Operators）。关于它们的用法就不啰嗦了，一眼就能看出来。</p>
+<h2 id="类和结构体的选择"><strong>类和结构体的选择</strong></h2>
+<p>相对于其他语言譬如C++，Swift中赋予了结构体更强大的功能，它和类类型有非常多的相似之处，都可以用来自定义数据类型，那么该如何选用呢？</p>
+<p>结构体实例总是通过「值传递」，类实例总是通过「引用传递」。这意味着二者适用于不同的任<br>务。按照通用的准则，当符合一条或多条以下条件时，请考虑构建结构体：</p>
+<ul>
+<li>结构体的主要目的是用来封装少量相关简单数据值；</li>
+<li>有理由预计一个结构体实例在赋值或传递时，封装的数据将会被拷贝而不是被引用；</li>
+<li>任何在结构体中储存的值类型属性，也将会被拷贝，而不是被引用；</li>
+<li>结构体不需要去继承另一个已存在类型的属性或者行为；</li>
+</ul>
+<p>P.S：个人觉得，有了一定的使用经历之后，这个问题便不再是问题了，可能会变成一种下意识。</p>
+<h2 id="集合类型的赋值和拷贝行为"><strong>集合类型的赋值和拷贝行为</strong></h2>
+<p>姑且也把String认为是集合类型吧！</p>
+<p>在OC中，NSString、NSArray、NSSet、NSDictionary以及相关类型都是类类型，因此，在传递过程中，它们的传递方式默认情况都是引用传递（对于属性，如果指定copy修饰词则有所不同，相对而言，比较复杂）。</p>
+<p>但是在Swift中，正如前文所述，String、Array、Set、Dictionary的本质都是「结构体」。无论在什么场合，它们的传递方式都是值传递。官方文档是这么描述的：</p>
+<blockquote>
+<p>Swift’s String, Array, and Dictionary types are implemented as structures. This means that strings, arrays, and dictionaries are copied when they are assigned to a new constant or variable, or when they are passed to a function or method.</p>
+</blockquote>
+<p>P.S：在第一个版本的《The Swift Programming Language》中有不同的描述，大概的意思是：</p>
+<blockquote>
+<p>Swift中数组（Array）和字典（Dictionary）类型均以结构体的形式实现。然而当数组被赋予一个常量或变量，或被传递给一个函数或方法时，数组（以及字典）的拷贝行为和其它结构体有些许不同。在Swift的后台中，只有确有必要，实际（actual）拷贝才会被执行。Swift管理所有的值拷贝以确保性能最优化的性能，所以你也没有必要去避免赋值以保证最优性能。</p>
+</blockquote>
+<p>P.P.S：上述这段话摘自《The Swift Programming Language》第一个版本中译版。可以看出，相对于第一个版本，当下Swift（1.2版本）做了一些修改，简化了设计理念，理解上也更容易一些。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Swift/">Swift</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/05/11/Swift-Classes-and-Structures/" data-title="Swift类和结构体 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/05/11/Swift-Properties/" title="Swift属性">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  Swift属性</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/05/05/Swift-Enumerations/"  title="Swift枚举">
+ <strong>NEXT:</strong><br/> 
+ <span>Swift枚举
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/05/11/Swift-Classes-and-Structures/" data-title="Swift类和结构体" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#类和结构体对比"><span class="toc-number">1.</span> <span class="toc-text">类和结构体对比</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#类和结构体的定义"><span class="toc-number">1.1.</span> <span class="toc-text">类和结构体的定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实例以及属性访问"><span class="toc-number">1.2.</span> <span class="toc-text">实例以及属性访问</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#结构体的逐一成员构造器"><span class="toc-number">1.3.</span> <span class="toc-text">结构体的逐一成员构造器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#值类型和引用类型"><span class="toc-number">1.4.</span> <span class="toc-text">值类型和引用类型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#类和结构体的选择"><span class="toc-number">2.</span> <span class="toc-text">类和结构体的选择</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#集合类型的赋值和拷贝行为"><span class="toc-number">3.</span> <span class="toc-text">集合类型的赋值和拷贝行为</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

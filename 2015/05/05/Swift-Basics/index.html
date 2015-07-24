@@ -1,0 +1,554 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Swift初见 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="Swift基本类型
+Swift的类型是在C和OC的基础上发展而来的，Int是整型；Double和Float是浮点型；Bool是布尔型；String是字符串。类似OC，Swift也提出了三个集合类型：Array、Set、Dictionary；
+除了上述比较熟悉的类型，Swift还增加了OC中没有的类型">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/05/05/Swift-Basics/" title="Swift初见" itemprop="url">Swift初见</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-05-05T12:57:48.000Z" itemprop="datePublished">2015-05-05</time>
+    更新日期:<time datetime="2015-07-04T09:01:47.000Z" itemprop="dateModified">2015-07-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Swift基本类型"><span class="toc-number">1.</span> <span class="toc-text">Swift基本类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常量和变量"><span class="toc-number">2.</span> <span class="toc-text">常量和变量</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#let和var"><span class="toc-number">2.1.</span> <span class="toc-text">let和var</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#声明"><span class="toc-number">2.2.</span> <span class="toc-text">声明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#赋值"><span class="toc-number">2.3.</span> <span class="toc-text">赋值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#类型推测（Type_Inference）"><span class="toc-number">2.4.</span> <span class="toc-text">类型推测（Type Inference）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#静态局部变量、静态全局变量、全局变量"><span class="toc-number">2.5.</span> <span class="toc-text">静态局部变量、静态全局变量、全局变量</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#可选类型（Options）"><span class="toc-number">3.</span> <span class="toc-text">可选类型（Options）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#理解optionals"><span class="toc-number">3.1.</span> <span class="toc-text">理解optionals</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用optionals"><span class="toc-number">3.2.</span> <span class="toc-text">使用optionals</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Implicitly_Unwrapped_Optionals"><span class="toc-number">3.3.</span> <span class="toc-text">Implicitly Unwrapped Optionals</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#元组（Tuple）"><span class="toc-number">4.</span> <span class="toc-text">元组（Tuple）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#元组概述"><span class="toc-number">4.1.</span> <span class="toc-text">元组概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用元组"><span class="toc-number">4.2.</span> <span class="toc-text">使用元组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#理解元组"><span class="toc-number">4.3.</span> <span class="toc-text">理解元组</span></a></li></ol></li></ol>
+		</div>
+		
+		<h2 id="Swift基本类型"><strong>Swift基本类型</strong></h2>
+<p>Swift的类型是在C和OC的基础上发展而来的，Int是整型；Double和Float是浮点型；Bool是布尔型；String是字符串。类似OC，Swift也提出了三个集合类型：Array、Set、Dictionary；</p>
+<p>除了上述比较熟悉的类型，Swift还增加了OC中没有的类型，比如元组（Tuple）；Swift还增加了可选（Optional）类型。</p>
+<p>Swift是一个类型安全的语言（甚至以此著称），可选（Optional）就是一个很好的例子。Swift可以让你清除地知道值的类型。如果你的代码期望得到一个String，你却不小心传入一个Int，Swift的类型安全机制会在开发阶段发现这个问题，避免在runtime出错。</p>
+<h2 id="常量和变量"><strong>常量和变量</strong></h2>
+<p>在OC以及C中，一个值类型或引用类型数据是常量还是变量由关键字<code>const</code>决定。在Swift中，在没有const这一说喽。</p>
+<h3 id="let和var"><strong>let和var</strong></h3>
+<p>Swift使用let来声明常量，使用var来声明变量；</p>
+<h3 id="声明"><strong>声明</strong></h3>
+<p>Swift在声明一个变量或者常量可以携带类型信息，也可以不携带。</p>
+<p>P.S：声明变量/常量时，不指明类型而让Swift编译器隐式处理的这种行为被称为『类型推测』（Type Inference），后文有更详细介绍。</p>
+<h3 id="赋值"><strong>赋值</strong></h3>
+<p>本来常量和变量是编程语言里非常基础的概念，没啥好讲的，但Swift世界里，有些许不同，在赋值过程中，需要注意：</p>
+<ol>
+<li>无论是常量还是变量，在定义时都可以没有右值（即没有初始化值，譬如<code>var a: Int</code>或<code>let b: NSObject</code>），在其他语言中，系统往往会在这种情况下为它们分配一个默认值，譬如OC会设置默认值0或者nil；但这在Swift的世界里是不可能的，Swift不会为它们设置任何默认值，无论是在什么时候；</li>
+<li>无论是常量还是变量，在第一次使用（访问）之前必须要保证有与类型匹配的值（譬如，<code>var a:Int; print(&quot;a = \(a)&quot;)</code>是不合法的）；</li>
+<li>和其他语言一样，常量只能进行一次赋值，变量可以进行任意多次赋值；但无论何时，赋值时右值都必须与其定义时的类型匹配，Swift不会帮你做任何转换；</li>
+</ol>
+<p>第3点意味着：</p>
+<ul>
+<li><code>let aInt: Int = 0; aInt = 5</code>不合法，常量只能进行一次初始化；</li>
+<li><code>var aObject: NSObject; aObject = nil</code>不合法，右值<code>nil</code>与NSObject类型不匹配；</li>
+<li><code>var aInt: Int; aInt = 0.0</code>不合法，右值<code>0.0</code>与Int类型不匹配；</li>
+</ul>
+<p><strong>说明</strong>：</p>
+<ul>
+<li>常量/变量使用之前没有初始化/赋值在Xcode的编译错误通常是：『Variable <em>variableName</em> used before being initialized』；</li>
+<li>常量/变量赋值时类型不对的编译错误是：『Cannot assign a value of type <em>WrongType</em> to a value of type <em>CorrectType</em>』；</li>
+</ul>
+<p>总之，一定要深刻理解到Swift是一门类型安全的语言，《The Swift Programming Language》是这么说的：</p>
+<blockquote>
+<p>Swift is a <em>type safe</em> language. A type safe language encourages you to be clear about the types of values your code can work with. If part of your code expects a <code>String</code>, you can not pass it an <code>Int</code> by mistake.</p>
+</blockquote>
+<h3 id="类型推测（Type_Inference）"><strong>类型推测（Type Inference）</strong></h3>
+<p>显然，『类型推测』在处理引用类型时非常便利，这会使得代码更简洁；但是在处理值类型时可能会有些许麻烦，譬如1.0推断为float还收double？在这种记忆力不是特别牢靠（不太确认）的情况下最好还是显式写出变量/常量的类型吧。</p>
+<h3 id="静态局部变量、静态全局变量、全局变量"><strong>静态局部变量、静态全局变量、全局变量</strong></h3>
+<p>「静态局部变量」、「静态全局变量」、「全局变量」这些是C语言里的概念，在Swift似乎不存在。</p>
+<h2 id="可选类型（Options）"><strong>可选类型（Options）</strong></h2>
+<p>正如上文所阐述的，Swift是一门『类型安全』的语言，在对对象赋值时，左值类型和右值类型必须匹配，否则无法通过编译；但在OC中，有非常非常多的机会与nil指针打交道，譬如：</p>
+<ul>
+<li>某个方法/函数返回nil指针，表示返回的对象不存在；</li>
+<li>某个方法/函数的某个传入参数为nil，表示传入空值；</li>
+<li>某个strong类型指针赋值nil，表示不再持有原对象；</li>
+</ul>
+<p>Swift的创建是基于Objective-C的，何况还得保证与之兼容，必然考虑到了这个问题，Swift中能够赋值nil的类型叫「可选类型」（<code>optional</code>）。</p>
+<h3 id="理解optionals"><strong>理解optionals</strong></h3>
+<p>C和OC中并没有可选这个概念。在OC的对象世界里，一个指针要么对应这一个对象，要么对应着nil；很多时候我们不知道这个指针到底是空指针，还是有一个有效的对象与之对应，所以我们在OC中经常会写大量大量的<code>if</code>语句判断某个指针是否为空。而在Swift中，不需要这么麻烦，因为它是一门类型安全的语言，NSObject类型变量在运行时一定有一个NSObject对象与之对应，不可能是nil值。想想这个就激动，想象一下，以前在OC中调用具有返回值的方法时经常需要对返回值进行判断，因为必须要考虑它可能返回nil啊，譬如：</p>
+<figure class="highlight Objective-C"><pre><div class="line"><span class="built_in">NSMutableArray</span> *aArray = [<span class="built_in">NSMutableArray</span> array];</div><div class="line"><span class="built_in">NSString</span> *aStr = [<span class="keyword">self</span> aFuckMethod];     <span class="comment">// aFuckMethod的实现代码不可见，不知道一定会返回一个NSString</span></div><div class="line"><span class="keyword">if</span> (aStr) {</div><div class="line">    [aArray addObject:aStr];</div><div class="line">}</div></pre></figure>
+
+<p>如果在Swift中，<code>aFuckMethod的</code>原型为<code>func aFuckMethod() -&gt; String</code>，则清晰表明了aFuckMethod方法一定会返回一个非String类型对象，那么上面一段代码就可以省掉那个if语句了；对比Swift，确实感觉到了OC是一个门太落后的语言，太罗嗦了！</p>
+<p>回过头来阐述Swift的<code>optional</code>。简而言之：</p>
+<blockquote>
+<p>You use <code>optionals</code> in situations where a value may be absent. An optional says:</p>
+<pre><code> * There is <span class="operator">a</span> <span class="built_in">value</span>, <span class="operator">and</span> <span class="keyword">it</span> equals x
+</code></pre><p>or</p>
+<pre><code> * There is <span class="operator">not</span> <span class="built_in">value</span> <span class="keyword">at</span> all
+</code></pre></blockquote>
+<p>相对于OC，Swift的<code>optionals</code>对值类型（譬如整型、结构体）和引用类型（类对象）的处理更具<code>一致性</code>。在OC中，一个方法要不返回一个对象要不返回nil，后者表示『缺乏一个合法的对象』；然而，这只对对象起作用；对于结构体、基本的C类型或者枚举都不起作用，处理这些类型，OC方法一般会返回一个特殊值（譬如NSNotFound）来暗示值缺失，这种方法会假设方法的调用者知道并有意识对特殊值进行判断。然而，Swift的<code>optionals</code>可以让你暗示任意类型的缺失，并不需要一个特殊值。</p>
+<p>P.S：稍微体会一下，就会意识到Swift的<code>optional</code>高明多了。</p>
+<h3 id="使用optionals"><strong>使用optionals</strong></h3>
+<p><strong>Optional类型默认值</strong></p>
+<p>在OC中，若声明一个对象（指针）但不赋值，系统会默认将之设置为nil；在Swift中也类似，对于一个optional，若不对其赋值，则默认为nil，这可不是我瞎说，文档有说明：</p>
+<blockquote>
+<p>If you define an optional variable without providing a default value, the variable is automatically set to nil for you.</p>
+</blockquote>
+<p>P.S：似乎这是Swift唯一为变量/常量设置默认值的时机。</p>
+<p>简而言之，你可以对一个optional变量赋值nil，也可以赋值相应的对象。</p>
+<p>在OC中，我们经常需要对一个类类型指针进行判断，判断它是否为nil；在Swift中使用optional也不省心，也常常需要写if语句判断，只是Swift中提供了更多丰富的处理方式。</p>
+<p><strong>强制解析（Foreced Unwrapping）符<code>!</code></strong></p>
+<p>You can use an <code>if</code> statement to find out whether an optional contains a value by comparing the optional against <code>nil</code>. You perform this comparison with the <code>==</code> or <code>!=</code>.</p>
+<p>当你确定可选包确实含值之后,你可以在可选的名字后面加一个感叹号<code>!</code>来获取值。这个惊叹号表示『我知道这个可选有值，请使用它』，这被称为可选值的<code>强制解析</code>（forced unwrapping），如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">let</span> strNumber = <span class="string">"42"</span></div><div class="line"><span class="keyword">var</span> convertNumber: <span class="type">Int</span>?</div><div class="line">convertNumber = strNumber.toInt()</div><div class="line"><span class="keyword">if</span> convertNumber != <span class="built_in">nil</span> {</div><div class="line">    <span class="built_in">println</span>(<span class="string">"转换后的结果为：<span class="subst">\(convertNumber!)</span>"</span>)</div><div class="line">}</div></pre></figure>
+
+<p>值得注意的是，使用<code>!</code>来获取一个不存在的可选值会导致runtime error。因此使用<code>!</code>强制解析前，一定要确定<code>optional</code>包含一个非nil的值。</p>
+<p>总之，一定要记住，惊叹号<code>!</code>对于<code>optional</code>而言是『强制解析符』，而不是仅仅是『解析符』，这可不是咬文嚼字，虽然只有两字之差，但意思差远了。</p>
+<p><strong>可选绑定（Optional Binding）</strong></p>
+<p>使用可选绑定（optional binding）来判断<code>optional</code>是否包含值，如果包含就把值赋给一个临时常量或者变量。可选绑定可以用在<code>if</code>和<code>while</code>语句中来对可选的值进行判断并把值赋给一个常量或者变量，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">let</span> strNumber = <span class="string">"42"</span></div><div class="line"><span class="keyword">if</span> <span class="keyword">let</span> actualNumber = strNumber.toInt() {</div><div class="line">    <span class="built_in">println</span>(<span class="string">"转换后的结果为：<span class="subst">\(actualNumber)</span>"</span>)</div><div class="line">}</div></pre></figure>
+
+<p>这段代码可以理解为：<br>如果<code>strNumber.toInt()</code>返回的<code>optional</code>包含一个Int值，则创建一个叫actualNumber的新常量（actualNumber为Int类型）并将可选包含的值赋给它。</p>
+<p>这段『可选绑定』的代码显然比前一段『强制解析』的代码要简短一些，可是，我总觉得Swift的这一部分设计不好，晦涩难懂。首先，<br>下意识里，<code>let actualNumber = strNumber.toInt()</code>等价两句代码：<code>let temp = strNumber.toInt()</code>和<code>let actualNumber = temp</code>，得到的actualNumber应该是一个optional啊，怎么文档给出的解释暗示actualNumber是一个Int类型变量呢？Fuck！</p>
+<h3 id="Implicitly_Unwrapped_Optionals"><strong>Implicitly Unwrapped Optionals</strong></h3>
+<p>『隐式解析可选』作为右值？</p>
+<p>『隐式解析可选』似乎比普通optional更安全，既然这么好，为什么不放弃前面的普通optional呢？似乎是不行的，文档这么说：</p>
+<blockquote>
+<p>Do not use an implicitly unwrapped optional when there is a possibility of a variable becoming <code>nil</code> at a later point. Always use a normal optional type if you need to check for a <code>nil</code> value during the lifetime of a variable.</p>
+</blockquote>
+<h2 id="元组（Tuple）"><strong>元组（Tuple）</strong></h2>
+<h3 id="元组概述"><strong>元组概述</strong></h3>
+<p>元组（tuples）早已经是很多高级语言（譬如Python）的中重要组成成分了，它用来把多个值组合成一个复合值，而这些值可以是任意类型（无所谓变量还是常量，无所谓值类型还是引用类型，无所谓optional还是non-optional），并不要求是相同类型。</p>
+<h3 id="使用元组"><strong>使用元组</strong></h3>
+<p><strong>分解元组（Decompose Tuple）</strong></p>
+<p>Swift中的元组分解（decompose）和Python中差不多，你可以使用如下语法将一个元组分解成单独的常量和变量：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">let</span> http404Error = (<span class="number">404</span>, <span class="string">"Not Found"</span>)</div><div class="line"><span class="comment">// http404Error的类型是(Int, String)，值是(404, "Not Found")</span></div><div class="line"></div><div class="line"><span class="keyword">var</span> (status, statusMessage) = http404Error</div></pre></figure>
+
+<p>在decompose时，如果只需要一部分元组信息，使用<code>_</code>来标记要忽略的部分。</p>
+<p><strong>Tuple支持下标操作</strong></p>
+<p>可以使用下标访问一个元组中指定的元素，譬如<code>http404Error.0</code>表示访问上述元组http404Error的第一个元素（值为404的Int型）。</p>
+<p><strong>给Tuple元素命名</strong></p>
+<p>使用下标访问Tuple元素难免不够完美，毕竟数字太冰冷了；Swift的Tuple还支持给Tuple元素命名，譬如：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">let</span> http404Error = (status: <span class="number">404</span>, message:<span class="string">"Not Found"</span>)</div><div class="line"><span class="built_in">println</span>(<span class="string">"状态码：<span class="subst">\(http404Error.status)</span>, 信息：<span class="subst">\(http404Error.message)</span>"</span>)</div></pre></figure>
+
+<h3 id="理解元组"><strong>理解元组</strong></h3>
+<p>根据我的理解，Tuple并不算一种类型（事实上Swift中也不存在所谓的<code>Tuple</code>类型），它更应该看成是Swift所支持的一种语言特性（语法）。Tuple看起来像数组，但显然不同于数组，数组可是一种数据类型，数组包括大量的功能方法，「元组」是不存在所谓的方法的。也正因为如此，元组的使用场景比较单一，一般用来临时组织数据（譬如组织函数/方法的返回值和参数）。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Swift/">Swift</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/05/05/Swift-Basics/" data-title="Swift初见 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/05/05/Swift-Collections/" title="Swift集合类型">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  Swift集合类型</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/05/02/iOS的坐标系统/"  title="iOS的坐标系统">
+ <strong>NEXT:</strong><br/> 
+ <span>iOS的坐标系统
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/05/05/Swift-Basics/" data-title="Swift初见" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Swift基本类型"><span class="toc-number">1.</span> <span class="toc-text">Swift基本类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常量和变量"><span class="toc-number">2.</span> <span class="toc-text">常量和变量</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#let和var"><span class="toc-number">2.1.</span> <span class="toc-text">let和var</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#声明"><span class="toc-number">2.2.</span> <span class="toc-text">声明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#赋值"><span class="toc-number">2.3.</span> <span class="toc-text">赋值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#类型推测（Type_Inference）"><span class="toc-number">2.4.</span> <span class="toc-text">类型推测（Type Inference）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#静态局部变量、静态全局变量、全局变量"><span class="toc-number">2.5.</span> <span class="toc-text">静态局部变量、静态全局变量、全局变量</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#可选类型（Options）"><span class="toc-number">3.</span> <span class="toc-text">可选类型（Options）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#理解optionals"><span class="toc-number">3.1.</span> <span class="toc-text">理解optionals</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用optionals"><span class="toc-number">3.2.</span> <span class="toc-text">使用optionals</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Implicitly_Unwrapped_Optionals"><span class="toc-number">3.3.</span> <span class="toc-text">Implicitly Unwrapped Optionals</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#元组（Tuple）"><span class="toc-number">4.</span> <span class="toc-text">元组（Tuple）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#元组概述"><span class="toc-number">4.1.</span> <span class="toc-text">元组概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用元组"><span class="toc-number">4.2.</span> <span class="toc-text">使用元组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#理解元组"><span class="toc-number">4.3.</span> <span class="toc-text">理解元组</span></a></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,537 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>让AFNetworking文件上传显示上传进度 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="写在前面
+目前手头的iOS项目中有一个逻辑功能是“客户端向服务器上传多张图片”，目前服务器处理功能相对来说比较羸弱，所以若图片达到了几兆会花掉相当长时间；为了不让用户重复点击“提交”button，处理方式是以一个类似于风火轮的控件屏蔽当前页面；这种做法是极其糟糕，如果整个过程需要3分钟，风火轮伴随着">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/04/07/让AFNetworking文件上传显示上传进度/" title="让AFNetworking文件上传显示上传进度" itemprop="url">让AFNetworking文件上传显示上传进度</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-04-07T12:50:59.000Z" itemprop="datePublished">2015-04-07</time>
+    更新日期:<time datetime="2015-07-04T09:10:28.000Z" itemprop="dateModified">2015-07-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AFNetworking的进度管理"><span class="toc-number">2.</span> <span class="toc-text">AFNetworking的进度管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用NSProgress"><span class="toc-number">3.</span> <span class="toc-text">使用NSProgress</span></a></li></ol>
+		</div>
+		
+		<h2 id="写在前面">写在前面</h2>
+<p>目前手头的iOS项目中有一个逻辑功能是“客户端向服务器上传多张图片”，目前服务器处理功能相对来说比较羸弱，所以若图片达到了几兆会花掉相当长时间；为了不让用户重复点击“提交”button，处理方式是以一个类似于风火轮的控件屏蔽当前页面；这种做法是极其糟糕，如果整个过程需要3分钟，风火轮伴随着提示文字会在那里转3分钟，而用户此时啥都干不了，并且也不知道发生了什么事情？是网络问题？还是这个App完全是个傻逼，挂了，会这么一直转下去？用户此时最可能做的事情是“双击Home键 — 向上滑动该App进而使之退出 — 删除该App”…</p>
+<p>关于App文件上传操作，有无限的可能性对之进行优化，笔者所做的第一步是，将上传进度告诉用户。</p>
+<p>本文所涉及的网络库是第三方库AFNetworking，AFNetworking库同时支持NSURLConnection和NSURLSession架构，本文只针对NSURLSession架构；</p>
+<h2 id="AFNetworking的进度管理">AFNetworking的进度管理</h2>
+<p>笔者之前接触过AFNetworking中基于NSURLConnection框架的代码，基于这个框架的AFNetworking，实现“将上传进度给显示出来”非常容易，因为它提供了一个uploadProgress block接口，用户只要定义这个block，在其中实现“显示进度信息”的逻辑，并将这个block传入即可，到一定时候自然会回调这个block，如下：</p>
+<figure class="highlight Objective-C"><pre><div class="line">- (<span class="keyword">void</span>)connection:(<span class="built_in">NSURLConnection</span> __unused *)connection</div><div class="line">   didSendBodyData:(<span class="built_in">NSInteger</span>)bytesWritten</div><div class="line"> totalBytesWritten:(<span class="built_in">NSInteger</span>)totalBytesWritten</div><div class="line">totalBytesExpectedToWrite:(<span class="built_in">NSInteger</span>)totalBytesExpectedToWrite</div><div class="line">{</div><div class="line">    <span class="built_in">dispatch_async</span>(dispatch_get_main_queue(), ^{</div><div class="line">        <span class="keyword">if</span> (<span class="keyword">self</span><span class="variable">.uploadProgress</span>) {</div><div class="line">            <span class="keyword">self</span><span class="variable">.uploadProgress</span>((NSUInteger)bytesWritten, totalBytesWritten, totalBytesExpectedToWrite);</div><div class="line">        }</div><div class="line">    });</div><div class="line">}</div></pre></figure>
+
+<p>基于NSURLSession的框架，我刚开始料想AFNetworking中也提供了这样的接口，但是找了很久都没有找到，抱着解决问题的心态，读了相当一部分AFNetworking的代码，遂成此文。</p>
+<p>参考《<a href="/2015/04/05/AFNetworking使用笔记1">AFNetworking使用笔记1</a>》和《<a href="https://github.com/AFNetworking/AFNetworking/" target="_blank" rel="external">AFNetworking使用说明</a>》，可以很容易知道实现一个「上传任务」的步骤如下：</p>
+<ol>
+<li>创建一个AFURLSessionManager实例并配置之；</li>
+<li>构建请求，即创建并配置NSURLRequest对象；</li>
+<li>基于NSURLRequest对象创建一个NSURLSessionUploadTask实例；</li>
+<li>激活（resume）NSURLSessionUploadTask实例；</li>
+</ol>
+<p>在学习ViewController过程中了解到，创建并呈现一个View Controller过程中如下：</p>
+<ol>
+<li>创建一个ViewController；</li>
+<li>配置ViewController；</li>
+<li>呈现ViewController；</li>
+</ol>
+<p>在呈现ViewController过程中，会涉及ViewController的生命周期，在其生命周期各个节骨点，都会调用其相应的回调方法，譬如ViewDidLoad、viewWillAppear等等；</p>
+<p>和ViewController类似，一个「网络任务」在激活后也会涉及多个过程，譬如「任务完成」「任务失败」，对于upload任务或download任务，还涉及「已上传XX个字节」「已下载XX个字节」等等，在这些节骨点中也会回调NSURLSessionTask中的一些方法；</p>
+<p>然而，它们略有不同。对于ViewController而言，这些回调方法一般写在ViewController类定义中；但对于NSURLSessionTask而言，这些回调函数并没有在NSURLSessionTask中定义，而是为之分配了一个AFURLSessionManagerTaskDelegate对象，这个对象中对应有「任务完成」「任务失败」「已上传XX个字节」「已下载XX个字节」之类的回调方法。</p>
+<p>如果以上阐述是没问题的，那么必然有如下过程或问题：</p>
+<ol>
+<li>在构建NSURLSessionTask过程中，必然需要创建一个AFURLSessionManagerTaskDelegate对象并绑定到NSURLSessionTask对象中，问题是：<br>创建AFURLSessionManagerTaskDelegate对象是AFNetworking已搞定还是用户自己处理？</li>
+<li>AFURLSessionManagerTaskDelegate中的回调方法负责做哪些事情？</li>
+<li>AFURLSessionManagerTaskDelegate中的回调方法是如何被回调的？</li>
+</ol>
+<p>先看第一个问题：创建AFURLSessionManagerTaskDelegate对象是AFNetworking已搞定还是用户自己处理？</p>
+<p>以创建upload task（即创建NSURLSessionUploadTask对象）为例，AFNetworking中的代码如下：</p>
+<figure class="highlight Objective-C"><pre><div class="line">- (NSURLSessionUploadTask *)uploadTaskWithStreamedRequest:(<span class="built_in">NSURLRequest</span> *)request</div><div class="line">                                                 progress:(NSProgress * __autoreleasing *)progress</div><div class="line">                                        completionHandler:(<span class="keyword">void</span> (^)(NSURLResponse *response,</div><div class="line">                                                                    <span class="keyword">id</span> responseObject,</div><div class="line">                                                                    <span class="built_in">NSError</span> *error))completionHandler</div><div class="line">{</div><div class="line">    __block NSURLSessionUploadTask *uploadTask = <span class="literal">nil</span>;</div><div class="line">    <span class="comment">// 1. 以同步阻塞的方式创建NSURLSessionUploadTask实例</span></div><div class="line">    <span class="built_in">dispatch_sync</span>(url_session_manager_creation_queue(), ^{</div><div class="line">        uploadTask = [<span class="keyword">self</span><span class="variable">.session</span> uploadTaskWithStreamedRequest:request];</div><div class="line">    });</div><div class="line">	</div><div class="line">    <span class="comment">// 2. 为NSURLSessionUploadTask分配一个delegate（即AFURLSessionManagerTaskDelegate对象）</span></div><div class="line">    [<span class="keyword">self</span> addDelegateForUploadTask:uploadTask progress:progress completionHandler:completionHandler];</div><div class="line">	</div><div class="line">    <span class="keyword">return</span> uploadTask;</div><div class="line">}</div></pre></figure>
+
+<p>到了这里，我们可以确定第一个问题的答案了。创建AFURLSessionManagerTaskDelegate对象是AFNetworking已搞定还是用户自己处理？答案是：AFNetworking负责创建一个AFURLSessionManagerTaskDelegate对象并分配给NSURLSessionUploadTask；</p>
+<p>关于<code>addDelegateForUploadTask:progress:completionHandler:</code>的具体实现，此处略过，更多信息还得参详AFNetworking代码；</p>
+<p>值得一提的是，AFURLSessionManagerTaskDelegate中有一个NSProgress对象，本文的中心问题“显示上传进度”将与这个对象息息相关，后文会提到。</p>
+<p>再来看第二个问题：AFURLSessionManagerTaskDelegate中的回调方法负责做哪些事情？</p>
+<p>AFURLSessionManagerTaskDelegate中定义并实现的回调方法有很多，如下是其中一部分：</p>
+<figure class="highlight Objective-C"><pre><div class="line">// 「已上传XX个字节」回调方法</div><div class="line">- (void)URLSession:(__unused NSURLSession *)session</div><div class="line">              task:(__unused NSURLSessionTask *)task</div><div class="line">   didSendBodyData:(__unused int64_t)bytesSent</div><div class="line">    totalBytesSent:(int64_t)totalBytesSent</div><div class="line">totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend {</div><div class="line">    <span class="keyword">...</span></div><div class="line">}</div><div class="line">	</div><div class="line">// 「任务完成」回调方法</div><div class="line">- (void)URLSession:(__unused NSURLSession *)session</div><div class="line">              task:(NSURLSessionTask *)task</div><div class="line">didCompleteWithError:(NSError *)error {</div><div class="line">    <span class="keyword">...</span></div><div class="line">}</div><div class="line">	</div><div class="line">// 「已下载XX个字节」回调方法</div><div class="line"> - (void)URLSession:(__unused NSURLSession *)session</div><div class="line">          dataTask:(__unused NSURLSessionDataTask *)dataTask</div><div class="line">    didReceiveData:(NSData *)data {</div><div class="line">    <span class="keyword">...</span></div><div class="line">}</div><div class="line">	</div><div class="line">// 「下载完成并缓存到本地」回调方法</div><div class="line">- (void)URLSession:(NSURLSession *)session</div><div class="line">      downloadTask:(NSURLSessionDownloadTask *)downloadTask</div><div class="line">didFinishDownloadingToURL:(NSURL *)location {</div><div class="line">    <span class="keyword">...</span></div><div class="line">}</div><div class="line">	</div><div class="line"><span class="keyword">...</span></div></pre></figure>
+
+<p>这些回调方法的实现代码中所做的事情各不相同，以「任务完成」回调方法为例，它最终会在main thread中调用task的completionHandler block；</p>
+<p>本文的重点是看「已上传XX个字节」回调方法的实现代码，如下：</p>
+<figure class="highlight Objective-C"><pre><div class="line"><span class="pp">- <span class="params">(void)</span>URLSession:<span class="params">(<span class="variable">_</span>_unused <span class="variable">NSURLSession</span> *)</span>session</span></div><div class="line">              task:<span class="params">(<span class="variable">_</span>_unused <span class="variable">NSURLSessionTask</span> *)</span>task</div><div class="line">   didSendBodyData:<span class="params">(<span class="variable">_</span>_unused int64_t)</span>bytesSent</div><div class="line">    totalBytesSent:<span class="params">(int64_t)</span>totalBytesSent</div><div class="line">totalBytesExpectedToSend:<span class="params">(int64_t)</span>totalBytesExpectedToSend</div><div class="line">{</div><div class="line">    self.progress.total<span class="variable">UnitCount</span> = total<span class="variable">BytesExpectedToSend</span>;</div><div class="line">    self.progress.completed<span class="variable">UnitCount</span> = total<span class="variable">BytesSent</span>;</div><div class="line">}</div></pre></figure>
+
+<p>可以看到，「已上传XX个字节」回调方法所做的事情非常简单，只是做了一件事情，配置其progress属性；然而，我们很期待在这个方法中具有回调progress block之类的代码，譬如：</p>
+<figure class="highlight Objective-C"><pre><div class="line">dispatch_get_main_queue(), ^{</div><div class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>.completionHandler) {</div><div class="line">    <span class="keyword">self</span>.progressHandler(bytesSent, totalBytesSent, totalBytesExpectedToSend);</div><div class="line">}</div></pre></figure>
+
+<p>但现实是，没有！所以我们没办法以传入block的形式在progress block将上传进度信息给打印出来。</p>
+<p>再回答第三个问题：AFURLSessionManagerTaskDelegate中的回调方法是如何被回调的？</p>
+<p>以上述的「已上传XX个字节」回调方法为例。</p>
+<p>首先AFURLSessionManager也定义了一个名为URLSession:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:的方法，如下：</p>
+<figure class="highlight Objective-C"><pre><div class="line">- (<span class="keyword">void</span>)URLSession:(NSURLSession *)session</div><div class="line">              <span class="keyword">task</span>:(NSURLSessionTask *)<span class="keyword">task</span></div><div class="line">   didSendBodyData:(int64_t)bytesSent</div><div class="line">    totalBytesSent:(int64_t)totalBytesSent</div><div class="line">totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend</div><div class="line">{</div><div class="line">	</div><div class="line">    <span class="comment">// ...</span></div><div class="line">    <span class="comment">// 1. 找到task对应的delegate</span></div><div class="line">    AFURLSessionManagerTaskDelegate *delegate = [self delegateForTask:<span class="keyword">task</span>];</div><div class="line">    </div><div class="line">    <span class="comment">// 2. 回调task的delegate的URLSession:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:方法</span></div><div class="line">    [delegate URLSession:session <span class="keyword">task</span>:<span class="keyword">task</span> didSendBodyData:bytesSent</div><div class="line">          totalBytesSent:totalBytesSent totalBytesExpectedToSend:totalUnitCount];</div><div class="line">	</div><div class="line">    <span class="comment">// 3. 回调URLSessionManager的taskDidSendBodyData block</span></div><div class="line">    <span class="keyword">if</span> (self.taskDidSendBodyData) {</div><div class="line">        self.taskDidSendBodyData(session, <span class="keyword">task</span>, bytesSent, totalBytesSent, totalUnitCount);</div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<p>AFURLSessionManager的这个URLSession:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:会在某个时刻被回调，至于它的回调过程此处不详细追究了。总之，它的逻辑代码中做了两件件事情：</p>
+<ol>
+<li>找到当前task对应的delegate，调用delegate的URLSession:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:方法；</li>
+<li>回调AFURLSessionManager的taskDidSendBodyData block；</li>
+</ol>
+<p>所以，AFURLSessionManagerTaskDelegate中的「已上传XX个字节」回调方法就这么被调用了。</p>
+<p>OK，上文提到的三个问题都已经回答了，但“显示上传进度”这个问题还没有得到解决，因为到现在为止，我们还不知道将“显示上传进度”的代码插在哪里？</p>
+<p>但对于笔者而言，仍然在第一时间找到了一个解决方案！</p>
+<p>AFURLSessionManager的URLSession:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:回调方法不是做了两件事情吗？第一件是调用task的delegate的URLSession:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:回调方法回调方法（即上文所谓的「已上传XX个字节」回调方法），第二件事情是调用taskDidSendBodyData block，将“显示上传进度”相关代码写在taskDidSendBodyData block中不就可以了？说干就干！</p>
+<figure class="highlight Objective-C"><pre><div class="line"><span class="keyword">...</span></div><div class="line">// <span class="number">5.</span> start a task</div><div class="line">NSURLSessionUploadTask *uploadTask =</div><div class="line">[self multipartFormRequestURLString:URLString</div><div class="line">                         parameters:parameters</div><div class="line">                         multiParts:@[multipartDic]</div><div class="line">                              error:error</div><div class="line">                           progress:nil</div><div class="line">                            success:success</div><div class="line">                            failure:failure];</div><div class="line">	</div><div class="line">// <span class="number">6.</span> 设置AFURLSessionManager对象的taskDidSendBodyData block</div><div class="line">[self setTaskDidSendBodyDataBlock:^(NSURLSession *session,</div><div class="line">                                    NSURLSessionTask *task,</div><div class="line">                                    int64_t bytesSent,</div><div class="line">                                    int64_t totalBytesSent,</div><div class="line">                                    int64_t totalBytesExpectedToSend) {</div><div class="line">    <span class="keyword">if</span> (uploadTask == task) {</div><div class="line">        DLog(@<span class="string">"上传头像完成比例=%f"</span>, (float)totalBytesSent / totalBytesExpectedToSend);</div><div class="line">    }</div><div class="line">}];</div></pre></figure>
+
+<p>这确实是一种解决问题的方式！</p>
+<p>需要提醒的是，AFURLSessionManager的taskDidSendBodyData block的执行线程不是main thread，所以如果想在taskDidSendBodyData block中更新UI，则还得回到main thread中处理，至于处理方法比较简单，此处略过。</p>
+<p>“taskDidSendBodyData block的执行线程不是main thread”这个说法是经过笔者验证的，验证方法可以在该block中将当前线程信息给打印出来，譬如使用<code>NSLog(@&quot;current thread: %@&quot;,[NSThread currentThread]);</code>之类的代码；当然，也可以在这个block中设置断点，然后观察Xcode中的线程栈，笔者就是采用这种方法，如下图所示：<br><img src="/img/201504/QQ20150407-1.png" alt="/img/201504/QQ20150407-1.png"></p>
+<p>OK，问题貌似解决了，但显然不够优雅（甚至笔者怀疑会产生逻辑错误）。“在AFURLSessionManager的taskDidSendBodyData block中显示当前upload task的上传进度消息”这种做法的处理在笔者看来逻辑是非常不清晰的。相对于当前的upload task而言，AFURLSessionManager是逻辑范围更大的东东，upload task的进度信息不应该在AFURLSessionManager的taskDidSendBodyData block中完成，万一AFURLSessionManager同一时间里要处理多个upload task呢？并且也不应该在创建配置upload task的时候定义AFURLSessionManager的taskDidSendBodyData block。</p>
+<p>P.S：对于AFURLSessionManager的taskDidSendBodyData block，我想到它的一个用途（用来记录当前AFURLSessionManager上传的文件流量的总和）。</p>
+<p>如果此路不通，那么该如何呢？通过各种资料查询，笔者找到了另外一个突破点，NSURLSessionUploadTask的delegate（AFURLSessionManagerTaskDelegate对象）的progress属性。</p>
+<h2 id="使用NSProgress">使用NSProgress</h2>
+<p>既然NSURLSessionUploadTask的文件上传进度信息被存储在其delegate（AFURLSessionManagerTaskDelegate对象）的progress属性中，如果我们能够获取这个progress，不就可以得到当前的上传进度信息，进而不久可以“显示上传进度”？</p>
+<p>获取NSURLSessionUploadTask的delegate的progress属性是很容易的，回想起NSURLSessionUploadTask的创建方法：</p>
+<figure class="highlight Objective-C"><pre><div class="line">- (NSURLSessionUploadTask <span class="keyword">*</span>)uploadTaskWithStreamedRequest:(NSURLRequest <span class="keyword">*</span>)request</div><div class="line">                                                 progress:(NSProgress <span class="keyword">*</span> __autoreleasing <span class="keyword">*</span>)progress</div><div class="line">                                        completionHandler:(void (^)(NSURLResponse <span class="keyword">*</span>response,</div><div class="line">                                                                    id responseObject,</div><div class="line">                                                                    NSError <span class="keyword">*</span>error))completionHandler;</div></pre></figure>
+
+<p>其中第二个属性就是progress，我们可以传入一个NSProgress指针，等这个方法处理完了，该progress指针就指向了NSURLSessionUploadTask的delegate的progress属性；之后我们监听这个NSProgress对象就可以了，一旦这个NSProgress对象发生了变化，我们就在UI层面更新我们的进度信息；大概代码如下：</p>
+<figure class="highlight Objective-C"><pre><div class="line"><span class="comment">// 1. 定义一个NSProgress指针</span></div><div class="line">NSProgress *progress;</div><div class="line">	</div><div class="line"><span class="comment">// 2. 启动一个upload task</span></div><div class="line">[manager publishAPP3:aDict</div><div class="line">          withImages:multiParts</div><div class="line">               error:&error</div><div class="line">            progress:&progress  <span class="comment">// 传入NSProgress指针</span></div><div class="line">             success:^(<span class="built_in">NSDictionary</span> *resultDic) {</div><div class="line">                 [progress removeObserver:weakSelf forKeyPath:<span class="string">@"fractionCompleted"</span>];</div><div class="line">                 DLog(<span class="string">@"publish app success"</span>);</div><div class="line">                 [weakSelf showSuccessMessage:<span class="string">@"发布成功"</span>];</div><div class="line">             }</div><div class="line">             failure:^(<span class="built_in">NSError</span> *error) {</div><div class="line">                 DLog(<span class="string">@"publish app failure, error: %@"</span>, error<span class="variable">.localizedDescription</span>);</div><div class="line">                 [progress removeObserver:weakSelf forKeyPath:<span class="string">@"fractionCompleted"</span>];</div><div class="line">                 [weakSelf showErrorMessage:<span class="string">@"发布失败，请重试!"</span>];</div><div class="line">             }];</div><div class="line">	</div><div class="line"><span class="comment">// 3. 监听NSProgress对象</span></div><div class="line">[progress addObserver:<span class="keyword">self</span></div><div class="line">           forKeyPath:<span class="string">@"fractionCompleted"</span></div><div class="line">              options:NSKeyValueObservingOptionNew context:<span class="literal">nil</span>];</div><div class="line">	</div><div class="line">	</div><div class="line"><span class="comment">// 监听处理方法</span></div><div class="line">- (<span class="keyword">void</span>)observeValueForKeyPath:(<span class="built_in">NSString</span> *)keyPath</div><div class="line">                      ofObject:(<span class="keyword">id</span>)object</div><div class="line">                        change:(<span class="built_in">NSDictionary</span> *)change</div><div class="line">                       context:(<span class="keyword">void</span> *)context</div><div class="line">{</div><div class="line">    NSProgress *progress = <span class="literal">nil</span>;</div><div class="line">    <span class="keyword">if</span> ([object isKindOfClass:[NSProgress class]]) {</div><div class="line">        progress = (NSProgress *)object;</div><div class="line">    }</div><div class="line">    <span class="keyword">if</span> (progress) {</div><div class="line">        <span class="built_in">dispatch_async</span>(dispatch_get_main_queue(), ^{</div><div class="line">            DLog(<span class="string">@"已经完成：%f"</span>, progress<span class="variable">.fractionCompleted</span>);</div><div class="line">            <span class="keyword">if</span> (progress<span class="variable">.fractionCompleted</span> == <span class="number">1.0000</span>) {</div><div class="line">                [<span class="keyword">self</span> showLoadingMessage:<span class="string">@"正在处理"</span>];</div><div class="line">            } <span class="keyword">else</span> {</div><div class="line">                [<span class="keyword">self</span> showProgress:(<span class="keyword">float</span>)progress<span class="variable">.fractionCompleted</span> Message:<span class="string">@"正在发布"</span>];</div><div class="line">            }</div><div class="line">        });</div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<p>最终效果如下：</p>
+<p><img src="/img/201504/QQ20150408-1.png" alt="/img/201504/QQ20150408-1.png"></p>
+<p>感悟：AFNetworking代码真值得好好读一读啊！</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/AFNetworking/">AFNetworking</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/iOS/">iOS</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/04/07/让AFNetworking文件上传显示上传进度/" data-title="让AFNetworking文件上传显示上传进度 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/04/11/深入理解dispatch_sync/" title="深入理解dispatch_sync">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  深入理解dispatch_sync</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/04/05/AFNetworking使用笔记2/"  title="AFNetworking使用笔记2">
+ <strong>NEXT:</strong><br/> 
+ <span>AFNetworking使用笔记2
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/04/07/让AFNetworking文件上传显示上传进度/" data-title="让AFNetworking文件上传显示上传进度" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AFNetworking的进度管理"><span class="toc-number">2.</span> <span class="toc-text">AFNetworking的进度管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用NSProgress"><span class="toc-number">3.</span> <span class="toc-text">使用NSProgress</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

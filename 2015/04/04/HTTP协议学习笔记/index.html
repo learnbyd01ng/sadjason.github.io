@@ -1,0 +1,591 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>HTTP协议学习笔记 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="写在前面
+对于程序员而言，HTTP协议是一个非常熟悉的名词。每个人或多或少都对此有所了解。知道它是Web设计、客户端开发等的基础协议。通过它可以让服务器和客户端进行XML、JSON甚至是二进制数据的传输。笔者近期在对之前的程序（iOS项目）的梳理过程中，发现对HTTP协议的了解程度还远远谈不上“熟悉">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/04/04/HTTP协议学习笔记/" title="HTTP协议学习笔记" itemprop="url">HTTP协议学习笔记</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-04-04T07:57:35.000Z" itemprop="datePublished">2015-04-04</time>
+    更新日期:<time datetime="2015-07-04T09:11:16.000Z" itemprop="dateModified">2015-07-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HTTP协议须知"><span class="toc-number">2.</span> <span class="toc-text">HTTP协议须知</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HTTP消息概述"><span class="toc-number">3.</span> <span class="toc-text">HTTP消息概述</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#开始行"><span class="toc-number">3.1.</span> <span class="toc-text">开始行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#消息头"><span class="toc-number">3.2.</span> <span class="toc-text">消息头</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#消息主体"><span class="toc-number">3.3.</span> <span class="toc-text">消息主体</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#请求消息"><span class="toc-number">4.</span> <span class="toc-text">请求消息</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#请求行"><span class="toc-number">4.1.</span> <span class="toc-text">请求行</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#响应消息"><span class="toc-number">5.</span> <span class="toc-text">响应消息</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#状态行"><span class="toc-number">5.1.</span> <span class="toc-text">状态行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#状态码"><span class="toc-number">5.2.</span> <span class="toc-text">状态码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实体（entity）"><span class="toc-number">6.</span> <span class="toc-text">实体（entity）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#实体类型"><span class="toc-number">6.1.</span> <span class="toc-text">实体类型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#POST、GET、HEAD等方法"><span class="toc-number">7.</span> <span class="toc-text">POST、GET、HEAD等方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GET方法"><span class="toc-number">7.1.</span> <span class="toc-text">GET方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HEAD方法"><span class="toc-number">7.2.</span> <span class="toc-text">HEAD方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#POST方法"><span class="toc-number">7.3.</span> <span class="toc-text">POST方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PUT方法"><span class="toc-number">7.4.</span> <span class="toc-text">PUT方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HTTP和MIME"><span class="toc-number">8.</span> <span class="toc-text">HTTP和MIME</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#multipleForm/form-data消息"><span class="toc-number">9.</span> <span class="toc-text">multipleForm/form-data消息</span></a></li></ol>
+		</div>
+		
+		<h2 id="写在前面">写在前面</h2>
+<p>对于程序员而言，HTTP协议是一个非常熟悉的名词。每个人或多或少都对此有所了解。知道它是Web设计、客户端开发等的基础协议。通过它可以让服务器和客户端进行XML、JSON甚至是二进制数据的传输。笔者近期在对之前的程序（iOS项目）的梳理过程中，发现对HTTP协议的了解程度还远远谈不上“熟悉”，更多的时候是能够凭借网络资源能够找到某种问题的解决方案，譬如图片的上传与下载，多个文件的上传与下载等等之类的。但是很难从原理层面对这些或有用或无用的信息进行甄别，更谈不上完全独立针对某个网络问题进行合理的程序设计。于是，决定对HTTP相关知识进行一次好好的梳理。</p>
+<p>本文的内容只是站在自身的角度，将那些不是特别明白但是可能会经常涉及的知识点进行整理。关于HTTP的更多内容还得看RFC2616文档。</p>
+<p>说明：本文会经常出现“客户端”“服务器”“发送端”“接收端”这些概念；就本文而言，“服务端”指的是“管理HTTP资源的端点”，“客户端”指“请求HTTP资源的端点”；而“发送端”和“接收端”是相对的，譬如“客户端”发送一个GET请求到“服务器”，则针对这条消息，“客户端”是“发送端”，“服务器”是“接收端”；然后“服务器”返回一个消息给“客户端”，针对这条响应消息，“服务器”是“发送端”，“客户端”是接收端。</p>
+<h2 id="HTTP协议须知">HTTP协议须知</h2>
+<p>HTTP，即所谓的『超文本传输协议』，全称叫『HyperText Transfer Protocol』，是一个客户端和服务端请求和应答的标准（TCP）。</p>
+<ul>
+<li>HTTP是应用层的协议；</li>
+<li>HTTP协议是建立在TCP协议之上的协议，后者是传输层的协议；</li>
+</ul>
+<h2 id="HTTP消息概述">HTTP消息概述</h2>
+<p>HTTP消息，顾名思义，指的是“遵循HTTP协议，客户端和服务端的交流语言”（笔者的一家之言，注意，在HTTP协议中，客户端和服务端是相对的，称“请求端”和“应答端”或许更好）。</p>
+<p>从方向或应答角度来看，HTTP消息有两种：<strong>请求（Request）消息</strong>和<strong>响应（Response）消息</strong>；</p>
+<p>HTTP协议定义了HTTP消息的格式，请求消息和响应消息都由一个<strong>开始行（start-line）</strong>、<strong>0个或多个消息头（headers）</strong>、可有可无的<strong>消息主体（message-body）</strong>组成。</p>
+<figure class="highlight"><pre><div class="line">generic-message =</div><div class="line">	start-line                 ; 开始行</div><div class="line">	*(message-header CRLF)     ; 消息头</div><div class="line">	CRLF</div><div class="line">	[message-body]             ; 消息主体</div><div class="line">	</div><div class="line">;  其中CRLF表示“结束符”</div><div class="line">;  *表示“0个或多个“”</div><div class="line">;  []表示“可有可无”</div></pre></figure>
+
+<p>下面将围绕「开始行」「消息头」「消息主体」这几个概念进行详细阐述。</p>
+<h3 id="开始行">开始行</h3>
+<p>首先是「开始行」，「开始行」是什么样的格式？这不一定，因为对于不同的消息类型（请求消息和响应消息），「开始行」的格式是不同的：</p>
+<ul>
+<li>对于「请求消息」，<strong><em>start-line</em></strong>是「Request-Line」（即「请求行」），「请求行」的格式后文会介绍；</li>
+<li>对于「响应消息」，<strong><em>start-line</em></strong>是「Status-Line」（即「状态行」），「状态行」的格式后文会介绍；</li>
+</ul>
+<h3 id="消息头">消息头</h3>
+<p>然后是「消息头」，根据「作用域」来分，「消息头」分为：「常用头」（general-header）、「请求头」（request-header）、「响应头」（response-header）、「实体头」（entity-header）。无论如何，它们的格式总是这样：<br><code>message-header = field-name &quot;:&quot; [field-value]</code><br>其中field-name对大小写不敏感。</p>
+<h3 id="消息主体">消息主体</h3>
+<p>接着是「消息主体」，RFC2616中讲：</p>
+<blockquote>
+<p>The message-body (if any) of an HTTP message is used to carry the entity-body associated with the request or response.</p>
+</blockquote>
+<p>如下：</p>
+<figure class="highlight"><pre><div class="line">message-<span class="keyword">body</span> = </div><div class="line"><span class="keyword">entity</span>-<span class="keyword">body</span> | &lt;<span class="keyword">entity</span>-<span class="keyword">body</span> encoded as per Transfer-Encoding&gt;</div></pre></figure>
+
+<p>这是什么意思呢？</p>
+<p>HTTP协议中有两个概念非常容易混淆，「消息主体」（message-body）和「实体主体」（entity-body）。「实体主体」可以理解为「客户端想要发送给服务端看到的东东」，而「消息主体」是「服务端看到客户端传过来的东东」，二者的区别在于传输过程中可能会对entity-body进行编码；</p>
+<p>并非任何「请求消息」或者「响应消息」都可以有「消息主体」这一部分内容。「消息主体」可否存在于某个消息中由<strong>请求类型</strong>和<strong>响应类型</strong>决定的。</p>
+<p>P.S：“请求类型”“响应类型”，或许没有这种说法，不同的“请求类型”在这里的意思是指不同方法的请求，譬如我们熟悉的GET请求、POST请求等；同样，不同的“响应类型”指不同状态码的请求，譬如404响应、403响应、200响应等；</p>
+<p>对于「请求消息」，某些情况是不允许包含「消息主体」的，譬如HEAD请求；对于服务端而言，在处理“不允许”包含「消息主体」的请求消息时，应该忽略不理会这些消息的「消息主体」，哪怕这些消息包含了「消息主体」。但对于某些允许包含「消息主体」的「请求消息」，也可以不包含「消息主体」，譬如对于POST请求消息，本身是被允许包含「消息主体」的，但真正发送「请求消息」时，也可以不包含任何的「消息主体」。</p>
+<p>那么问题来了，服务器如何识别「某个可能包含消息主体的请求消息是否真的包含消息主体」呢？根据RFC2616的描述，服务器可以通过两个message-header来判别某个「请求消息」中是否包含「请求主体」，这两个message-header分别是Content-Length和Transfer-Encoding，前者记录「消息实体」的长度，后者记录对entity-body进行编码的东东；</p>
+<p>更细化来看，客户端或者服务器的处理逻辑「消息主体」的逻辑如下：</p>
+<ol>
+<li>对于不能包含「消息主体」的消息（譬如HEAD请求消息、1xx响应消息），完全忽略「消息主体」，当它不存在；</li>
+<li>如果消息中出现“Transfer-Encoding”头，并且其值不是“identity”时，then the transfer-length is defined by use of the “chunked” transfer-coding (section 3.6), unless the message is terminated by closing the connection.<br>P.S：不太理解这一句，但感觉的意思是，如果所接收到的“消息”中包含“Transfer-Encoding”头且其值不是“identity”，则计算所接收到「消息主体」并处理之；</li>
+<li>如果消息中出现“Content-Length”头，则认为所接收到的「消息主体」的长度为“Content-Length”的值，并且该值也是entity-body的值（即认为entity-body没有进行特别的传输编码）；<br>P.S：如果entity-body进行了特别的传输编码，千万不要定义“Content-Length”这个header，因为这会让服务器造成误解；<br>P.S：如果消息中同时包含“Transfer-Encoding”头和“Content-Length”头，则后者会被忽略不处理；</li>
+<li>If the message uses the media type “multipart/byteranges”, and the transfer-length is not otherwise specified, then this self-delimiting media type defines the transfer-length. This media type MUST NOT be used unless the sender knows that the recipient can parse it; the presence in a request of a Range header with multiple byte-range specifiers from a 1.1 client implies that the client can parse multipart/byteranges responses<br>P.S：看不懂！</li>
+</ol>
+<h2 id="请求消息">请求消息</h2>
+<h3 id="请求行">请求行</h3>
+<p>正如前文所述，对于「请求消息」，「开始行」被称为「请求行」，其格式如下：</p>
+<figure class="highlight"><pre><div class="line">Request-Line =<span class="function"><span class="keyword">Method</span> <span class="title">SP</span> <span class="title">Request</span>-<span class="title">URL</span> <span class="title">SP</span> <span class="title">HTTP</span>-<span class="title">Version</span> <span class="title">CRLF</span></span></div><div class="line">;  </div><div class="line">;  SP表示“分隔符”</div><div class="line">;  CRLF表示“结束符”</div></pre></figure>
+
+<p>其中，Method包括：</p>
+<figure class="highlight"><pre><div class="line"><span class="type">Method</span> = <span class="string">"OPTIONS"</span></div><div class="line">         | <span class="string">"GET"</span></div><div class="line">         | <span class="string">"HEAD"</span></div><div class="line">         | <span class="string">"POST"</span></div><div class="line">         | <span class="string">"PUT"</span></div><div class="line">         | <span class="string">"DELETE"</span></div><div class="line">         | <span class="string">"TRACE"</span></div><div class="line">         | <span class="string">"CONNECT"</span></div><div class="line">         | extension-<span class="keyword">method</span></div></pre></figure>
+
+<p>关于Method这部分内容，相对比较熟悉，直接摘抄RFC2616：</p>
+<blockquote>
+<p>The list of methods allowed by a resource can be specified in an Allow header field (section 14.7). The return code of the response always notifies the client whether a method is currently allowed on a resource, since the set of allowed methods can change dynamically.</p>
+<p>An origin server SHOULD return the status code 405 (Method Not Allowed) if the method is known by the origin server but not allowed for the requested resource, and 501 (Not Implemented) if the method is unrecognized or not implemented by the origin server.</p>
+<p>The methods GET and HEAD MUST be supported by all general-purpose servers. All other methods are OPTIONAL;</p>
+</blockquote>
+<h2 id="响应消息">响应消息</h2>
+<h3 id="状态行">状态行</h3>
+<p>正如前文所述，对于「响应消息」，「开始行」被称为「状态行」，其格式如下：</p>
+<figure class="highlight"><pre><div class="line"><span class="setting">Status-Line = <span class="value">HTTP-Version SP Status-Code SP Reason-Phrase CRLF</span></span></div><div class="line"><span class="comment">;  </span></div><div class="line"><span class="comment">;  SP表示“分隔符”</span></div><div class="line"><span class="comment">;  CRLF表示“结束符”</span></div><div class="line"><span class="comment">;  Status-Code表示“状态码”，譬如经典的404</span></div><div class="line"><span class="comment">;  Reason-Phrase表示“状态码的简单文字描述”</span></div></pre></figure>
+
+<h3 id="状态码">状态码</h3>
+<p>状态码都是三位数，第一位数（最高位）定义响应类别，第一位有5种值：</p>
+<ul>
+<li>1xx: Informational - Request received, continuing process</li>
+<li>2xx: Success - The action was successfully received, understood, and accepted</li>
+<li>3xx: Redirection - Further action must be taken in order to complete the request</li>
+<li>4xx: Client Error - The request contains bad syntax or cannot be fulfilled</li>
+<li>5xx: Server Error - The server failed to fulfill an apparently valid request</li>
+</ul>
+<h2 id="实体（entity）">实体（entity）</h2>
+<p>如果不被请求方法和响应状态码限制，「请求消息」和「响应消息」都可以传输entity。实体包括「实体头」和「实体主体」（entity-body），有些响应只包括「实体头」（譬如针对HEAD请求的响应）。</p>
+<h3 id="实体类型">实体类型</h3>
+<p>实体可能是一个文件，也可能是一段文本，所以必然有一个重要的“属性”用来描述“实体类型”，这个“属性”是「实体头」“Content-Type”，实体类型比较繁多，譬如png文件对应的实体类型是“image/png”，更多Content-Type参考：<a href="http://tool.oschina.net/commons" target="_blank" rel="external">http://tool.oschina.net/commons</a></p>
+<h2 id="POST、GET、HEAD等方法">POST、GET、HEAD等方法</h2>
+<p>RFC2616对「请求消息」的方法进行了分类：安全方法（Safe Methods）和幂等方法（Idempotent Mehtods）。</p>
+<p>要理解「安全方法」，先介绍一个概念：「副作用」，副作用指当你发送完一个请求以后，网站上的资源状态没有发生修改，即认为这个请求是无副作用的。比如注册用户这个请求是有副作用的，获取用户详情可以认为是无副作用的。</p>
+<p>对于「幂等方法」，“幂等”是说一个请求原封不动的发送N次和M次（N不等于M，N和M都大于1）服务器上资源的状态最终是一致的。比如发贴是非幂等的，重放10次发贴请求会创建10个帖子。但修改帖子内容是幂等的，一个修改请求重放无论多少次，帖子最终状态都是一致的。</p>
+<p>「请求消息」的方法众多，有些的方法只是读取服务器的资源，有的方法可能会修改服务器的资源。GET和HEAD属于前者，它们只是获取资源，这些方法被称为「安全方法」；POST、PUT、DELETE属于后者，它们可能使服务器的资源发生变化，这些方法被称为「幂等方法」。</p>
+<p>P.S：根据笔者的理解，所谓的「安全方法」和「幂等方法」只是一种臆想，不是绝对的。举个例子，服务器有某篇文章，现在浏览器通过GET方法获取这篇文章，当然，客户端并没有修改这篇文章，但是，服务器可能做了这样的处理：将这篇文章的“浏览次数”+1；鸿观上讲，这个GET方法还是修改了服务器的资源；所以，「安全方法」和「幂等方法」知道这个概念就好，不必当真。</p>
+<h3 id="GET方法">GET方法</h3>
+<p>GET方法意思是获取被请求URI（Request-URI）指定的信息（以实体的格式）。如果请求URI 涉及到一个数据生成过程，那么这个过程生成的数据应该被作为实体在响应中返回而不是过程的源文本，除非源文本恰好是过程的输出。</p>
+<p>如果「请求消息」包含If-Modified-Since、If-Unmodified-Since、If-Match、If-None-Match或者If-Range头，GET的语义将变成“条件（conditionall）GET”。一个条件GET方法会请求满足条件头域的实体。条件GET方法的目的是为了减少不必要的网络使用，这通过允许利用缓存里仍然保鲜的实体而不用多次请求或传输客户端已经拥有的实体来实现的。</p>
+<p>如果请求方法包含一个Range头域，那么GET方法就变成“部分Get”（partial GET）方法。 一个部分GET会请求实体的一部分。部分GET方法的目的是为了减少不必要的网络使用，可以允许客户端从服务器获取实体的部分数据，而不需要获取客户端本地已经拥有的部分实体数据。</p>
+<p>P.S：关键词 — <strong><em>条件GET</em></strong>和<strong><em>部分GET</em></strong>。</p>
+<h3 id="HEAD方法">HEAD方法</h3>
+<p>除了服务器不能在响应里返回消息主体，HEAD方法和GET方法基本一致。HEAD请求的「响应消息」里的「消息头」应该和GET请求的「响应消息」里的「消息头」一致。此方法被用来获取请求实体的元信息而不需要传输实体主体（entity-body）。此方法经常被用来测试超文本链接的有效性、可访问性以及最近的改变等，对于涉及下载的服务，HEAD方法还用来获取“欲下载文件的大小”。</p>
+<h3 id="POST方法">POST方法</h3>
+<p>在实际应用中，GET和POST是用得最多的。相对于GET方法，POST方法在Request-URI所标识的资源后附加新的数据，而GET方法直接将数据放在URI中；此外，POST还可以携带「消息主体」，而GET不成。</p>
+<p>简而言之：</p>
+<p>GET：「安全方法」，「幂等方法」，不可不含「消息主体」<br>POST：非「安全方法」，非「幂等方法」，可包含「消息主体」</p>
+<h3 id="PUT方法">PUT方法</h3>
+<p>PUT方法请求服务器去把请求里的实体存储在请求URI（Request-URI）标识下。如果请求 URI（Request-URI）指定的的资源已经在源服务器上存在，那么此请求里的实体应该被当作是源服务器关于此URI所指定资源实体的最新修改版本。如果请求URI（Request-URI）指定的资源不存在，并且此URI被用户代理定义为一个新资源，那么源服务器就应该根据请求里的实体创建一个此URI所标识下的资源。如果一个新的资源被创建了，源服务器必须能向用户代理（user agent）发送201（已创建）响应。如果已存在的资源被改变了，那么源服务器应该发送200（Ok）或者204（无内容）响应。如果资源不能根据请求URI创建或者改变，一个合适的错误响应应该给出以反应问题的性质。实体的接收者不能忽略任何它不理解和不能实现的Content-*（如：Content-Range）头，并且必须返回501（没有被实现）响应。</p>
+<p>P.S：其他方法略过，很少用到。</p>
+<h2 id="HTTP和MIME">HTTP和MIME</h2>
+<p>最开始HTTP协议是不允许在「消息实体」中挂载二进制文件的，后来逐渐扩展，开始支持MIME协议，这才允许在消息实体中挂载二进制文件，譬如音频、图片等。所以「实体头」Content-Type的很多值MIME-Type中所定义的值。</p>
+<h2 id="multipleForm/form-data消息">multipleForm/form-data消息</h2>
+<p>经过不断的演化，HTTP协议借鉴并包容了MIME协议，使得HTTP协议能够服务器和客户端之间传输各种文件（文本文件譬如txt文件、二进制文件譬如png文件），具体的处理方式是将这些文件放在「消息体」中，关于这个上文已有所述；但是有一个问题：「消息体」中能够承载多个实体（entity）吗？换句话说，如果HTTP通信涉及多个文件的传输，该如何处理？</p>
+<p>如果只是基于上文所涉及的内容，是没办法做到在一次HTTP消息传输中传输多个文件的。而实现多个文件的传输就得涉及所谓的<code>multipleForm/form-data消息</code>了。</p>
+<p>根据http/1.1 rfc 2616的协议规定，我们的请求方式只有OPTIONS、GET、HEAD、POST、PUT、DELETE、TRACE等，<code>multipart/form-data</code>是个什么东东呢？</p>
+<p>对于<code>multipart/form-data</code>，似乎没有找到权威的定义，RFC2616对于它的描述只是出现在“Media Type”部分。根据我的理解，可以认为<code>multipart/form-data</code>是一种类型的「消息体」。</p>
+<p>P.S：姑且认为<code>multipart/form-data</code>是一种类型的「消息体」吧！</p>
+<p>传输<code>multipart/form-data</code>「消息体」的基础方法是POST；简单来说，当需要在一次「请求消息」中传输多个文件时，就将着多个文件“揉成”一个<code>multipart/form-data</code>「消息体」，然后以POST形式传到服务器。</p>
+<p><code>multipart/form-data</code>「消息体」有啥不同之处呢？</p>
+<p>首先是Content-Type不同，其他的「消息体」的Content-Type可能是“image/png”“text/plain”之类的，但是<code>multipart/form-data</code>「消息体」的Content-Type必须是“multipart/form-data”；</p>
+<p>其次是<code>multipart/form-data</code>「消息体」内嵌了一个或多个其他「消息体」。</p>
+<p>举个例子，假设有这么一段HTML代码：</p>
+<figure class="highlight HTML"><pre><div class="line"><span class="tag">&lt;<span class="title">FORM</span> <span class="attribute">ACTION</span>=<span class="value">"http://server.dom/cgi/handle"</span> <span class="attribute">ENCTYPE</span>=<span class="value">"multipart/form-data"</span> <span class="attribute">METHOD</span>=<span class="value">POST</span>&gt;</span></div><div class="line">    What is your name? <span class="tag">&lt;<span class="title">INPUT</span> <span class="attribute">TYPE</span>=<span class="value">TEXT</span> <span class="attribute">NAME</span>=<span class="value">submitter</span>&gt;</span></div><div class="line">    What files are you sending? <span class="tag">&lt;<span class="title">INPUT</span> <span class="attribute">TYPE</span>=<span class="value">FILE</span> <span class="attribute">NAME</span>=<span class="value">pics</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="title">FORM</span>&gt;</span></div></pre></figure>
+
+<p>对应的网页如下：<br><img src="/img/201504/QQ20150405-1.png" alt="QQ20150405-1.png"></p>
+<p>当用户在姓名输入框中输入“张不坏”，并且选择了一个txt文档“file1.txt”时，客户端发送的HTTP消息体数据可能如下：</p>
+<figure class="highlight"><pre><div class="line">Content-type: multipart/form-data, boundary=AaB03x</div><div class="line">	</div><div class="line">--AaB03x</div><div class="line">content-disposition: form-data; name=<span class="string">"field1"</span></div><div class="line">	</div><div class="line">张不坏</div><div class="line">--AaB03x</div><div class="line">content-disposition: form-data; name=<span class="string">"pics"</span>; filename=<span class="string">"file1.txt"</span></div><div class="line">Content-Type: text/plain</div><div class="line">  <span class="keyword">...</span> contents of file1.txt <span class="keyword">...</span></div><div class="line">--AaB03x--</div></pre></figure>
+
+<p>可以看到，这个示例中涉及两个entity的传输：</p>
+<ul>
+<li>Content-Type为默认值的文本框输入值；</li>
+<li>Content-Type为“text/plain”的纯文本文件；</li>
+</ul>
+<p>P.S：这里若可以用HTTP协议分析工具分析一下最好了。</p>
+<p>关于<code>multipart/form-data</code>「消息体」，还往往涉及boundary之类的更多概念，本文就针对这个详述了。</p>
+<p>还会经常有一种<code>Content-Type</code>值为<code>multipart/mixed</code>，笔者一度在<code>multipart/form-data</code>和<code>multipart/mixed</code>之间傻傻分不清楚。对于上述示例中“What files are you sending?”之后的文件选择按钮，当选择多个文件时（譬如keynote文件，事实上这个“文件是一个文件包”，它由多个文件组成），则该entity对应的Content-Type是<code>multipart/mixed</code>，表示该form entry对应多个文件，RFC1867的描述如下：</p>
+<blockquote>
+<p>If multiple files are to be returned as the result of a single form<br>entry, they can be returned as multipart/mixed embedded within the multipart/form-data.</p>
+</blockquote>
+<p>但无论如何，<code>multipart/mixed</code>消息体都是嵌套在<code>multipart/form-data</code>内部的子消息体。</p>
+<p>P.S：<code>multipleForm/form-data消息</code>这一部分内容的叙述不够详细，有时间还是使用HTTP报文分析工具进行更加详细的分析吧。</p>
+<p><strong>参考资料</strong></p>
+<ol>
+<li>HTTP协议RFC2616文档（能够找到中文翻译版，我参考的是“孙超进”翻译版本，感谢他的贡献，但感觉翻译得不是很好）；</li>
+<li>RFC2046，MIME协议part2，定义了Media Types；</li>
+<li>RFC1867，Form-based File Upload in HTML；</li>
+<li><a href="http://blog.csdn.net/five3/article/details/7181521" target="_blank" rel="external">HTTP协议之multipart/form-data请求分析</a>；</li>
+</ol>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/HTTP/">HTTP</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Others/">Others</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/04/04/HTTP协议学习笔记/" data-title="HTTP协议学习笔记 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/04/05/AFNetworking使用笔记1/" title="AFNetworking使用笔记1">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  AFNetworking使用笔记1</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/03/30/当UIScrollView遇到UINavigationController/"  title="当UIScrollView遇到UINavigationController">
+ <strong>NEXT:</strong><br/> 
+ <span>当UIScrollView遇到UINavigationController
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/04/04/HTTP协议学习笔记/" data-title="HTTP协议学习笔记" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HTTP协议须知"><span class="toc-number">2.</span> <span class="toc-text">HTTP协议须知</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HTTP消息概述"><span class="toc-number">3.</span> <span class="toc-text">HTTP消息概述</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#开始行"><span class="toc-number">3.1.</span> <span class="toc-text">开始行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#消息头"><span class="toc-number">3.2.</span> <span class="toc-text">消息头</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#消息主体"><span class="toc-number">3.3.</span> <span class="toc-text">消息主体</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#请求消息"><span class="toc-number">4.</span> <span class="toc-text">请求消息</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#请求行"><span class="toc-number">4.1.</span> <span class="toc-text">请求行</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#响应消息"><span class="toc-number">5.</span> <span class="toc-text">响应消息</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#状态行"><span class="toc-number">5.1.</span> <span class="toc-text">状态行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#状态码"><span class="toc-number">5.2.</span> <span class="toc-text">状态码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实体（entity）"><span class="toc-number">6.</span> <span class="toc-text">实体（entity）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#实体类型"><span class="toc-number">6.1.</span> <span class="toc-text">实体类型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#POST、GET、HEAD等方法"><span class="toc-number">7.</span> <span class="toc-text">POST、GET、HEAD等方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GET方法"><span class="toc-number">7.1.</span> <span class="toc-text">GET方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HEAD方法"><span class="toc-number">7.2.</span> <span class="toc-text">HEAD方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#POST方法"><span class="toc-number">7.3.</span> <span class="toc-text">POST方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PUT方法"><span class="toc-number">7.4.</span> <span class="toc-text">PUT方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HTTP和MIME"><span class="toc-number">8.</span> <span class="toc-text">HTTP和MIME</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#multipleForm/form-data消息"><span class="toc-number">9.</span> <span class="toc-text">multipleForm/form-data消息</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

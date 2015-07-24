@@ -1,0 +1,508 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Two Pointers Problems | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="Two Pointers Problems
+「双指针问题」英文里更多时候被称为「Two Pointers Problems」。相对于和Dynamic Programming、Greedy、Backtracking等，似乎没什么人把「Two Pointers」称之为一种算法。根据我的理解，「双指针」处">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/07/06/Two-Pointers-Problems/" title="Two Pointers Problems" itemprop="url">Two Pointers Problems</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-07-06T13:59:40.000Z" itemprop="datePublished">2015-07-06</time>
+    更新日期:<time datetime="2015-07-09T02:38:45.000Z" itemprop="dateModified">2015-07-09</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Two_Pointers_Problems"><span class="toc-number">1.</span> <span class="toc-text">Two Pointers Problems</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#夹逼"><span class="toc-number">2.</span> <span class="toc-text">夹逼</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Trapping_Rain_Water"><span class="toc-number">2.1.</span> <span class="toc-text">Trapping Rain Water</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#追逐"><span class="toc-number">3.</span> <span class="toc-text">追逐</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#写在后面"><span class="toc-number">4.</span> <span class="toc-text">写在后面</span></a></li></ol>
+		</div>
+		
+		<h2 id="Two_Pointers_Problems"><strong>Two Pointers Problems</strong></h2>
+<p>「双指针问题」英文里更多时候被称为「Two Pointers Problems」。相对于和Dynamic Programming、Greedy、Backtracking等，似乎没什么人把「Two Pointers」称之为一种算法。根据我的理解，「双指针」处理指的是一种常见的解题思路，它可以用来解决一类问题。基于它的Solution常常有如下特点：</p>
+<ul>
+<li>时间复杂度为O(n)；</li>
+<li>常常结合一维DP（Dynamic Programming）思路；</li>
+</ul>
+<p>LeetCode对Two Pointers题目进行了归类，迄今为止，除了两道hard级别题目以及需要付费完成的题目之外，我提供了所有问题的Solution并被<code>Accpeted</code>。</p>
+<p>「Two Pointers」问题一般处理的对象是数组或者字符串。所谓「双指针」，指的是在处理过程中使用两个指针，对这两个指针根据一定逻辑进行移动，进而能够求得问题的解。经过个人总结，以为双指针的移动策略有两种：「夹逼」和「追逐」。</p>
+<p>P.S：「Two Pointers」问题处理的对象也有可能是链表，一般是「双指针追逐」问题，譬如「判断链表是否有环」问题。</p>
+<p>所谓「夹逼」指的是两个指针在刚开始时分别置于数组（或字符串）的头部或尾部，然后向内侧根据具体的策略进行移动…</p>
+<p>所谓「追逐」指的是两个指针在刚开始时均置于数组（或字符串）的头部，然后向后根据一定策略进行移动…</p>
+<p>下文将分别以「夹逼」和「追逐」为类别在LeetCode中挑选几道典型的「Two Pointers」问题进行简单介绍。</p>
+<h2 id="夹逼"><strong>夹逼</strong></h2>
+<p>「夹逼」两个字怎么看都感觉很邪恶，但叫惯了感觉还是不错^_^</p>
+<p>如上文所言，所谓「夹逼」指的是两个指针在刚开始时分别置于数组（或字符串）的头部或尾部，然后向内侧根据具体的策略进行移动，以下是一些应用场景。</p>
+<p><strong>Two Sums</strong></p>
+<p>LeetCode中关于「Two Sums」问题有一个系列（好几道），这里指的是<a href="https://leetcode.com/problems/two-sum-ii-input-array-is-sorted" target="_blank" rel="external">Two Sum II</a>，本题属于收费内容，虽然不能提交代码参与LeetCode测试，但是仍然能够在<a href="http://www.cnblogs.com/ganganloveu/p/4198968.html" target="_blank" rel="external">网上</a>看到该题目的描述：</p>
+<blockquote>
+<p>Given an array of integers that is already sorted in ascending order, find two numbers such that they add up to a specific target number.<br>&nbsp;<br>The function <code>twoSum</code> should return indices of the two numbers such that they add up to the target, where <em>index1</em> must be less than <em>index2</em>. Please note that your returned answers (both <em>index1</em> and <em>index2</em>) are not zero-based.<br>&nbsp;<br>You may assume that each input would have exactly one solution.<br>&nbsp;<br>Input: <em>numbers</em>=<code>{2, 7, 11, 15}</code>, <em>target</em>=9<br>Output: <em>index1</em>=1, <em>index2</em>=2</p>
+</blockquote>
+<p>该题或许是阐述「Two Pointers」最好的例子了。简单阐述一下思路：初始化左指针left指向数组起始，初始化右指针right指向数组结尾，根据已排序这个特性：</p>
+<ul>
+<li>如果<code>numbers[left]</code>与<code>numbers[right]</code>的<strong>和</strong>小于target，说明应该增加<strong>和</strong>，因此left右移一个较大的值；</li>
+<li>如果<code>numbers[left]</code>与<code>numbers[right]</code>的<strong>和</strong>大于target，说明应该减小<strong>和</strong>，因此right左移一个较小的值；</li>
+<li>如果<code>numbers[left]</code>与<code>numbers[right]</code>的<strong>和</strong>等于target，直接返回left和right；</li>
+</ul>
+<p>此思路的时间复杂度<code>O(n)</code>，one-pass，空间复杂度<code>O(1)</code>。</p>
+<p>P.S：暴力求解的思路是比较所有两个元素，瞧瞧它们的和是否等于target，根据高中的数学知识，容易知道需要计算C<sup>2</sup><sub style="margin-left:-6px;">n</sub>次；以上的这种思路是否可能会错过某些「组合」呢？确实会过滤掉许多组合，但是这种过滤是无害的，笔者曾在<a href="/2015/06/28/Container-With-Most-Water/">这篇博客</a>中阐述过缘由。</p>
+<p><strong>Container With Most Water</strong></p>
+<p><a href="https://leetcode.com/problems/container-with-most-water/" target="_blank" rel="external">本题</a>个人感觉非常棒，它的描述和分析详见<a href="/2015/06/28/Container-With-Most-Water/">这篇博文</a>，Solution代码详见<a href="https://github.com/sadjason/LeetCode/blob/master/container-with-most-water.py" target="_blank" rel="external">这里</a>。</p>
+<h3 id="Trapping_Rain_Water"><strong>Trapping Rain Water</strong></h3>
+<p>题目详见<a href="https://leetcode.com/problems/trapping-rain-water/" target="_blank" rel="external">这里</a>，本题比上一道题更抽象一些，但解题方式似乎更丰富一些，通过网上资料可以得到各种姿势的Solution，我的<a href="https://github.com/sadjason/LeetCode/blob/master/trapping-rain-water.py" target="_blank" rel="external">github</a>中是我能够找到的最简洁版本。</p>
+<p>P.S：单纯站在「Two Pointers」的角度，个人觉得本题是比价抽象，同时难度系数比较高的一道。</p>
+<h2 id="追逐"><strong>追逐</strong></h2>
+<p><strong>Minimum Size Subarray Sum</strong></p>
+<p><a href="https://leetcode.com/problems/minimum-size-subarray-sum/" target="_blank" rel="external">Minimum Size Subarray Sum</a>为「双指针追逐」问题提供了一个非常棒的场景描述：</p>
+<blockquote>
+<p>Given an array of n positive integers and a positive integer s, find the minimal length of a subarray of which the <code>sum ≥ s</code>. If there isn’t one, return 0 instead.<br>&nbsp;<br>For example, given the array <code>[2,3,1,2,4,3]</code> and <code>s = 7</code>,<br>the subarray <code>[4,3]</code> has the minimal length under the problem constraint.</p>
+</blockquote>
+<p>解题思路：两个指针begin和end分别从数组0位置开始「启程」，end向后移动，当子数组<code>[begin,end]</code>的元素和大于等于target时，计算end-begin+1，此时begin开始向后移动，直到子数组<code>[begin,end]</code>元素和重新小于target。</p>
+<p>最终Solution代码如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer} s</span></div><div class="line">    <span class="comment"># @param {integer[]} nums</span></div><div class="line">    <span class="comment"># @return {integer}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">minSubArrayLen</span><span class="params">(self, s, nums)</span>:</span></div><div class="line">        n = len(nums)</div><div class="line">        <span class="keyword">if</span> n == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> <span class="number">0</span></div><div class="line">        </div><div class="line">        begin, end, sums, ret = <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span></div><div class="line">        <span class="keyword">while</span> end &lt; n:</div><div class="line">            sums += nums[end]</div><div class="line">            <span class="keyword">while</span> sums &gt;= s:</div><div class="line">                <span class="keyword">if</span> ret == <span class="number">0</span> <span class="keyword">or</span> end-begin+<span class="number">1</span> &lt; ret:</div><div class="line">                    ret = end-begin+<span class="number">1</span></div><div class="line">                sums -= nums[begin]</div><div class="line">                begin += <span class="number">1</span></div><div class="line">            end += <span class="number">1</span></div><div class="line">                </div><div class="line">        <span class="keyword">return</span> ret</div></pre></figure>
+
+<p><strong>Linked List Cycle</strong></p>
+<p>链表环问题也属于「Two Pointers」问题，LeetCode中有两道链表环问题：</p>
+<ul>
+<li><a href="https://leetcode.com/problems/linked-list-cycle/" target="_blank" rel="external">Linked List Cycle</a></li>
+<li><a href="https://leetcode.com/problems/linked-list-cycle-ii/" target="_blank" rel="external">Linked List Cycle II</a></li>
+</ul>
+<p>具体分析笔者在之前博客中已经讲过，详见<a href="/2015/06/09/linked-list/#链表环问题">这里</a>，代码在<a href="https://github.com/sadjason/LeetCode/blob/master/linked-list-cycle.py" target="_blank" rel="external">github</a>中。</p>
+<p><strong>Longest Substring Without Repeating Characters</strong></p>
+<p>本问题在之前博客分析过，详见<a href="/2015/07/06/String-Problems/#最长子串问题">这里</a>。</p>
+<p><strong>Implement strStr()</strong></p>
+<p>本题详见<a href="">这里</a>，描述如下：</p>
+<blockquote>
+<p>Implement strStr().<br>&nbsp;<br>Returns the index of the first occurrence of needle in haystack, or -1 if needle is not part of haystack.</p>
+</blockquote>
+<p>感觉这道题有很多Solution，如下是笔者冒泡级别的Solution：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param haystack, a string</span></div><div class="line">    <span class="comment"># @param needle, a string</span></div><div class="line">    <span class="comment"># @return an integer</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">strStr</span><span class="params">(self, haystack, needle)</span>:</span></div><div class="line">        <span class="comment"># haystack - 被查找的字符串，needle - 匹配字符串</span></div><div class="line">        m, n = len(needle), len(haystack)</div><div class="line">	</div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">0</span>, n-m+<span class="number">1</span>):</div><div class="line">            flag = <span class="keyword">True</span></div><div class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> xrange(<span class="number">0</span>, m):</div><div class="line">                <span class="keyword">if</span> haystack[i+j] != needle[j]:</div><div class="line">                    flag = <span class="keyword">False</span></div><div class="line">                    <span class="keyword">break</span></div><div class="line">            <span class="keyword">if</span> flag:</div><div class="line">                <span class="keyword">return</span> i</div><div class="line">        <span class="keyword">return</span> -<span class="number">1</span></div></pre></figure>
+
+<p>写到这里，意识到其实冒泡排序也可以说是「Two Pointers Problems」。</p>
+<p>P.S：对于这题，有一些其他有名的算法更加有效率，如Rabin-Karp algorithm, KMP algorithm, 或者Boyer-Moore algorithm，了解这些算法可以作为一个扩展训练；或许会在之后的博客中谈及。</p>
+<h2 id="写在后面"><strong>写在后面</strong></h2>
+<p>其实本文问题在其他我的其他博文中大多也涉及到了，这里再次系统抽出来说明是为了更好的对「Two Pointers」问题做个总结。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/07/06/Two-Pointers-Problems/" data-title="Two Pointers Problems | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/07/06/String-Problems/" title="字符串和算法 第一弹">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  字符串和算法 第一弹</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/07/06/merge-intervals-and-insert-interval/"  title="Merge Intervals and Insert Interval">
+ <strong>NEXT:</strong><br/> 
+ <span>Merge Intervals and Insert Interval
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/07/06/Two-Pointers-Problems/" data-title="Two Pointers Problems" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Two_Pointers_Problems"><span class="toc-number">1.</span> <span class="toc-text">Two Pointers Problems</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#夹逼"><span class="toc-number">2.</span> <span class="toc-text">夹逼</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Trapping_Rain_Water"><span class="toc-number">2.1.</span> <span class="toc-text">Trapping Rain Water</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#追逐"><span class="toc-number">3.</span> <span class="toc-text">追逐</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#写在后面"><span class="toc-number">4.</span> <span class="toc-text">写在后面</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,575 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>字符串和算法 第一弹 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="罗马数字和正整数
+罗马数字和正整数之间如何转换？如果没有遇到这道题，还真不会。只隐约记得小学老师教过，但完全忘了。
+参考百度百科罗马数字。罗马数字由7个字符组成，这7个字符分别对应不同的整型值：I-1，V-5，X-10，L-50，C-100，D-500，M-1000。
+不同的组合构建了不同的值，组数">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/07/06/String-Problems/" title="字符串和算法 第一弹" itemprop="url">字符串和算法 第一弹</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-07-06T14:01:56.000Z" itemprop="datePublished">2015-07-06</time>
+    更新日期:<time datetime="2015-07-14T03:19:09.000Z" itemprop="dateModified">2015-07-14</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#罗马数字和正整数"><span class="toc-number">1.</span> <span class="toc-text">罗马数字和正整数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Roman_to_Integer"><span class="toc-number">1.1.</span> <span class="toc-text">Roman to Integer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Integer_to_Roman"><span class="toc-number">1.2.</span> <span class="toc-text">Integer to Roman</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#子序列问题"><span class="toc-number">2.</span> <span class="toc-text">子序列问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最长子串问题"><span class="toc-number">3.</span> <span class="toc-text">最长子串问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#编辑距离"><span class="toc-number">4.</span> <span class="toc-text">编辑距离</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Parentheses问题"><span class="toc-number">5.</span> <span class="toc-text">Parentheses问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Valid_Parentheses"><span class="toc-number">5.1.</span> <span class="toc-text">Valid Parentheses</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Generate_Parentheses"><span class="toc-number">5.2.</span> <span class="toc-text">Generate Parentheses</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Longest_Valid_Parentheses"><span class="toc-number">5.3.</span> <span class="toc-text">Longest Valid Parentheses</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Interleaving_String"><span class="toc-number">6.</span> <span class="toc-text">Interleaving String</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#回文处理"><span class="toc-number">7.</span> <span class="toc-text">回文处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#函数实现"><span class="toc-number">8.</span> <span class="toc-text">函数实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Others"><span class="toc-number">9.</span> <span class="toc-text">Others</span></a></li></ol>
+		</div>
+		
+		<h2 id="罗马数字和正整数"><strong>罗马数字和正整数</strong></h2>
+<p>罗马数字和正整数之间如何转换？如果没有遇到这道题，还真不会。只隐约记得小学老师教过，但完全忘了。</p>
+<p>参考百度百科<a href="http://baike.baidu.com/subview/42061/42061.htm" target="_blank" rel="external">罗马数字</a>。罗马数字由7个字符组成，这7个字符分别对应不同的整型值：<code>I-1</code>，<code>V-5</code>，<code>X-10</code>，<code>L-50</code>，<code>C-100</code>，<code>D-500</code>，<code>M-1000</code>。</p>
+<p>不同的组合构建了不同的值，组数规则很简单：</p>
+<ol>
+<li>相同的数字连写，所表示的数等于这些数字相加得到的数，如，III = 3；</li>
+<li>小的数字在大的数字的左边，所表示的数等于大数减小数得到的数，如，IV = 4，IX = 9；</li>
+<li>小的数字在大的数字的右边，所表示的数等于这些数字相加得到的数，如，VII = 8, XII = 12；</li>
+</ol>
+<p>说明：</p>
+<ul>
+<li>规则2优先于规则3；</li>
+<li><code>4</code>和<code>9</code>以及相关数（譬如40，90等）要求使用规则2表示，即不能用<code>IIII</code>表示<code>4</code>，而该用<code>IV</code>表示。</li>
+</ul>
+<p>P.S：罗马数字表示法还有一些其他规则，本文不需要了解，就此略过。</p>
+<p>罗马数字表示较小的正整数尚可，但表示比较大的数就很困难。</p>
+<h3 id="Roman_to_Integer"><strong>Roman to Integer</strong></h3>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/roman-to-integer/" target="_blank" rel="external">Roman to Integer</a>，描述如下：</p>
+<blockquote>
+<p>Given a roman numeral, convert it to an integer.<br>&nbsp;<br>Input is guaranteed to be within the range from 1 to 3999.</p>
+</blockquote>
+<p>题目中已经说明了所给的整数小于4000，这是因为罗马数字不方便表示比较大的整数，简化题目。</p>
+<p>只要了解题意，有点耐心，即可解题，如下是一种比较优雅的解决方案：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {string} s</span></div><div class="line">    <span class="comment"># @return {integer}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">romanToInt</span><span class="params">(self, s)</span>:</span></div><div class="line">        romans = dict(((<span class="string">'I'</span>,<span class="number">1</span>), (<span class="string">'V'</span>,<span class="number">5</span>), (<span class="string">'X'</span>,<span class="number">10</span>), (<span class="string">'L'</span>,<span class="number">50</span>), (<span class="string">'C'</span>,<span class="number">100</span>), (<span class="string">'D'</span>,<span class="number">500</span>), (<span class="string">'M'</span>,<span class="number">1000</span>)))</div><div class="line">        ret = <span class="number">0</span></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(len(s)):</div><div class="line">            <span class="keyword">if</span> i &gt; <span class="number">0</span> <span class="keyword">and</span> romans[s[i]] &gt; romans[s[i-<span class="number">1</span>]]:</div><div class="line">                ret -= <span class="number">2</span> * romans[s[i-<span class="number">1</span>]]</div><div class="line">            ret += romans[s[i]]</div><div class="line">        <span class="keyword">return</span> ret</div></pre></figure>
+
+<h3 id="Integer_to_Roman"><strong>Integer to Roman</strong></h3>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/integer-to-roman/" target="_blank" rel="external">Integer to Roman</a>，描述如下：</p>
+<blockquote>
+<p>Given an integer, convert it to a roman numeral.<br>&nbsp;<br>Input is guaranteed to be within the range from 1 to 3999.</p>
+</blockquote>
+<p>唯一需要注意的是4，9等之类数字的表示方法，不能使用<code>IIII</code>和<code>VIIII</code>表示哦，应该使用<code>IV</code>和<code>IX</code>表示。代码如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer} num</span></div><div class="line">    <span class="comment"># @return {string}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">intToRoman</span><span class="params">(self, num)</span>:</span></div><div class="line">        <span class="comment"># Ⅰ-1，V-5，X-10，L-50，C-100，D-500，M-1000</span></div><div class="line">        integers = [<span class="number">1000</span>, <span class="number">900</span>, <span class="number">500</span>, <span class="number">400</span>, <span class="number">100</span>, <span class="number">90</span>, <span class="number">50</span>, <span class="number">40</span>, <span class="number">10</span>, <span class="number">9</span>, <span class="number">5</span>, <span class="number">4</span>, <span class="number">1</span>]</div><div class="line">        romans = [<span class="string">'M'</span>, <span class="string">'CM'</span>, <span class="string">'D'</span>, <span class="string">'CD'</span>, <span class="string">'C'</span>, <span class="string">'XC'</span>, <span class="string">'L'</span>, <span class="string">'XL'</span>, <span class="string">'X'</span>, <span class="string">'IX'</span>, <span class="string">'V'</span>, <span class="string">'IV'</span>, <span class="string">'I'</span>]</div><div class="line">        j = <span class="number">0</span></div><div class="line">        ret = <span class="string">''</span></div><div class="line">        <span class="keyword">while</span> num &gt; <span class="number">0</span>:</div><div class="line">            <span class="keyword">while</span> num &lt; integers[j]:</div><div class="line">                j += <span class="number">1</span></div><div class="line">            ret += romans[j]</div><div class="line">            num -= integers[j]</div><div class="line">        <span class="keyword">return</span> ret</div></pre></figure>
+
+<h2 id="子序列问题"><strong>子序列问题</strong></h2>
+<p><a href="https://leetcode.com/problems/distinct-subsequences/" target="_blank" rel="external">Distinct Subsequences </a></p>
+<p>未解，留坑。</p>
+<h2 id="最长子串问题"><strong>最长子串问题</strong></h2>
+<p>所谓最长子串问题的一般形式是：求满足某种条件的最长子串。</p>
+<p><strong>Longest Substring Without Repeating Characters</strong></p>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/longest-substring-without-repeating-characters/" target="_blank" rel="external">Longest Substring Without Repeating Characters</a>，描述如下：</p>
+<blockquote>
+<p>Given a string, find the length of the longest substring without repeating characters. For example, the longest substring without repeating letters for “abcabcbb” is “abc”, which the length is 3. For “bbbbb” the longest substring is “b”, with the length of 1.</p>
+</blockquote>
+<p>简单来说，本题要求中找出最长子串，该子串满足的条件：不含重复字符。</p>
+<p>我的解题思路：将本题当做双指针（Two Pointers）问题处理，已知字符串s，使用两个指针（begin和end）记录满足要求的子串，则意味着<code>s[begin, end]</code>子串中不含任何重复字符，同时，使用一个map（或曰「字典」）记录这些字符的索引位置；end向前推进，当s[end+1]被包含在map中时，意味着<code>s[begin, end]</code>中有与<code>s[end+1]</code>相同的字符；此时的任务是找出与<code>s[end+1]</code>相同字符的所以位置j，并将[begin, j]中的所有字符从map中删去，begin则重新定位到j+1，s[begin, end]此时又变成了符合要求的子串了。</p>
+<p>简单来说，本题是一个「两指针追逐」问题。我的Solution代码如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {string} s</span></div><div class="line">    <span class="comment"># @return {integer}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">lengthOfLongestSubstring</span><span class="params">(self, s)</span>:</span></div><div class="line">        n = len(s)</div><div class="line">        <span class="keyword">if</span> n == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> <span class="number">0</span></div><div class="line">	</div><div class="line">        caches = dict()</div><div class="line">        begin, end, ret = <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span></div><div class="line">        <span class="keyword">while</span> end &lt; n:</div><div class="line">            <span class="keyword">if</span> s[end] <span class="keyword">not</span> <span class="keyword">in</span> caches:</div><div class="line">                caches[s[end]] = end</div><div class="line">                ret = max(end-begin+<span class="number">1</span>, ret)</div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                <span class="keyword">for</span> i <span class="keyword">in</span> xrange(begin, caches[s[end]]):</div><div class="line">                    caches.pop(s[i])</div><div class="line">                begin = caches[s[end]] + <span class="number">1</span></div><div class="line">                caches[s[end]] = end</div><div class="line">            end += <span class="number">1</span></div><div class="line">        <span class="keyword">return</span> ret</div></pre></figure>
+
+<h2 id="编辑距离"><strong>编辑距离</strong></h2>
+<p>「编辑距离」问题是字符串处理中比较难的一个问题，笔者曾在<a href="/2015/05/23/edit-distance/">这篇博客</a>有过详细说明，本文不再赘述。</p>
+<h2 id="Parentheses问题"><strong>Parentheses问题</strong></h2>
+<p>Parentheses表示「括号」，「括号」问题是字符串处理中非常常见的问题。最低级问题恐怕就是验证括号序列合法性问题了，较复杂一点的有寻找最长合法子串问题，此外还有「产生所有合法括号序列」问题。</p>
+<h3 id="Valid_Parentheses"><strong>Valid Parentheses</strong></h3>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/valid-parentheses/" target="_blank" rel="external">Valid Parentheses</a>，描述如下：</p>
+<blockquote>
+<p>Given a string containing just the characters <code>&#39;(&#39;</code>, <code>&#39;)&#39;</code>, <code>&#39;{&#39;</code>, <code>&#39;}&#39;</code>, <code>&#39;[&#39;</code> and <code>&#39;]&#39;</code>, determine if the input string is valid.<br>&nbsp;<br>The brackets must close in the correct order, <code>&quot;()&quot;</code> and <code>&quot;()[]{}&quot;</code> are all valid but <code>&quot;(]&quot;</code> and <code>&quot;([)]&quot;</code> are not.</p>
+</blockquote>
+<p>印象中此题在本科阶段就碰到过，只是当时太菜了，自动忽略；现在看来此题非常简单了，使用stack解决：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {string} s</span></div><div class="line">    <span class="comment"># @return {boolean}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">isValid</span><span class="params">(self, s)</span>:</span></div><div class="line">        stack = []</div><div class="line">        caches = dict(((<span class="string">'('</span>,<span class="string">')'</span>), (<span class="string">'{'</span>,<span class="string">'}'</span>), (<span class="string">'['</span>,<span class="string">']'</span>)))</div><div class="line">        <span class="keyword">for</span> c <span class="keyword">in</span> s:</div><div class="line">            <span class="keyword">if</span> len(stack) == <span class="number">0</span>:</div><div class="line">                stack.append(c)</div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                <span class="keyword">if</span> caches.has_key(stack[-<span class="number">1</span>]) <span class="keyword">and</span>  caches[stack[-<span class="number">1</span>]] == c:</div><div class="line">                    stack.pop()</div><div class="line">                <span class="keyword">else</span>:</div><div class="line">                    stack.append(c)</div><div class="line">	</div><div class="line">        <span class="keyword">if</span> len(stack) == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> <span class="keyword">True</span></div><div class="line">        <span class="keyword">return</span> <span class="keyword">False</span></div></pre></figure>
+
+<h3 id="Generate_Parentheses"><strong>Generate Parentheses</strong></h3>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/generate-parentheses/" target="_blank" rel="external">Generate Parentheses</a>，描述如下：</p>
+<blockquote>
+<p>Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.<br>&nbsp;<br>For example, given <em>n</em> = 3, a solution set is:<br>&nbsp;<br><code>&quot;((()))&quot;, &quot;(()())&quot;, &quot;(())()&quot;, &quot;()(())&quot;, &quot;()()()&quot;</code></p>
+</blockquote>
+<p>不难看出，本题是一个backtracking问题，采用回溯法解决，我的Solution如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer} n</span></div><div class="line">    <span class="comment"># @return {string[]}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">generateParenthesis</span><span class="params">(self, n)</span>:</span></div><div class="line">        ret, stack = [], []</div><div class="line">        self.aux(ret, stack, <span class="number">0</span>, <span class="number">0</span>, n)</div><div class="line">        <span class="keyword">return</span> ret</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">aux</span><span class="params">(self, results, stack, lefts, rights, n)</span>:</span></div><div class="line">    <span class="comment"># lefts和rights分别记录stack中'('和')'的个数</span></div><div class="line">        <span class="keyword">if</span> lefts + rights == <span class="number">2</span> * n:</div><div class="line">            results.append(<span class="string">''</span>.join(stack))</div><div class="line">            <span class="keyword">return</span></div><div class="line">        </div><div class="line">        <span class="keyword">if</span> lefts &lt; n <span class="keyword">and</span> lefts == rights:</div><div class="line">            stack.append(<span class="string">'('</span>)</div><div class="line">            self.aux(results, stack, lefts+<span class="number">1</span>, rights, n)</div><div class="line">            stack.pop()</div><div class="line">        <span class="keyword">elif</span> lefts == n <span class="keyword">and</span> lefts &gt; rights:</div><div class="line">            stack.append(<span class="string">')'</span>)</div><div class="line">            self.aux(results, stack, lefts, rights+<span class="number">1</span>, n)</div><div class="line">            stack.pop()</div><div class="line">        <span class="keyword">elif</span> lefts &lt; n <span class="keyword">and</span> lefts &gt; rights:</div><div class="line">            stack.append(<span class="string">'('</span>)</div><div class="line">            self.aux(results, stack, lefts+<span class="number">1</span>, rights, n)</div><div class="line">            stack.pop()</div><div class="line">            stack.append(<span class="string">')'</span>)</div><div class="line">            self.aux(results, stack, lefts, rights+<span class="number">1</span>, n)</div><div class="line">            stack.pop()</div></pre></figure>
+
+<p>如上是递归版本，我还实现了一个迭代版本，详见我的<a href="https://github.com/sadjason/LeetCode/blob/master/generate-parentheses.py" target="_blank" rel="external">github</a>。</p>
+<h3 id="Longest_Valid_Parentheses"><strong>Longest Valid Parentheses</strong></h3>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/longest-valid-parentheses/" target="_blank" rel="external">Longest Valid Parentheses</a>，描述如下：</p>
+<blockquote>
+<p>Given a string containing just the characters <code>&#39;(&#39;</code> and <code>&#39;)&#39;</code>, find the length of the longest valid (well-formed) parentheses substring.<br>&nbsp;<br>For <code>&quot;(()&quot;</code>, the longest valid parentheses substring is <code>&quot;()&quot;</code>, which has length = 2.<br>&nbsp;<br>Another example is <code>&quot;)()())&quot;</code>, where the longest valid parentheses substring is <code>&quot;()()&quot;</code>, which has length = 4.</p>
+</blockquote>
+<p>代码如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {string} s</span></div><div class="line">    <span class="comment"># @return {integer}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">longestValidParentheses</span><span class="params">(self, s)</span>:</span></div><div class="line">        ret, cnt = <span class="number">0</span>, <span class="number">0</span></div><div class="line">        last = -<span class="number">1</span></div><div class="line">        stack = []      <span class="comment"># stack只存储'('</span></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(len(s)):</div><div class="line">            <span class="keyword">if</span> s[i] == <span class="string">'('</span>:</div><div class="line">                stack.append(i)</div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                <span class="keyword">if</span> len(stack) == <span class="number">0</span>:</div><div class="line">                    last = i</div><div class="line">                <span class="keyword">else</span>:</div><div class="line">                    stack.pop()</div><div class="line">                    <span class="keyword">if</span> len(stack) == <span class="number">0</span>:</div><div class="line">                        ret = max(ret, i-last)</div><div class="line">                    <span class="keyword">else</span>:</div><div class="line">                        ret = max(ret, i-stack[-<span class="number">1</span>])</div><div class="line">                    </div><div class="line">        <span class="keyword">return</span> ret</div></pre></figure>
+
+<h2 id="Interleaving_String"><strong>Interleaving String</strong></h2>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/interleaving-string/" target="_blank" rel="external">Interleaving String</a>，描述如下：</p>
+<blockquote>
+<p>Given <em>s1</em>, <em>s2</em>, <em>s3</em>, find whether <em>s3</em> is formed by the interleaving of <em>s1</em> and <em>s2</em>.<br>&nbsp;<br>For example,<br>Given:<br><em>s1</em> = <code>&quot;aabcc&quot;</code>,<br><em>s2</em> = <code>&quot;dbbca&quot;</code>,<br>&nbsp;<br>When <em>s3</em> = <code>&quot;aadbbcbcac&quot;</code>, return true.<br>When <em>s3</em> = <code>&quot;aadbbbaccc&quot;</code>, return false.</p>
+</blockquote>
+<p>不难判断这是一道二维DP问题，我的分析过程如下：<br><code>s1(i)</code>表示s1的前i个字符子串，<code>s2(j)</code>表示s2的前j个字符子串，i和j都从1开始计；<code>s3(i+j)</code>表示s3的前<code>i+j</code>个字符子串；<br>而<code>s1[i]</code>，<code>s2[j]</code>，<code>s3[i+j]</code>分别表示s1、s2、s3的第i、j、i+j个字符；<br><code>p(i,j)</code>记录<code>s3(i+j)</code>是否是<code>s(i)</code>和<code>s(j)</code>的Interleaving String，若是，则<code>p(i,j)=True</code>，否则<code>p(i,j)=False</code>。则很容易得到状态转换式，站在<code>p(i,j)</code>的角度，对于：</p>
+<ol>
+<li><code>s1[i]==s3[i+j]</code></li>
+<li><code>s2[j]==s3[i+j]</code></li>
+</ol>
+<p>若1和2同时满足，则<code>p(i,j)=p(i-1,j) || p(i,j-1)</code>；<br>若只满足1，则<code>p(i,j)=p(i-1,j)</code>；<br>若只满足2，则<code>p(i,j)=p(i,j-1)</code>；<br>若1和2都不满足，则<code>p(i,j)=False</code>；</p>
+<p>得到了状态方程，余下的都是细节问题了，代码详见<a href="https://github.com/sadjason/LeetCode/blob/master/interleaving-string.py" target="_blank" rel="external">这里</a>。</p>
+<h2 id="回文处理"><strong>回文处理</strong></h2>
+<p><strong><a href="https://leetcode.com/problems/valid-palindrome/" target="_blank" rel="external">Valid Palindrome</a></strong></p>
+<p>题目描述如下：</p>
+<blockquote>
+<p>Given a string, determine if it is a palindrome, considering only alphanumeric characters and ignoring cases.<br>&nbsp;<br>For example,<br><code>&quot;A man, a plan, a canal: Panama&quot;</code> is a palindrome.<br><code>&quot;race a car&quot;</code> is <strong>not</strong> a palindrome.</p>
+</blockquote>
+<p>这可以说是最简单的双指针（Two Pointers）问题了，代码详见<a href="https://github.com/sadjason/LeetCode/blob/master/valid-palindrome.py" target="_blank" rel="external">这里</a>。</p>
+<p><strong><a href="https://leetcode.com/problems/longest-palindromic-substring/" target="_blank" rel="external">Longest Palindromic Substring</a></strong></p>
+<p>题目描述如下：</p>
+<blockquote>
+<p>Given a string S, find the longest palindromic substring in S. You may assume that the maximum length of S is 1000, and there exists one unique longest palindromic substring.</p>
+</blockquote>
+<p>相较于上一道题，本题无论从难度和知名度上都上升了一大截。难度上升是自然的，知名度更大是因为它有相当的研究价值，有多种算法解题，我曾在<a href="/2015/05/22/Longest-Palindromic-Substring/">这篇博客</a>有过详细介绍。</p>
+<h2 id="函数实现"><strong>函数实现</strong></h2>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/string-to-integer-atoi/" target="_blank" rel="external">String to Integer (atoi) </a>。</p>
+<p>本题需要考虑非常多细节的问题，我的Solution代码详见<a href="(https://github.com/sadjason/LeetCode/blob/master/string-to-integer-atoi.py">github</a>，这个Solution在比较早的时候实现的，虽然被<code>Accpeted</code>了，但是又臭又长，以后有心情再整理一下吧。</p>
+<p><a href="https://leetcode.com/problems/implement-strstr/" target="_blank" rel="external">Implement strStr()</a><br>函数搜索一个字符串在另一个字符串中的第一次出现，详细分析参考<a href="/2015/07/06/KMP/">理解KMP算法</a>。</p>
+<h2 id="Others"><strong>Others</strong></h2>
+<p><strong><a href="https://leetcode.com/problems/longest-common-prefix/" target="_blank" rel="external">Longest Common Prefix</a></strong></p>
+<p>「冒泡排序」级别的题目，代码详见<a href="https://github.com/sadjason/LeetCode/blob/master/longest-common-prefix.py" target="_blank" rel="external">这里</a>。</p>
+<p><strong><a href="https://leetcode.com/problems/length-of-last-word/" target="_blank" rel="external">Length of Last Word</a></strong></p>
+<p>代码详见<a href="https://github.com/sadjason/LeetCode/blob/master/length-of-last-word.py" target="_blank" rel="external">这里</a>。</p>
+<p><strong><a href="https://leetcode.com/problems/zigzag-conversion/" target="_blank" rel="external">ZigZag Conversion</a></strong></p>
+<p>代码详见<a href="https://github.com/sadjason/LeetCode/blob/master/zigzag-conversion.py" target="_blank" rel="external">这里</a>。</p>
+<p><strong><a href="https://leetcode.com/problems/add-binary/" target="_blank" rel="external">Add Binary</a></strong></p>
+<p>这道题感觉很差劲，代码详见<a href="https://github.com/sadjason/LeetCode/blob/master/add-binary.py" target="_blank" rel="external">这里</a>。</p>
+<p><strong><a href="https://leetcode.com/problems/compare-version-numbers/" target="_blank" rel="external">Compare Version Numbers</a></strong></p>
+<p>趣味细节题，代码详见<a href="https://github.com/sadjason/LeetCode/blob/master/compare-version-numbers.y" target="_blank" rel="external">这里</a>。</p>
+<p><strong><a href="https://leetcode.com/problems/count-and-say/" target="_blank" rel="external">Count and Say</a></strong></p>
+<p>趣味细节题，代码详见<a href="https://github.com/sadjason/LeetCode/blob/master/count-and-say.py" target="_blank" rel="external">这里</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/String/">String</a><a href="/tags/LeetCode/">LeetCode</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/07/06/String-Problems/" data-title="字符串和算法 第一弹 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/07/06/Kth-Largest-Element-in-an-Array/" title="Kth Largest Element in an Array">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  Kth Largest Element in an Array</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/07/06/Two-Pointers-Problems/"  title="Two Pointers Problems">
+ <strong>NEXT:</strong><br/> 
+ <span>Two Pointers Problems
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/07/06/String-Problems/" data-title="字符串和算法 第一弹" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#罗马数字和正整数"><span class="toc-number">1.</span> <span class="toc-text">罗马数字和正整数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Roman_to_Integer"><span class="toc-number">1.1.</span> <span class="toc-text">Roman to Integer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Integer_to_Roman"><span class="toc-number">1.2.</span> <span class="toc-text">Integer to Roman</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#子序列问题"><span class="toc-number">2.</span> <span class="toc-text">子序列问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最长子串问题"><span class="toc-number">3.</span> <span class="toc-text">最长子串问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#编辑距离"><span class="toc-number">4.</span> <span class="toc-text">编辑距离</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Parentheses问题"><span class="toc-number">5.</span> <span class="toc-text">Parentheses问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Valid_Parentheses"><span class="toc-number">5.1.</span> <span class="toc-text">Valid Parentheses</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Generate_Parentheses"><span class="toc-number">5.2.</span> <span class="toc-text">Generate Parentheses</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Longest_Valid_Parentheses"><span class="toc-number">5.3.</span> <span class="toc-text">Longest Valid Parentheses</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Interleaving_String"><span class="toc-number">6.</span> <span class="toc-text">Interleaving String</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#回文处理"><span class="toc-number">7.</span> <span class="toc-text">回文处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#函数实现"><span class="toc-number">8.</span> <span class="toc-text">函数实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Others"><span class="toc-number">9.</span> <span class="toc-text">Others</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

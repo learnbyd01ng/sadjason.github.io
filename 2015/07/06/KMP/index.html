@@ -1,0 +1,518 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>理解KMP算法 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="写在前面
+早就知道「KMP」这个关键字表示的意思，它是一个效率非常高的字符串匹配算法，但一直没有尝试去深入了解它。本文的目标是能够集各种资料，结合自己的理解将KMP算法以图文的形式描述清楚。
+「字符串匹配」问题的基本描述是：给定两个字符串text和pattern，长度分别为m和n，判断pattern">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/07/06/KMP/" title="理解KMP算法" itemprop="url">理解KMP算法</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-07-06T15:38:36.000Z" itemprop="datePublished">2015-07-06</time>
+    更新日期:<time datetime="2015-07-14T03:07:28.000Z" itemprop="dateModified">2015-07-14</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#暴力解法"><span class="toc-number">1.</span> <span class="toc-text">暴力解法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#KMP算法"><span class="toc-number">2.</span> <span class="toc-text">KMP算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#字符串的比较机制"><span class="toc-number">2.1.</span> <span class="toc-text">字符串的比较机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#next[j]分析"><span class="toc-number">2.2.</span> <span class="toc-text">next[j]分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Implement_strStr()"><span class="toc-number">3.</span> <span class="toc-text">Implement strStr()</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#KMP时间复杂度"><span class="toc-number">4.</span> <span class="toc-text">KMP时间复杂度</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#写在后面"><span class="toc-number">5.</span> <span class="toc-text">写在后面</span></a></li></ol>
+		</div>
+		
+		<p><strong>写在前面</strong></p>
+<p>早就知道「KMP」这个关键字表示的意思，它是一个效率非常高的<strong>字符串匹配算法</strong>，但一直没有尝试去深入了解它。本文的目标是能够集各种资料，结合自己的理解将KMP算法以图文的形式描述清楚。</p>
+<p>「字符串匹配」问题的基本描述是：给定两个字符串text和pattern，长度分别为m和n，判断pattern是否在text中，如果出现则返回其第一次出现的位置；在算法分析中，text常被称为「文本串」，pattern被称为「模式串」。</p>
+<p>P.S：本文参考资料主要来自<a href="http://www.julyedu.com/" target="_blank" rel="external">七月算法</a>的算法讲解视频<a href="http://www.julyedu.com/video/play/id/12" target="_blank" rel="external">十分钟详解KMP</a>，感谢他们的精彩奉献；此外，还参考了《算法导论》。</p>
+<h2 id="暴力解法"><strong>暴力解法</strong></h2>
+<p>所有算法的参考基础都是「暴力求解」，「字符串匹配」问题也不例外，只是在《算法导论》中「暴力求解」有一个文雅的名字：「朴素字符串匹配算法」。</p>
+<p>在暴力求解中，我们会从<code>text[0]</code>开始与pattern匹配，当<code>text[0]</code>和<code>pattern[0]</code>相等，接着匹配下一个字符<code>text[1]</code>和<code>pattern[1]</code>，如此以往；当出现不相等的匹配时，<strong>回溯</strong>到起点，将之前的匹配信息全部扔掉，从<code>text[0]</code>的下一个字符<code>text[1]</code>重新开始匹配。</p>
+<p>很容易计算暴力求解的时间复杂度为<code>O(mn)</code>。</p>
+<p>接着我们来思考这么一个问题：为什么文本串的索引会回溯呢？</p>
+<p>答案很简单：因为模式串存在重复字符。</p>
+<p>试想一下，如果模式串pattern中的所有字符两两不相等，该如何处理呢？</p>
+<p>当从<code>text[p]</code>匹配到<code>text[p+q]</code>（pattern对应的是<code>pattern[0]</code>到<code>pattern[q]</code>）都成功，直到匹配<code>text[p+q+1]</code>时失败，因为给出的设定是pattern中字符两两不相等，所以<code>pattern[0, q]</code>中只有一个<code>pattern[0]</code>，即<code>text[p, p+q]</code>中只有一个字符等于<code>pattern[0]</code>，其他字符都不可能等于<code>pattern[0]</code>，所以可以直接跳到<code>text[p+q+1]</code>匹配，这样就能够避免回溯，算法时间复杂度锐减到<code>O(n)</code>。</p>
+<p>还可以给出一个更弱一点的设定：若模式串的首字符和其他字符不相同。同样的分析方式，同样可以避免回溯。</p>
+<p>但事实是，在实际应用中，我们必须要考虑pattern出现相同字符的情况，如上的设定似乎没什么卵用，但能够帮助理解「暴力求解」的症结所在，KMP算法的研究正是为了解决这个症结：避免回溯，one-pass。</p>
+<h2 id="KMP算法"><strong>KMP算法</strong></h2>
+<p>KMP的完整形式是「Knuth-Morris-Pratt」，它以算法的三个发明者命名，其中第一个名字鼎鼎有名的计算机科学家Donald Ervin Knuth，《计算机程序设计的艺术》的作者。</p>
+<h3 id="字符串的比较机制"><strong>字符串的比较机制</strong></h3>
+<p>两个字符串匹配的过程其实可以形象看作它们的相对移动，暴力求解的移动方式可能是：<br><img src="/img/201507/20150712-01.png" width="740" height="400"></p>
+<p>「暴力求解」的问题是pattern与text的相对速度太慢了。</p>
+<p>在KMP算法中，当<code>text[q]</code>匹配失败时，不会回到<code>text[p+1]</code>重新匹配，而是继续停留在q位置，在pattern中寻找能够与<code>text[q]</code>匹配的字符，简单来说，在KMP算法中，pattern移动得可能快得多，如下图：<br><img src="/img/201507/20150712-02.png" width="740" height="400"></p>
+<p>简单来说，在KMP算法中，当<code>text[q]</code>匹配失败时，我们在pattern之前已匹配的子串中找到k点（索引k），让text[q]和pattern[k]继续匹配，从物理的角度来看，相当于pattern相对于text移动了(j-k)格；为了让算法更快，k值越小越好。</p>
+<p>当然，事实没这么简单，让<code>text[q]</code>和<code>pattern[k]</code>匹配的前提是<code>text[q-k, q-1]</code>和<code>pattern[0, k-1]</code>已经匹配成功，如下图：<br><img src="/img/201507/20150712-03.png" width="740" height="200"></p>
+<p><code>text[q-k, q-1]</code>和<code>pattern[0, k-1]</code>匹配成功的本质是<code>pattern[0, k-1]</code>等于<code>text[j-k, j-1]</code>。简单来说，<code>pattern[0,j-1]</code>的k前缀和k后缀相等。</p>
+<p>虽然我们希望pattern尽可能移动得更快，即k值越小越好（最好等于0）；但前提是保证逻辑的完备性。因此我们在处理过程中，总是寻找最大k值，使得<code>pattern[0,j-1]</code>的k前缀和k后缀相等。</p>
+<p>如上，已知j，求k，这就是KMP的最本质问题，各种分析博客中将该问题称为<code>next[j]</code>问题。</p>
+<p>因此，接下来的重点是分析<code>next[j]</code>。</p>
+<h3 id="next[j]分析"><strong>next[j]分析</strong></h3>
+<p>如下将分析next的递推关系，值得一提的是，暂时分析next[j]时完全不用理会文本串text。</p>
+<p>对于模式串的位置j，有<code>next[j]=k</code>，即：<code>pattern[0,k-1]=pattern[j-k,j-1]</code>，如下图：<br><img src="/img/201507/20150712-04.png" width="630" height="130"></p>
+<p>对于模式串的位置j+1，考察<code>pattern[j]</code>：<br>若<code>pattern[k]==p[j]</code>，则<code>next[j+1]=next[j]+1</code>；</p>
+<p>这个很容易理解，若<code>pattern[k]!=p[j]</code>，又会如何呢？</p>
+<p>记<code>h=next[k]</code>，若<code>pattern[h]==p[j]</code>，则<code>next[j+1]=h+1</code>，否则重复此过程。</p>
+<p>这句话挺拗口，但动手画一下，理解起来没那么难，如下图：<br><img src="/img/201507/20150712-05.png" width="630" height="200"></p>
+<p>图中，已知：<code>next[0..j]</code>，目标：求<code>next[j+1]</code>。已知<code>next[j]=k</code>，若<code>next[j]!=next[k]</code>，则意味着我们需要在<code>pattern[0..k-1]</code>（图中第二行第一段黄色块）中寻找一段满足要求的最长前缀串，设长度为h，第三行中的紫色块即为满足要求的前缀串，如图所示，此时若<code>pattern[h]==pattern[j]</code>，则<code>next[j+1]=next[j]+1</code>；若<code>pattern[h]!=pattern[j]</code>，则需要继续循环处理。</p>
+<p>个人觉得，<code>next[j]</code>问题稍微麻烦一点的是「边界」。<code>next[0]=0</code>？<code>next[1]=0</code>还是<code>next[1]=1</code>？<code>next[j]=j</code>如何处理？</p>
+<p>假设字符串的长度为n，则其n前缀和n后缀必然相等，这种情况必须要过滤掉。因此，有必要限制<code>next[j]&lt;j</code>，从而：<code>next[0]=-1</code>，<code>next[1]=0</code>。</p>
+<p>依据以上的分析，计算<code>next[j]</code>的数组如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">calNext</span><span class="params">(self, pattern)</span>:</span>     <span class="comment"># pattern - 模式串</span></div><div class="line">    n = len(pattern)</div><div class="line">    next = [-<span class="number">1</span>] * n</div><div class="line">    j, k = <span class="number">0</span>, -<span class="number">1</span>    <span class="comment"># j, k = 0, next[0]</span></div><div class="line">    <span class="keyword">while</span> j &lt; n-<span class="number">1</span>:</div><div class="line">        <span class="keyword">if</span> k == -<span class="number">1</span> <span class="keyword">or</span> pattern[k] == pattern[j]:</div><div class="line">            j, k = j+<span class="number">1</span>, k+<span class="number">1</span></div><div class="line">            next[j] = k</div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            k = next[k]</div><div class="line">    <span class="keyword">return</span> next</div></pre></figure>
+
+<p>P.S：别看代码短，但理解起来还是得费些脑子。</p>
+<p>七月算法的视频<a href="http://www.julyedu.com/video/play/id/12" target="_blank" rel="external">十分钟详解KMP</a>中还对此求解next的逻辑进行了优化，具体的优化分析最好还是参考人家的视频。Python代码如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">calNext</span><span class="params">(self, pattern)</span>:</span>     <span class="comment"># pattern - 模式串</span></div><div class="line">    n = len(pattern)</div><div class="line">    next = [-<span class="number">1</span>] * n</div><div class="line">    j, k = <span class="number">0</span>, -<span class="number">1</span>    <span class="comment"># j, k = 0, next[0]</span></div><div class="line">    <span class="keyword">while</span> j &lt; n-<span class="number">1</span>:</div><div class="line">        <span class="keyword">if</span> k == -<span class="number">1</span> <span class="keyword">or</span> pattern[k] == pattern[j]:</div><div class="line">            j, k = j+<span class="number">1</span>, k+<span class="number">1</span></div><div class="line">            <span class="keyword">if</span> pattern[j] == pattern[k]:</div><div class="line">                next[j] = next[k]</div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                next[j] = k</div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            k = next[k]</div><div class="line">    <span class="keyword">return</span> next</div></pre></figure>
+
+<h2 id="Implement_strStr()"><strong>Implement strStr()</strong></h2>
+<p>KMP的最主要内容是对next的分析，next搞定了，剩下的事情就简单了。</p>
+<p>LeetCode中有一道与KMP直接相关的题目 — <a href="https://leetcode.com/problems/implement-strstr/" target="_blank" rel="external">Implement strStr()</a>，描述如下：</p>
+<blockquote>
+<p>Implement strStr().<br>&nbsp;<br>Returns the index of the first occurrence of needle in haystack, or -1 if needle is not part of haystack.</p>
+</blockquote>
+<p>strStr()函数在的「任务」是搜索一个字符串在另一个字符串中第一次出现，详见百度百科词条<a href="http://baike.baidu.com/view/745156.htm" target="_blank" rel="external">strstr</a>。</p>
+<p>我的Python代码如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param haystack, a string</span></div><div class="line">    <span class="comment"># @param needle, a string</span></div><div class="line">    <span class="comment"># @return an integer</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">strStr</span><span class="params">(self, haystack, needle)</span>:</span></div><div class="line">        <span class="comment"># haystack - 文本串，needle - 模式串</span></div><div class="line">        m, n = len(haystack), len(needle)</div><div class="line">        </div><div class="line">        <span class="comment"># 计算next</span></div><div class="line">        next = self.calNext(needle)</div><div class="line">	</div><div class="line">        i = j = <span class="number">0</span></div><div class="line">        <span class="keyword">while</span> i &lt; m <span class="keyword">and</span> j &lt; n:</div><div class="line">            <span class="keyword">if</span> haystack[i] == needle[j]:</div><div class="line">                i, j = i+<span class="number">1</span>, j+<span class="number">1</span></div><div class="line">            <span class="keyword">else</span>:   <span class="comment"># find k and update j</span></div><div class="line">                <span class="keyword">if</span> next[j] == -<span class="number">1</span>:</div><div class="line">                    i, j = i+<span class="number">1</span>, <span class="number">0</span></div><div class="line">                <span class="keyword">else</span>:</div><div class="line">                    j = next[j]</div><div class="line">                    </div><div class="line">        <span class="keyword">if</span> j == n:</div><div class="line">            <span class="keyword">return</span> i-n</div><div class="line">        <span class="keyword">return</span> -<span class="number">1</span></div></pre></figure>
+
+<p>本题的暴力解法代码如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param haystack, a string</span></div><div class="line">    <span class="comment"># @param needle, a string</span></div><div class="line">    <span class="comment"># @return an integer</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">strStr</span><span class="params">(self, haystack, needle)</span>:</span></div><div class="line">        <span class="comment"># haystack - 文本串，needle - 模式串</span></div><div class="line">        m, n = len(haystack), len(needle)</div><div class="line">	</div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">0</span>, m-n+<span class="number">1</span>):</div><div class="line">            flag = <span class="keyword">True</span></div><div class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> xrange(<span class="number">0</span>, n):</div><div class="line">                <span class="keyword">if</span> haystack[i+j] != needle[j]:</div><div class="line">                    flag = <span class="keyword">False</span></div><div class="line">                    <span class="keyword">break</span></div><div class="line">            <span class="keyword">if</span> flag:</div><div class="line">                <span class="keyword">return</span> i</div><div class="line">        <span class="keyword">return</span> -<span class="number">1</span></div></pre></figure>
+
+<p>P.S：暴力解法代码逻辑简单但不高效，时间复杂度为<code>O(mn)</code>。</p>
+<h2 id="KMP时间复杂度"><strong>KMP时间复杂度</strong></h2>
+<p>结合如上代码，分析KMP算法的时间复杂度（更详细的说明还得参考《算法导论》）。考察模式串pattern的「串头」和文本串text的对应位置。若不匹配，串头后移，保证尽快结束算法；若匹配，串头保持不动（仅仅是<code>i += 1</code>，<code>j += 1</code>，但串头和text的对应位置没变），一旦发现不匹配，就移动串头位置（即pattern向后移动）。</p>
+<p>最坏的情况，当结果位置位于<code>m-n</code>位置时，算法结束；因此，匹配时间复杂度为<code>O(m)</code>，算上计算next的时间复杂度<code>O(n)</code>，整体时间复杂度为<code>O(m+n)</code>。</p>
+<h2 id="写在后面"><strong>写在后面</strong></h2>
+<p>KMP算法非常巧妙，能够使用非常简短的代码描述；但是理解起来并不是相当容易，至少比理解快速排序神马的要难一点。</p>
+<p>本文写得很晦涩，希望以后能够随着自己的理解慢慢加深进而用更容易理解的语言表述清楚；用人话把技术讲清楚是非常重要的一种技能。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/KMP/">KMP</a><a href="/tags/String/">String</a><a href="/tags/LeetCode/">LeetCode</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/07/06/KMP/" data-title="理解KMP算法 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/07/07/using-Reachability/" title="使用Reachability（未完待续）">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  使用Reachability（未完待续）</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/07/06/Kth-Smallest-Element-in-a-BST/"  title="Kth Smallest Element in a BST">
+ <strong>NEXT:</strong><br/> 
+ <span>Kth Smallest Element in a BST
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/07/06/KMP/" data-title="理解KMP算法" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#暴力解法"><span class="toc-number">1.</span> <span class="toc-text">暴力解法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#KMP算法"><span class="toc-number">2.</span> <span class="toc-text">KMP算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#字符串的比较机制"><span class="toc-number">2.1.</span> <span class="toc-text">字符串的比较机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#next[j]分析"><span class="toc-number">2.2.</span> <span class="toc-text">next[j]分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Implement_strStr()"><span class="toc-number">3.</span> <span class="toc-text">Implement strStr()</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#KMP时间复杂度"><span class="toc-number">4.</span> <span class="toc-text">KMP时间复杂度</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#写在后面"><span class="toc-number">5.</span> <span class="toc-text">写在后面</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

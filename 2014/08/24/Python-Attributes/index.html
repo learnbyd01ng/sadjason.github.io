@@ -1,0 +1,498 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Python属性 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="写在前面
+本文是笔者学习Python过程中针对类的属性相关知识做的总结。参考资料包括《Learning Python 4th》的第37章、Python官方文档等，所针对版本为Python 2.7。
+Python中没有所谓的私有变量
+笔者好长时间（好吧，好几天时间里）都以为Python中的类是有私有资">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2014/08/24/Python-Attributes/" title="Python属性" itemprop="url">Python属性</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2014-08-24T10:40:16.000Z" itemprop="datePublished">2014-08-24</time>
+    更新日期:<time datetime="2015-07-04T09:26:43.000Z" itemprop="dateModified">2015-07-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Python中没有所谓的私有变量"><span class="toc-number">1.</span> <span class="toc-text">Python中没有所谓的私有变量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#管理attributes"><span class="toc-number">2.</span> <span class="toc-text">管理attributes</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#getattr方法和setattr方法"><span class="toc-number">2.1.</span> <span class="toc-text">getattr方法和setattr方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#getattribute方法"><span class="toc-number">2.2.</span> <span class="toc-text">getattribute方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#property"><span class="toc-number">2.3.</span> <span class="toc-text">property</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#descriptor_protocol"><span class="toc-number">2.4.</span> <span class="toc-text">descriptor protocol</span></a></li></ol></li></ol>
+		</div>
+		
+		<p><strong>写在前面</strong></p>
+<p>本文是笔者学习Python过程中针对类的属性相关知识做的总结。参考资料包括《Learning Python 4th》的第37章、<a href="https://docs.python.org/2.7/reference/datamodel.html" target="_blank" rel="external">Python官方文档</a>等，所针对版本为Python 2.7。</p>
+<h2 id="Python中没有所谓的私有变量">Python中没有所谓的私有变量</h2>
+<p>笔者好长时间（好吧，好几天时间里）都以为Python中的类是有私有资源的，因为很多博客都这么说“以双下划线（即‘__’）为前缀的实例变量即私有变量”，笔者经过验证果然如此，如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span><span class="params">(object)</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, name, age)</span>:</span></div><div class="line">        self.__age = age</div><div class="line">        self.name = name</div><div class="line">        </div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__str__</span><span class="params">(self)</span>:</span></div><div class="line">        <span class="keyword">return</span> <span class="string">'&lt;name: %s, age: %s&gt;'</span> % (self.name, self.__age)</div><div class="line">        </div><div class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</div><div class="line">    jack = Person(<span class="string">'Jack'</span>, <span class="number">22</span>)</div><div class="line">    <span class="keyword">print</span> jack          <span class="comment"># 输出：&lt;name: Jack, age: 22&gt;</span></div><div class="line">    <span class="keyword">print</span> jack.name     <span class="comment"># 输出：Jack</span></div><div class="line">    <span class="keyword">print</span> jack.__age    <span class="comment"># 报错</span></div></pre></figure>
+
+<p><code>print jack</code>和<code>print jack.name</code>都执行正常，<code>print jack.__age</code>则报错<code>AttributeError: &#39;Person&#39; object has no attribute &#39;__age&#39;</code>，效果不错，似乎在类外部不能访问类中以双下划线为前缀的实例变量<strong>age，这从某种角度来看起到了私有变量的效果，但事实真的是“Python组织访问以双下划线为前缀的实例变量”吗？其实不是这样的，不能在类外部访问</strong>age这个实例变量的原因是Python对双下划线为前缀的实例变量做了处理，是谓“Name Mangling”，或者译作“名字改编”，也就是在运行的时候，实例变量<strong>age的名字改为了“_Person</strong>age”，不信，把上述的<code>print jack.__age</code>改为<code>print jack._Person__age</code>试试看！关于<code>名字改编</code>不多说了，<a href="http://zhangbuhuai.com/2014/08/24/python-code-style/" target="_blank" rel="external">Python编程风格</a>中有介绍。</p>
+<p>值得一提的是，<code>名字改编</code>不光适用于实例变量，也适用于实例方法，比如，在上述的Person类中添加一个方法：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">__say_hello</span><span class="params">(self)</span>:</span></div><div class="line">    <span class="keyword">print</span> <span class="string">'say Hello'</span></div></pre></figure>
+
+<p>结果发现<code>jack.__say_hello()</code>会报错，<code>jack._Person__say_hello()</code>就正常执行了。</p>
+<h2 id="管理attributes">管理attributes</h2>
+<p>什么是管理attributes呢？通常情况下，访问对象的实例变量最简单的方式是通过.操作符，无论是get还是set，可以直接完成，但是，有些时候不能让get或者set那么容易，譬如上文中的Person实例，对于设置其age，肯定是要做个约束的，譬如只让设置“0~120”之间的整型数值，其他值概不接受，这显然要特意处理age的setter方法，这也算对管理attributes的一种吧；再譬如，默认情况下，读取某个实例中不存在的属性会造成程序崩溃，需要在类中进行一些处理以防止这种情况发生；这些都属于attributes管理。</p>
+<p>Python有四种管理属性的手段</p>
+<ol>
+<li><p><strong>getattr</strong>方法和<strong>setattr</strong>方法</p>
+</li>
+<li><p><strong>getattribute</strong>方法；</p>
+</li>
+<li><p>property</p>
+</li>
+<li><p>descriptor</p>
+</li>
+</ol>
+<h3 id="getattr方法和setattr方法"><strong>getattr</strong>方法和<strong>setattr</strong>方法</h3>
+<p><strong>getattr</strong>方法和<strong>setattr</strong>方法的用途很容易理解。对于<strong>getattr</strong>，当访问实例某个不存在的属性时会调用该方法，然而，当访问实例中合法的（存在的）属性时不会调用该方法；对于<strong>setattr</strong>，对实例中任何的实例变量设置值时会调用该方法；</p>
+<p>它们的使用场合比较多，譬如“让访问对象的不存在的属性时抛出异常，而不是挂掉”“禁止用户在类外部为实例绑定新的属性”等等，此处略过。</p>
+<p>但值得一提的是，在类中定义<strong>setattr</strong>时应该注意，不要使用如下代码：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">__setattr__</span><span class="params">(self, name, value)</span>:</span></div><div class="line">    sele.name = value</div></pre></figure>
+
+<p>这会造成循环，解释就略过了，很容易理解。</p>
+<p>那该怎么办呢？有两种做法：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="comment"># 1</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">__setattr__</span><span class="params">(self, name, value)</span>:</span></div><div class="line">    self.__dict__[name] = value</div><div class="line"><span class="comment"># 2</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">__setattr__</span><span class="params">(self, name, value)</span>:</span></div><div class="line">    object.__setattr__(name, value)</div></pre></figure>
+
+<p>值得注意的是，方式2仅适用于Python中new-style类，关于new-style class的概念，这里略过。</p>
+<h3 id="getattribute方法"><strong>getattribute</strong>方法</h3>
+<p><strong>getattribute</strong>和<strong>getattr</strong>比较类似，只是后者在“访问实例某个不存在的属性时会被调用”，而前者在“访问实例中任何一个属性时都会被调用”，所以笔者觉得<strong>getattribute</strong>应该和<strong>setattr</strong>是一对儿。和<strong>setattr</strong>类似，在其定义中不能直接执行<code>return self.name</code>，这样会造成递归循环的问题，应该用<code>return self.__dict__[name]</code>或者<code>return object.__getattribute__(name)</code>代替。</p>
+<p>在Python中，经常发现很多类都继承dict，这在C++或者Objective-C中是不可想象的。</p>
+<p>P.S：不存在内置的<strong>setattribute</strong>方法；</p>
+<p>上面的<strong>getattr</strong>方法和<strong>setattr</strong>方法以及<strong>getattribute</strong>方法针对的是<code>属性们</code>，而不是某个属性，若需要对某个属性进行特殊处理，则需要用到<code>property</code>。</p>
+<h3 id="property">property</h3>
+<p>与属性相关的property本质上是一些（几个）内置的decorator。比较容易理解，很快略过了。</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span><span class="params">(object)</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, name, age)</span>:</span></div><div class="line">    	self.__age = age</div><div class="line">        self.name = name</div><div class="line">        </div><div class="line">    <span class="decorator">@property</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">age</span><span class="params">(self)</span>:</span></div><div class="line">        <span class="keyword">print</span> <span class="string">'fetch age...'</span></div><div class="line">        <span class="keyword">return</span> self.__age</div><div class="line">        </div><div class="line">    <span class="decorator">@age.setter</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">age</span><span class="params">(self, value)</span>:</span></div><div class="line">        <span class="keyword">print</span> <span class="string">'set age...'</span></div><div class="line">        <span class="keyword">if</span> value &lt;= <span class="number">120</span> <span class="keyword">and</span> value &gt; <span class="number">0</span>:</div><div class="line">            self.__age = value</div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            <span class="keyword">raise</span> AttributeError(<span class="string">'设置失败，年龄不合法'</span>)</div><div class="line">            </div><div class="line">    <span class="decorator">@age.deleter</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">age</span><span class="params">(self)</span>:</span></div><div class="line">        <span class="keyword">del</span> self.__age</div><div class="line">        </div><div class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</div><div class="line">    jack = Person(<span class="string">'Jack'</span>, <span class="number">22</span>)</div><div class="line">    <span class="keyword">print</span> <span class="string">'old age: %d'</span> % (jack.age)</div><div class="line">    <span class="keyword">try</span>:</div><div class="line">        jack.age = <span class="number">130</span></div><div class="line">    <span class="keyword">except</span> AttributeError, e:</div><div class="line">        <span class="keyword">print</span> str(e)</div><div class="line">    <span class="keyword">print</span> <span class="string">'new age: %d'</span> % (jack.age)</div></pre></figure>
+
+<p>如此设置后，就可以用.age方式对self.__age进行读取、赋值、以及删除做特别的处理了。</p>
+<h3 id="descriptor_protocol">descriptor protocol</h3>
+<p>也是比较简单的，去吃饭，暂时略过吧，后续补充。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Python/">Python</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2014/08/24/Python-Attributes/" data-title="Python属性 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2014/08/25/understand-python-metaclass/" title="理解Python中的MetaClass">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  理解Python中的MetaClass</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2014/08/24/python-code-style/"  title="Python编程风格">
+ <strong>NEXT:</strong><br/> 
+ <span>Python编程风格
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2014/08/24/Python-Attributes/" data-title="Python属性" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Python中没有所谓的私有变量"><span class="toc-number">1.</span> <span class="toc-text">Python中没有所谓的私有变量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#管理attributes"><span class="toc-number">2.</span> <span class="toc-text">管理attributes</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#getattr方法和setattr方法"><span class="toc-number">2.1.</span> <span class="toc-text">getattr方法和setattr方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#getattribute方法"><span class="toc-number">2.2.</span> <span class="toc-text">getattribute方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#property"><span class="toc-number">2.3.</span> <span class="toc-text">property</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#descriptor_protocol"><span class="toc-number">2.4.</span> <span class="toc-text">descriptor protocol</span></a></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

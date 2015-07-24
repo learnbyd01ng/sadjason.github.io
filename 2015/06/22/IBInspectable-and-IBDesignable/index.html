@@ -1,0 +1,498 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>IBInspectable和IBDesignable | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="写在前面
+第一次遇到IBInspectable是在RESideMenu中，RESideMenu是github上非常「著名」的一个开源库，主要是实现侧滑菜单，到今天已经有四千多stars了；关于RESideMenu的更多信息，可以移步到github中去查找。
+在使用RESideMenu的过程中，看到这">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/06/22/IBInspectable-and-IBDesignable/" title="IBInspectable和IBDesignable" itemprop="url">IBInspectable和IBDesignable</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-06-22T02:50:45.000Z" itemprop="datePublished">2015-06-22</time>
+    更新日期:<time datetime="2015-07-04T08:46:29.000Z" itemprop="dateModified">2015-07-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+		</div>
+		
+		<p><strong>写在前面</strong></p>
+<p>第一次遇到<code>IBInspectable</code>是在RESideMenu中，RESideMenu是github上非常「著名」的一个开源库，主要是实现侧滑菜单，到今天已经有四千多stars了；关于RESideMenu的更多信息，可以移步到github中去查找。</p>
+<p>在使用RESideMenu的过程中，看到这样的场景：<br><img src="/img/201507/20150704-10.png" width="390" height="450"></p>
+<p>当时就勾起了我的好奇心，因为我早就想着Apple啥时候能让自定义View或ViewController能够在Interface Builder中进行配置（编辑属性）。</p>
+<p>后来查看RESideMenu.h文件，看到一个从未见过的关键字<code>IBInspectable</code>：<br><img src="/img/201507/20150704-11.png" width="670" height="510"></p>
+<p>问题似乎变得很清晰了，<code>IBInspectable</code>指令能够让我们在Interface Builder中编辑对应类的属性。</p>
+<p>接着在搜索引擎中搜索<code>IBInspectable</code>关键字，才搞明白<code>IBInspectable</code>是Xcode6新引入的指令，同时引入的还有另外一个指令<code>IBDesignable</code>。</p>
+<p><strong>IBInspectable和IBDesignable</strong></p>
+<p>Apple的官方文档《<a href="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/BuildingCocoaApps/WritingSwiftClassesWithObjective-CBehavior.html" target="_blank" rel="external">Using Swift With Cocoa and Objective-C</a>》中有关于<code>IBInspectable</code>和<code>IBDesignable</code>的介绍，如下：<br><img src="/img/201507/20150704-09.png" width="684" height="352"></p>
+<p>简单来说，<code>IBInspectable</code>使得在Interface Builder的Attribute Inspector（属性检查器）中能够查看类的属性，而<code>IBDesignable</code>能实时更新视图，很厉害吧！</p>
+<p>P.S：inspectable表示「可视的」。</p>
+<p>下面将以实际例子更加生动说明IBInspectable和IBDesignable的使用方法和效果。</p>
+<p><strong>使用IBInspectable</strong></p>
+<p>举个栗子，定义一个继承自UIView的类CustomView，如下：</p>
+<figure class="highlight Objective-C"><pre><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">CustomView</span> : <span class="title">UIView</span></span></div><div class="line">	</div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">assign</span>) IBInspectable <span class="built_in">CGFloat</span> customWidth;</div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">assign</span>) IBInspectable <span class="built_in">CGFloat</span> customHeight;</div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) IBInspectable <span class="built_in">NSString</span> *customTitle;</div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) IBInspectable <span class="built_in">UIColor</span> *customColor;</div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">assign</span>) IBInspectable <span class="built_in">BOOL</span> customHidden;</div><div class="line">	</div><div class="line"><span class="keyword">@end</span></div></pre></figure>
+
+<p>再在Interface Builder中创建一个View，该View的Custom Class指向到刚刚创建的类Custom View，在其Attributes Inspector中果然能够实时看到如下信息：<br><img src="/img/201507/20150704-12.png" width="304" height="143"></p>
+<p>这使得我们能够添加一些自定义的运行时属性，这些属性将会在view加载时设置它的初始值。<br><img src="/img/201507/20150704-13.png" width="304" height="151"></p>
+<p><strong>使用IBDesignable</strong></p>
+<p>上文已经讲过：<code>IBDesignable</code>能实时更新视图。具体是怎么回事儿呢？</p>
+<p>关于<code>IBDesignable</code>的内容摘自[IBInspectable/IBDesignable]（<a href="http://www.cocoachina.com/ios/20150227/11202.html）" target="_blank" rel="external">http://www.cocoachina.com/ios/20150227/11202.html）</a></p>
+<p>当应用到UIView或NSView子类中的时候，IBDesignable让Interface Builder知道它应该在画布上直接渲染视图。你会看到你的自定义视图在每次更改后不必编译并运行你的应用程序就会显示。</p>
+<p>标记一个自定义视图为Designable，只需在类名前加上IBDesignable的前缀（Objective-C中加上IB_DESIGNABLE）。你的初始化、布置和绘制方法将被用来在画布上渲染你的自定义视图：</p>
+<figure class="highlight Objective-C"><pre><div class="line">IB_DESIGNABLE</div><div class="line">@interface CustomView : UIView</div><div class="line">	<span class="keyword">...</span></div><div class="line">@end</div></pre></figure>
+
+<p><img src="/img/201507/20150704-14.png" width="452" height="148"></p>
+<p>从这个功能上节约的时间是不能被低估的。加上<code>IBInspectable</code>，一个设计师或开发人员可以轻松地调整自定义控件的呈现，以得到她想要的确切的结果。任何改变，无论是从代码或属性检查器中，都将立即呈现在画布上。</p>
+<p>由于在Interface Builder中呈现自定义视图不会有应用程序的完整上下文，你可能需要生成模拟数据以便显示，例如一个默认用户头像图片或仿制的天气数据。有两种方法可以为这个特殊的上下文添加代码。</p>
+<p>第一种是使用<code>prepareForInterfaceBuilder()</code>方法。<br><code>prepareForInterfaceBuilder()</code>方法与你代码的其余部分一起编译，但只有当视图正在准备在Interface Builder显示时执行。</p>
+<p>第二种是使用<code>#if TARGET_INTERFACE_BUILDER</code>宏。<br><code>#if TARGET_INTERFACE_BUILDER</code>预处理宏在Objective-C或Swift下都是工作的，它会视情况编译正确代码：</p>
+<figure class="highlight Objective-C"><pre><div class="line"><span class="preprocessor">#<span class="keyword">if</span> !TARGET_INTERFACE_BUILDER</span></div><div class="line">    <span class="comment">// this code will run in the app itself</span></div><div class="line"><span class="preprocessor">#<span class="keyword">else</span></span></div><div class="line">    <span class="comment">// this code will execute only in IB</span></div><div class="line"><span class="preprocessor">#<span class="keyword">endif</span></span></div></pre></figure>
+
+<p><strong>IBDesignable和IBInspectable结合使用</strong></p>
+<p>把自定义IBDesignable视图和视图里的IBInspectable属性结合在一起，你能干点啥？作为一个例子，让我们更新老式经典<a href="http://www.folklore.org/StoryView.py?story=Calculator_Construction_Set.txt" target="_blank" rel="external">Apple folklore</a>：在“Steve Jobs Roll Your Own Calculator Construction Set”，Xcode 6的风格：<br><img src="/img/201507/20150704-15.gif" width="445" height="460"></p>
+<p><strong>参考资料</strong></p>
+<ul>
+<li><a href="http://www.cocoachina.com/industry/20140619/8883.html" target="_blank" rel="external">如何在iOS 8中使用Swift和Xcode 6制作精美的UI组件</a></li>
+<li><a href="http://www.weheartswift.com/make-awesome-ui-components-ios-8-using-swift-xcode-6/" target="_blank" rel="external">How to make awesome UI components in iOS 8 using Swift and XCode 6</a></li>
+<li><a href="http://www.cocoachina.com/ios/20150227/11202.html" target="_blank" rel="external">IBInspectable/IBDesignable</a></li>
+</ul>
+<p><strong>写在最后</strong></p>
+<p>介绍<code>IBDesignable</code>的内容完全摘自《<a href="http://www.cocoachina.com/ios/20150227/11202.html" target="_blank" rel="external">IBInspectable/IBDesignable</a>》，还不是非常理解，至少对<code>IBDesignable</code>的强大功能的体会还不够深，希望以后能够补充更多的示例说明。今天很忙，要准备找工作了！</p>
+<p>最后，再次让我感觉到iOS开发不是我想象中那么简单的，我甚至连很多工具都没使用好，路漫漫其修远兮！</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Xcode/">Xcode</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/iOS/">iOS</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/06/22/IBInspectable-and-IBDesignable/" data-title="IBInspectable和IBDesignable | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/06/26/objc-new-features-in-2015/" title="2015 Objective-C 新特性">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  2015 Objective-C 新特性</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/06/21/permutation-and-combination/"  title="排列与组合算法">
+ <strong>NEXT:</strong><br/> 
+ <span>排列与组合算法
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/06/22/IBInspectable-and-IBDesignable/" data-title="IBInspectable和IBDesignable" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

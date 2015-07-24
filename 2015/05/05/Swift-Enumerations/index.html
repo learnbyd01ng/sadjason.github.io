@@ -1,0 +1,534 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Swift枚举 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="枚举概述
+枚举定义了一个通用类型的一组相关的值，使你可以在你的代码中以安全的方式来使用这些值。如果你熟悉C语言，你就会知道，在C语言中枚举指定相关名称为一组整型值。Swift中的枚举更加灵活，不必给每一个枚举成员提供一个值。如果一个值（被认为是「原始值」）被提供给每个枚举成员，则该值可以是一个字符串">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/05/05/Swift-Enumerations/" title="Swift枚举" itemprop="url">Swift枚举</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-05-05T13:32:11.000Z" itemprop="datePublished">2015-05-05</time>
+    更新日期:<time datetime="2015-07-04T09:00:54.000Z" itemprop="dateModified">2015-07-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#枚举概述"><span class="toc-number">1.</span> <span class="toc-text">枚举概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#枚举语法"><span class="toc-number">2.</span> <span class="toc-text">枚举语法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#枚举和switch语句"><span class="toc-number">3.</span> <span class="toc-text">枚举和switch语句</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#关联值（Associated_Values）"><span class="toc-number">4.</span> <span class="toc-text">关联值（Associated Values）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#原始值（Raw_Values）"><span class="toc-number">5.</span> <span class="toc-text">原始值（Raw Values）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">6.</span> <span class="toc-text">总结</span></a></li></ol>
+		</div>
+		
+		<h2 id="枚举概述"><strong>枚举概述</strong></h2>
+<p>枚举定义了一个通用类型的一组相关的值，使你可以在你的代码中以安全的方式来使用这些值。如果你熟悉C语言，你就会知道，在C语言中枚举指定相关名称为一组整型值。Swift中的枚举更加灵活，不必给每一个枚举成员提供一个值。如果一个值（被认为是「原始值」）被提供给每个枚举成员，则该值可以是一个字符串，一个字符，或是一个整型值或浮点值。</p>
+<p>P.S：这段话挺拗口，简单来看包括两点信息：</p>
+<ul>
+<li>枚举成员可以没有任何值；</li>
+<li>枚举成员可以设置任何类型的值，但是同一个枚举类型的成员的值类型必须相同，这些值被称为枚举成员的「原始值」（raw value）；</li>
+</ul>
+<p>此外，枚举成员可以指定任何类型的关联值存储到枚举成员值中，就像其他语言中的「联合体」（unions）和「变体」（variants）。你可以定义一组通用的相关成员作为枚举的一部分，每一组都有不同的一组与它相关的适当类型的数值。</p>
+<p>在Swift中，枚举类型是一等（first-class）类型。它们采用了很多传统上只被类所支持的特征，例如：</p>
+<ul>
+<li>计算型属性（computed properties），用于提供关于枚举当前值的附加信息；</li>
+<li>实例方法（instance methods），用于提供和枚举所代表的值相关联的功能。</li>
+<li>构造器（initializers），用于为初始化初识成员值；</li>
+<li>扩展（extensions），在原始的实现基础上扩展它们的功能；</li>
+<li>协议（protocols），遵守某个协议表示满足某个标准；</li>
+</ul>
+<h2 id="枚举语法"><strong>枚举语法</strong></h2>
+<p>定义一个「枚举」类型由关键字<code>enum</code>引导，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">enum</span> <span class="title">SomeEnumeration</span> </span>{</div><div class="line">    <span class="comment">// enumeration definition goes here</span></div><div class="line">}</div></pre></figure>
+
+<p>以下是指南针四个方向的一个例子：</p>
+<p>enum CompassPoint {<br>    case North<br>    case South<br>    case East<br>    case West<br>}</p>
+<p>一个枚举中被定义的值（例如North，South，East和West）是枚举的成员值（或者成员）。case关键词表明新的一行成员值将被定义。</p>
+<p><strong>注意</strong>：不像C和OC，枚举成员在被创建时<strong>不会</strong>被赋予一个整数值。因此上述CompassPoint的North、South、East、West这几个成员并不等于0、1、2、3。因此你不能用枚举成员值与Int值进行<code>比较</code>之类的操作，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">if</span> <span class="type">CompassPoint</span>.<span class="type">West</span> &gt; <span class="number">0</span>{</div><div class="line">    <span class="built_in">print</span>(<span class="string">"刘小姐，你好"</span>)</div><div class="line">}</div></pre></figure>
+
+<p>这几行代码是无法通过编译的；</p>
+<h2 id="枚举和switch语句"><strong>枚举和switch语句</strong></h2>
+<p>或许枚举的大多数应用场景与switch语句分不开了，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">var</span> directionToHead = <span class="type">CompassPoint</span>.<span class="type">East</span></div><div class="line">    </div><div class="line"><span class="keyword">switch</span> directionToHead {</div><div class="line"><span class="keyword">case</span> .<span class="type">East</span>:</div><div class="line">    <span class="built_in">println</span>(<span class="string">"Where the sun rises"</span>)</div><div class="line"><span class="keyword">case</span> .<span class="type">West</span>:</div><div class="line">    <span class="built_in">println</span>(<span class="string">"Where the skies are blue"</span>)</div><div class="line"><span class="keyword">case</span> .<span class="type">South</span>:</div><div class="line">    <span class="built_in">println</span>(<span class="string">"Watch out for penguins"</span>)</div><div class="line"><span class="keyword">case</span> .<span class="type">North</span>:</div><div class="line">    <span class="built_in">println</span>(<span class="string">"Lots of planets have a north"</span>)</div><div class="line">}</div></pre></figure>
+
+<h2 id="关联值（Associated_Values）"><strong>关联值（Associated Values）</strong></h2>
+<p>上文演示了一个枚举的成员是如何被定义（分类）的，其实，Swift中的「枚举」可以做到更多，在Swift中，你还可以为「枚举」成员设置一个关联值。譬如可以为CompassPoint.East设置一个常量或者变量值，并且在之后查看这个值。</p>
+<p>你可以定义Swift的枚举存储任何类型的关联值，如果需要的话，每个成员的关联值的数据类型可以是各不相同的。枚举的这种特性跟其他语言中的可辨识联合（discriminated unions），标签联合（tagged unions），或者变体（variants）相似。</p>
+<p>举个栗子，假设一个库存跟踪系统需要利用两种不同类型的条形码来跟踪商品。有些商品上标有UPC-A格式的一维码，它使用数字0到9。每一个条形码都有一个代表「数字系统」的数字，该数字后接10个代表「标识符」的数字。最后一个数字是「检查位」，用来验证代码是否被正确扫描：<br><img src="/img/201505/QQ20150506-1.png" width="346" height="150" alt="条形码" align="center/"><br>其他商品上标有QR码格式的二维码，它可以使用任何ISO8859-1字符，并且可以编码一个最多拥有2953字符的字符串：<br><img src="/img/201505/QQ20150506-2.png" width="230" height="230" alt="二维码" align="center/"></p>
+<p>对于库存跟踪系统来说，能够把UPC-A码作为三个整型值的元组，和把QR码作为一个任何长度的字符串存储起来是方便的。</p>
+<p>在Swift中，用来定义两种商品条码的枚举是这样子的：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">enum</span> <span class="title">Barcode</span> </span>{</div><div class="line">    <span class="keyword">case</span> <span class="type">UPCA</span>(<span class="type">Int</span>, <span class="type">Int</span>, <span class="type">Int</span>)</div><div class="line">    <span class="keyword">case</span> <span class="type">QRCode</span>(<span class="type">String</span>)</div><div class="line">}</div></pre></figure>
+
+<p>以上代码可以这么理解：定义一个名为Barcode的枚举类型，它可以是UPCA的一个关联值<code>(Int,Int,Int)</code>，或者QRCode的一个字符串类型<code>(String)</code>关联值。</p>
+<p>这个定义不提供任何Int或String的实际值，它只是定义了，当Barcode常量和变量等于Barcode.UPCA或Barcode.QRCode时，关联值的类型。</p>
+<p>然后可以使用任何一种条码类型创建新的条码，如：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">var</span> productBarcode = <span class="type">Barcode</span>.<span class="type">UPCA</span>(<span class="number">8</span>, <span class="number">85909_51226</span>, <span class="number">3</span>)</div></pre></figure>
+
+<p>以上例子创建了一个名为productBarcode的新变量，并且赋给它一个Barcode.UPCA的关联元组值<code>(8, 8590951226, 3)</code>。提供的「标识符」值在整数字中有一个下划线，使其便于阅读条形码。</p>
+<p>同一个商品可以被分配给一个不同类型的条形码，如：</p>
+<figure class="highlight Swift"><pre><div class="line">productBarcode = .<span class="type">QRCode</span>(<span class="string">"ABCDEFGHIJKLMNOP"</span>)</div></pre></figure>
+
+<p>以上例子创建了一个名为productBarcode的新变量，并且赋给它一个Barcode.UPCA的关联元组值<code>(8, 8590951226, 3)</code>。提供的「标识符」值在整数字中有一个下划线，使其便于阅读条形码。</p>
+<p>同一个商品可以被分配给一个不同类型的条形码，如：</p>
+<figure class="highlight Swift"><pre><div class="line">productBarcode = .<span class="type">QRCode</span>(<span class="string">"ABCDEFGHIJKLMNOP"</span>)</div></pre></figure>
+
+<p>这时，原始的Barcode.UPCA和其整数值被新的Barcode.QRCode和其字符串值所替代。条形码的常量和变量可以存储一个<code>.UPCA</code>或者一个<code>.QRCode</code>（连同它的关联值），但是在任何指定时间只能存储其中之一。</p>
+<p>像以前那样，不同的条形码类型可以使用一个switch语句来检查，然而这次关联值可以被取作为switch语句的一部分。你可以在switch的case分支代码中􏰀取每个关联值作为一个常量（用let修饰）或者作为一个变量（用var修饰）来使用：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">var</span> productBarcode = <span class="type">Barcode</span>.<span class="type">UPCA</span>(<span class="number">8</span>, <span class="number">85909_51226</span>, <span class="number">3</span>)</div><div class="line">productBarcode = .<span class="type">QRCode</span>(<span class="string">"ABCDEFGHIJKLMNOP"</span>)</div><div class="line"><span class="keyword">switch</span> productBarcode {</div><div class="line"><span class="keyword">case</span> .<span class="type">UPCA</span>(<span class="keyword">let</span> numberSystem, <span class="keyword">let</span> identifier, <span class="keyword">let</span> check):</div><div class="line">    <span class="built_in">println</span>(<span class="string">"UPC-A with value of <span class="subst">\(numberSystem)</span>, <span class="subst">\(identifier)</span>, <span class="subst">\(check)</span>."</span>)</div><div class="line"><span class="keyword">case</span> .<span class="type">QRCode</span>(<span class="keyword">let</span> productCode):</div><div class="line">    <span class="built_in">println</span>(<span class="string">"QR code with value of <span class="subst">\(productCode)</span>."</span>)</div><div class="line">}</div><div class="line"><span class="comment">// 输出：QR code with value of ABCDEFGHIJKLMNOP.</span></div></pre></figure>
+
+<p>￼如果一个枚举成员的所有关联值被提取为常量，或者它们全部被提取为变量，为了简洁，你可以只放置一个var或者let标注在成员名称前：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">var</span> productBarcode = <span class="type">Barcode</span>.<span class="type">UPCA</span>(<span class="number">8</span>, <span class="number">85909_51226</span>, <span class="number">3</span>)</div><div class="line">productBarcode = .<span class="type">QRCode</span>(<span class="string">"ABCDEFGHIJKLMNOP"</span>)</div><div class="line"><span class="keyword">switch</span> productBarcode {</div><div class="line"><span class="keyword">case</span> <span class="keyword">let</span> .<span class="type">UPCA</span>(numberSystem, identifier, check):</div><div class="line">    <span class="built_in">println</span>(<span class="string">"UPC-A with value of <span class="subst">\(numberSystem)</span>, <span class="subst">\(identifier)</span>, <span class="subst">\(check)</span>."</span>)</div><div class="line"><span class="keyword">case</span> <span class="keyword">let</span> .<span class="type">QRCode</span>(productCode):</div><div class="line">    <span class="built_in">println</span>(<span class="string">"QR code with value of <span class="subst">\(productCode)</span>."</span>)</div><div class="line">}</div><div class="line"><span class="comment">// 输出：QR code with value of ABCDEFGHIJKLMNOP.</span></div></pre></figure>
+
+<h2 id="原始值（Raw_Values）"><strong>原始值（Raw Values）</strong></h2>
+<p>除了「关联值」之外，Swift还支持「原始值」。</p>
+<p>作为关联值的替代，枚举成员可以被默认值（称为原始值）预先填充，其中这些原始值具有相同的类型。</p>
+<p>如下是一个枚举成员存储原始ASCII值的例子：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">enum</span> <span class="title">ASCIIControlCharacter</span>: <span class="title">Character</span> </span>{</div><div class="line">    <span class="keyword">case</span> <span class="type">Tab</span> = <span class="string">"\t"</span></div><div class="line">    <span class="keyword">case</span> <span class="type">LineFeed</span> = <span class="string">"\n"</span></div><div class="line">    <span class="keyword">case</span> <span class="type">CarriageReturn</span> = <span class="string">"\r"</span></div><div class="line">}</div></pre></figure>
+
+<p>在这里，称为ASCIIControlCharacter的枚举的原始值类型被定义为字符型Character，并被设置了一些比较常见的ASCII控制字符。</p>
+<p>注意，「原始值」和「关联值」是不相同的。当你开始在你的代码中定义枚举的时候「原始值」是被预先填充的值，像上述三个ASCII码。对于一个特定的枚举成员，它的「原始值」始终是相同的。关联值是当你在创建一个基于枚举成员的新常量或变量时才会被设置，并且每次当你这么做得时候，它的值可以是不同的。</p>
+<p>「原始值」可以是字符串，字符，或者任何整型值或浮点型值。每个原始值在它的枚举声明中必<br>须是唯一的。<strong>当整型值被用于原始值，如果其他枚举成员没有值时，它们会自动递增</strong>。</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">enum</span> <span class="title">Month</span>: <span class="title">Int</span> </span>{</div><div class="line">    <span class="keyword">case</span> <span class="type">January</span> = <span class="number">1</span>, <span class="type">February</span>, <span class="type">March</span>, <span class="type">April</span>, <span class="type">May</span>, <span class="type">June</span>, <span class="type">July</span>, <span class="type">August</span>, <span class="type">September</span>, <span class="type">October</span>, <span class="type">November</span>,<span class="type">December</span></div><div class="line">}</div></pre></figure>
+
+<p>自动递增意味着Month.February的raw value为2，依次类推。可以使用枚举成员的<code>rawValue</code>属性访问枚举成员的raw value。</p>
+<p>值得一提的是，<code>enum ASCIIControlCharacter: Character</code>中的<code>: Character</code>并非表示继承，而只是指定枚举成员的「原始值」类型。原始值类型不能是类类型，否则会有这样的错误：Raw type ‘<em>ClassType</em>‘ is not convertible from any literal。 </p>
+<p><strong>使用raw value初始化枚举变量/常量</strong></p>
+<p>在对枚举类型常量/变量初始化时，可以基于rawValue值，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">var</span> may = <span class="type">Month</span>(rawValue: <span class="number">5</span>)</div></pre></figure>
+
+<p>返回一个<code>optional</code>，该optional可能包含一个Mouth成员，也可能是nil。</p>
+<p>这个提供rawValue外部形参名的initializer被称为<code>raw value initializer</code>。</p>
+<p>注意：</p>
+<blockquote>
+<p>The raw value initializer is a failable initializer, because not every raw value will return an enumeration member.</p>
+</blockquote>
+<h2 id="总结"><strong>总结</strong></h2>
+<p>有网友说『Optional的实质就是枚举类型』，访问Optional资源信息，验证了这种说法，但Swift的枚举非常让人看不懂。</p>
+<p>希望以后有更深刻的理解，进而更新篇博文。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Swift/">Swift</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/05/05/Swift-Enumerations/" data-title="Swift枚举 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/05/11/Swift-Classes-and-Structures/" title="Swift类和结构体">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  Swift类和结构体</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/05/05/Swift-Closures/"  title="Swift闭包">
+ <strong>NEXT:</strong><br/> 
+ <span>Swift闭包
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/05/05/Swift-Enumerations/" data-title="Swift枚举" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#枚举概述"><span class="toc-number">1.</span> <span class="toc-text">枚举概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#枚举语法"><span class="toc-number">2.</span> <span class="toc-text">枚举语法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#枚举和switch语句"><span class="toc-number">3.</span> <span class="toc-text">枚举和switch语句</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#关联值（Associated_Values）"><span class="toc-number">4.</span> <span class="toc-text">关联值（Associated Values）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#原始值（Raw_Values）"><span class="toc-number">5.</span> <span class="toc-text">原始值（Raw Values）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">6.</span> <span class="toc-text">总结</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

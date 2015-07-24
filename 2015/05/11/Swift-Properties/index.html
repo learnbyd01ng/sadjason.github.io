@@ -1,0 +1,541 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Swift属性 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="属性概述
+在Swift中，属性是类、结构体甚至枚举的组成部分。
+存储型属性和计算型属性
+OC中属性有两种：「普通属性」和「合成属性」，譬如对于一个UIView，center和bounds是其普通属性（是由对应的存储单元与之对应），而frame是合成属性（根据center和bounds而成而来）。在S">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/05/11/Swift-Properties/" title="Swift属性" itemprop="url">Swift属性</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-05-11T15:02:59.000Z" itemprop="datePublished">2015-05-11</time>
+    更新日期:<time datetime="2015-07-04T09:01:09.000Z" itemprop="dateModified">2015-07-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#属性概述"><span class="toc-number">1.</span> <span class="toc-text">属性概述</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#存储型属性和计算型属性"><span class="toc-number">1.1.</span> <span class="toc-text">存储型属性和计算型属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实例属性和类型属性"><span class="toc-number">1.2.</span> <span class="toc-text">实例属性和类型属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#属性监控"><span class="toc-number">1.3.</span> <span class="toc-text">属性监控</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#存储型属性"><span class="toc-number">2.</span> <span class="toc-text">存储型属性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#存储型属性的定义"><span class="toc-number">2.1.</span> <span class="toc-text">存储型属性的定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#存储型属性的初始化"><span class="toc-number">2.2.</span> <span class="toc-text">存储型属性的初始化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#延迟存储型属性"><span class="toc-number">2.3.</span> <span class="toc-text">延迟存储型属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#存储型属性和实例变量"><span class="toc-number">2.4.</span> <span class="toc-text">存储型属性和实例变量</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#计算型属性"><span class="toc-number">3.</span> <span class="toc-text">计算型属性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#计算型属性的定义"><span class="toc-number">3.1.</span> <span class="toc-text">计算型属性的定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#只读计算型属性"><span class="toc-number">3.2.</span> <span class="toc-text">只读计算型属性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#属性监视器（Property_Observers）"><span class="toc-number">4.</span> <span class="toc-text">属性监视器（Property Observers）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#类型属性"><span class="toc-number">5.</span> <span class="toc-text">类型属性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#类型属性语法"><span class="toc-number">5.1.</span> <span class="toc-text">类型属性语法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#获取和设置类型属性的值"><span class="toc-number">5.2.</span> <span class="toc-text">获取和设置类型属性的值</span></a></li></ol></li></ol>
+		</div>
+		
+		<h2 id="属性概述"><strong>属性概述</strong></h2>
+<p>在Swift中，属性是类、结构体甚至枚举的组成部分。</p>
+<h3 id="存储型属性和计算型属性"><strong>存储型属性和计算型属性</strong></h3>
+<p>OC中属性有两种：「普通属性」和「合成属性」，譬如对于一个UIView，center和bounds是其普通属性（是由对应的存储单元与之对应），而frame是合成属性（根据center和bounds而成而来）。在Swift中也有类似概念，只不过被称为：「存储型属性」（stored properties）和「计算型属性」（computed properties）。</p>
+<p><strong>注意：「存储型属性」可以存在于类、结构体以及枚举中，但「计算型属性」只能被类或结构体所有</strong>。</p>
+<h3 id="实例属性和类型属性"><strong>实例属性和类型属性</strong></h3>
+<p>「存储型属性」和「计算型属性」是根据「是否对应存储单元」而分的；</p>
+<p>根据『所有者』又可以分为「实例属性」和「类型属性」（type properties）。</p>
+<p>P.S：「类型属性」在其他语言中更多时候被称为「类属性」（或「静态变量」），但在Swift的世界里，结构体和枚举也可以有属性，所以叫「类型属性」更合适。</p>
+<h3 id="属性监控"><strong>属性监控</strong></h3>
+<p>在Swift中，针对属性有一个非常高级的功能：监听属性。简单来说，可以通过定义属性监视器来控制属性的变化，一次来触发一个自定义的操作；属性监视器可以添加到自己写的属性上，也可以添加到从父类继承的属性上。</p>
+<h2 id="存储型属性"><strong>存储型属性</strong></h2>
+<p>简单来说，一个「存储型属性」就是特定类或结构体的实例的一个常量或变量，「存储型属性」可以是变量存储型属性（关键字var定义），也可以是常量存储型属性（用关键字let定义）。</p>
+<h3 id="存储型属性的定义"><strong>存储型属性的定义</strong></h3>
+<p>Swift中属性的定义非常简单，和普通变量/常量的定义差不多，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">SomeClass</span></span>{</div><div class="line">    <span class="keyword">var</span> someClassProperty: <span class="type">String</span> = <span class="string">""</span></div><div class="line">}</div><div class="line">	</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">SomeStructure</span> </span>{</div><div class="line">    <span class="keyword">var</span> someStructureProperty: <span class="type">String</span> = <span class="string">""</span></div><div class="line">}</div><div class="line">	</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">SomeEnumeration</span> </span>{</div><div class="line">    <span class="keyword">var</span> someEnumerationProperty: <span class="type">String</span> = <span class="string">""</span></div><div class="line">}</div></pre></figure>
+
+<p>P.S：相对于变量/常量而言，属性可能会更多涉及「作用域」（譬如private、internal、public等），本文暂时不涉及这方面的信息，因为「作用域」是更大层面上的一个概念，单纯以property为讨论对象不足以清楚阐述它。</p>
+<h3 id="存储型属性的初始化"><strong>存储型属性的初始化</strong></h3>
+<p>和变量一样，在使用存储型属性（无论是内部方法使用还是外部使用）之前需要对其进行初始化，关于存储型属性初始化：</p>
+<ul>
+<li>可以在定义存储型属性的时候指定默认值；</li>
+<li>可以在构造过程时（initializer中）设置或修改存储型属性的值（无论是常量还是变量）；</li>
+</ul>
+<p><strong>指定默认值</strong></p>
+<p>指定默认值的方式有很多种，包括：「字面值赋值」，「创建实例赋值」，「函数赋值」，「闭包赋值」等等。举个栗子：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">ZWView</span> </span>{</div><div class="line">    <span class="comment">// 直接初始化</span></div><div class="line">    <span class="keyword">var</span> tag: <span class="type">Int</span>       = <span class="number">0</span>                                  <span class="comment">// 字面值赋值</span></div><div class="line">    <span class="keyword">var</span> bounds: <span class="type">CGSize</span> = <span class="type">CGSize</span>(width: <span class="number">0.0</span>, height: <span class="number">0.0</span>)    <span class="comment">// 创建实例赋值</span></div><div class="line">    </div><div class="line">    <span class="comment">// 使用「闭包」或「函数」赋值</span></div><div class="line">    <span class="keyword">var</span> center: <span class="type">CGPoint</span> = <span class="type">CGPointMake</span>(<span class="number">0.0</span>, <span class="number">0.0</span>)             <span class="comment">// 函数赋值</span></div><div class="line">    <span class="keyword">var</span> description: <span class="type">String</span> = {                             <span class="comment">// 闭包赋值</span></div><div class="line">            <span class="keyword">return</span> <span class="string">"I am a ZWView"</span></div><div class="line">        }()</div><div class="line">}</div></pre></figure>
+
+<p><strong>在initializer中初始化</strong></p>
+<p>class ZWView {<br>    var superView: ZWView?</p>
+<pre><code><span class="comment">// 在initializer中初始化初始化存储型属性</span>
+<span class="keyword">init</span>() {
+    <span class="keyword">self</span>.superView = <span class="built_in">nil</span>
+}
+</code></pre><p>}</p>
+<p>值得一提的是，当为「存储型属性」设置默认值或者是在「构造器」中为其赋值时，它们的值都是被直接设置的，不会触发任何属性监测器（property observers）。</p>
+<h3 id="延迟存储型属性"><strong>延迟存储型属性</strong></h3>
+<p>在OC（其他语言也差不多），总会有些lazy处理的东东，譬如对于UITableViewCell，它有一个属性叫<code>detailTextLabel</code>，它是一个UILabel对象，根据我的理解，UITableViewCell默认初始化情况下该对象是不会被初始化的（毕竟不是每个UITableViewCell都需要展示detail信息嘛），当第一次访问它时，会在detailTextLabel的getter中初始化它，一般会这儿写：</p>
+<figure class="highlight Objective-C"><pre><div class="line">- (<span class="built_in">UILabel</span>)detailTextLabel {</div><div class="line">    <span class="keyword">if</span> (_detailTextLabel == <span class="literal">nil</span>) {</div><div class="line">        _detailTextLabel = [[<span class="built_in">UILabel</span> alloc] init];</div><div class="line">        [<span class="keyword">self</span> addSubView:_detailTextLabel];</div><div class="line">    }</div><div class="line">    <span class="keyword">return</span> _detailTextLabel;</div><div class="line">}</div></pre></figure>
+
+<p>这是OC中一种典型的lazy处理方式。但在Swift中，lazy处理上升到了语法层面，Swift称之为：「延迟存储型属性」（lazy stored property）。它是指第一次被调用的时候才会计算其初始值的属性。在属性声明前使用<code>lazy</code>来表示一个延迟存储型属性。</p>
+<p>注意：必须将延迟存储型属性声明成变量（使用var关键字），因为属性的值在实例构造完成之前可能无法得到。而常量属性在initialization前可能无法得到。</p>
+<p>延迟属性很有用，当属性的值依赖于在实例的initialization结束前无法知道具体值的外部因素时，或者当属性的值需要复杂或大量的计算时，可以只在需要的时候来计算它。</p>
+<h3 id="存储型属性和实例变量"><strong>存储型属性和实例变量</strong></h3>
+<p>在OC中，普通属性（非合成属性）一般都对应有一个实例变量，譬如名为name的属性一般有一个名为_name实例变量与之对应；在实际编程过程，在类的内部很多时候直接操作实例变量，在外部才操作属性（访问或赋值）。</p>
+<p>但在Swift中，刻意模糊「存储型属性」和「实例变量」这两个概念，简而言之，对于名为name的属性，它没有别的实例变量名称，或说它的实例变量名称也叫name。</p>
+<h2 id="计算型属性"><strong>计算型属性</strong></h2>
+<h3 id="计算型属性的定义"><strong>计算型属性的定义</strong></h3>
+<p>在OC中，所有属性（无论是普通属性还是合成属性）都可以定义setter和getter，但Swift将逻辑区分得更加清晰。对于「存储型属性」，Swift提供了<code>lazy</code>以及属性监视器（<code>willSet</code>和<code>didSet</code>），用来处理以前在OC中需要在getter或setter中额外的逻辑；也因为如此，Swift不再允许「存储型属性」拥有setter和getter（因为没必要嘛）；setter和getter仅能为「计算型属性」所有，这也成为了区分「计算型属性」和「存储型属性」的重要（唯一）标志。</p>
+<p>在定义上，「计算型属性」和「存储型属性」没有太大区别，不能存在所谓关键字用来标注「计算型属性」，只是「计算型属性」在定义时必须定义其getter，至于setter，可以定义也可以忽略，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Point</span> </span>{</div><div class="line">    <span class="keyword">var</span> x = <span class="number">0.0</span>, y = <span class="number">0.0</span></div><div class="line">}</div><div class="line">	</div><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Size</span> </span>{</div><div class="line">    <span class="keyword">var</span> width = <span class="number">0.0</span>, height = <span class="number">0.0</span></div><div class="line">}</div><div class="line">	</div><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Rect</span> </span>{</div><div class="line">    <span class="keyword">var</span> origin = <span class="type">Point</span>()</div><div class="line">    <span class="keyword">var</span> size = <span class="type">Size</span>()</div><div class="line">    <span class="keyword">var</span> center: <span class="type">Point</span> {</div><div class="line">        <span class="keyword">get</span> {</div><div class="line">            <span class="keyword">let</span> centerX = origin.x + (size.width / <span class="number">2</span>)</div><div class="line">            <span class="keyword">let</span> centerY = origin.y + (size.height / <span class="number">2</span>)</div><div class="line">            <span class="keyword">return</span> <span class="type">Point</span>(x: centerX, y: centerY)</div><div class="line">        }</div><div class="line">        <span class="keyword">set</span>(newCenter) {</div><div class="line">            origin.x = newCenter.x - (size.width / <span class="number">2</span>)</div><div class="line">            origin.y = newCenter.y - (size.height / <span class="number">2</span>)</div><div class="line">        }</div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<p>可以看到，在Swift中，getter和setter的形式分别是：<code>get{}</code>和<code>set(newPropertyName){}</code>。setter还可以写得更简洁一点（将形参去掉，使用关键字newValue），如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">var</span> center: <span class="type">Point</span> {</div><div class="line">    <span class="keyword">get</span> {</div><div class="line">        <span class="keyword">let</span> centerX = origin.x + (size.width / <span class="number">2</span>)</div><div class="line">        <span class="keyword">let</span> centerY = origin.y + (size.height / <span class="number">2</span>)</div><div class="line">        <span class="keyword">return</span> <span class="type">Point</span>(x: centerX, y: centerY)</div><div class="line">    }</div><div class="line">    <span class="keyword">set</span> {</div><div class="line">        <span class="comment">// 注意关键字「newValue」</span></div><div class="line">        origin.x = newValue.x - (size.width / <span class="number">2</span>)</div><div class="line">        origin.y = newValue.y - (size.height / <span class="number">2</span>)</div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<h3 id="只读计算型属性"><strong>只读计算型属性</strong></h3>
+<p>如何定义只读计算型属性？很简单，只定义getter而不定义setter就可以了。</p>
+<p>值得一提的是，一定要使用<code>var</code>关键字修饰「计算型属性」，文档是这么描述的：</p>
+<blockquote>
+<p>You must declare computed properties — including read-only computed properties —  as variable properties with the <code>var</code> keyword, because their value is not fixed. The <code>let</code> keyword is only used for constant properties, to indicate that values cannot be changed once they are set as part of instance initialization.</p>
+</blockquote>
+<h2 id="属性监视器（Property_Observers）"><strong>属性监视器（Property Observers）</strong></h2>
+<p>上文已经多次提到「属性监视器」。属性监视器监控和响应属性值的变化，每次属性被设置值的时候都会调用属性监视器，甚至新的值和现在的值相同的时候也不例外。</p>
+<p>P.S：我刚开始接触「属性监视器」这个概念时，还以为它可以提供类似于OC中KVO的功能呢，后来发现想多了，Swift中的lazy、属性监视器所提供的功能在OC中的getter和setter中都能实现，只不过Swift将这些逻辑区分得更加清晰而已。</p>
+<p><strong>Swift允许可以为延迟属性之外的其他存储型属性添加属性监视器，也可以通过重载的方式为继承的属性（包括存储型属性和计算属性）添加属性监视器。</strong></p>
+<p>注意哦，不能为non-overridden computed property添加属性监视器！文档是这么描述的：</p>
+<blockquote>
+<p>You don’t need to define property observers for non-overridden computed properties, because you can observe and respond to changes to their value from directly within the computed property’s setter.</p>
+</blockquote>
+<p>所谓的属性监视器说白了就是类似于getter和setter的代码块，只不过是由关键字<code>willSet</code>和<code>didSet</code>引导的。<code>willSet</code>和<code>didSet</code>都携带一个参数，它们的默认名分别为<code>newValue</code>和<code>oldValue</code>，用来表示<code>新值</code>和<code>旧值</code>，用户可以自己定义一个新的名字。所以willSet和didSet的一般是这样的：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span>: <span class="title">NSObject</span> </span>{</div><div class="line">    <span class="keyword">var</span> age: <span class="type">Int</span> = <span class="number">0</span> {</div><div class="line">        <span class="keyword">willSet</span> {</div><div class="line">            <span class="built_in">println</span>(<span class="string">"新值=<span class="subst">\(newValue)</span>"</span>)</div><div class="line">        }</div><div class="line">        <span class="keyword">didSet</span> {</div><div class="line">            <span class="built_in">println</span>(<span class="string">"旧值=<span class="subst">\(oldValue)</span>"</span>)</div><div class="line">        }</div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<p>总之，<code>willSet</code>和<code>didSet</code>的功能并不是很强大，我想基于它们恐怕很难有牛逼哄哄的「奇技淫巧」吧！</p>
+<h2 id="类型属性"><strong>类型属性</strong></h2>
+<p>在其他语言中，类本身所定义的属性往往叫「类属性」（或静态变量），「类属性」不属于任何一个实例，不管该类类型有多少个实例，这些属性都只有一份。只不过在Swift的世界里，结构体和枚举也可以有属性，所以这种属性被称为「类型属性」（也是更合适的叫法）。</p>
+<p>在Swift中，对于值类型（即结构体和枚举），可以定义存储型或计算型类型属性；但对于引用类型（类），只能定义计算型类型属性。</p>
+<p>P.S：闹不明白为什么有这种设定，希望以后能有个比较好的解释吧。<br>P.P.S：在实际使用中，发现Swift（使用的是环境是Xcode 6.3，Swift 1.2）又允许类类型定义存储型类型属性，但最新《The Swift Programming Language》中又没有提到。挺郁闷的！无论如何，暂且认为Swift允许定义存储型类型属性吧！</p>
+<p>和存储型实例属性不同，定义存储型类型属性时必须为它指定一个默认值，因为对于每个实例而言，可以在initializer中初始化属性，但是对一个类型而言，它是没有所谓的initializer的。</p>
+<h3 id="类型属性语法"><strong>类型属性语法</strong></h3>
+<p>Swift规定，对于值类型（即结构体、枚举）的类型属性，使用关键字<code>static</code>来修饰；对于引用类型（即类类型）的类型属性，使用关键字<code>class</code>来修饰，但也可以使用关键字<code>static</code>来修饰；被<code>class</code>修饰的类类型属性允许在子类中override该类型属性，但被<code>static</code>修饰的类类型属性不允许被子类override，效果等同于<code>final class</code>。</p>
+<p>如下是一些使用例子：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">SomeStructure</span> </span>{</div><div class="line">    <span class="keyword">static</span> <span class="keyword">var</span> storedTypeProperty = <span class="string">"Some value."</span></div><div class="line">    <span class="keyword">static</span> <span class="keyword">var</span> computedTypeProperty: <span class="type">Int</span> {</div><div class="line">        <span class="comment">// return an Int value here</span></div><div class="line">        <span class="keyword">get</span> {</div><div class="line">            <span class="keyword">return</span> <span class="number">0</span></div><div class="line">        }</div><div class="line">    }</div><div class="line">}</div><div class="line">	</div><div class="line"><span class="class"><span class="keyword">enum</span> <span class="title">SomeEnumeration</span> </span>{</div><div class="line">    <span class="keyword">static</span> <span class="keyword">var</span> storedTypeProperty = <span class="string">"Some value."</span></div><div class="line">    <span class="keyword">static</span> <span class="keyword">var</span> computedTypeProperty: <span class="type">Int</span> {</div><div class="line">        <span class="comment">// return an Int value here</span></div><div class="line">        <span class="keyword">get</span> {</div><div class="line">            <span class="keyword">return</span> <span class="number">0</span></div><div class="line">        }</div><div class="line">    }</div><div class="line">}</div><div class="line">	</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">SomeClass</span> </span>{</div><div class="line">    <span class="keyword">static</span> <span class="keyword">var</span> storedTypeProperty = <span class="string">"Some value."</span></div><div class="line">    <span class="keyword">static</span> <span class="keyword">var</span> computedTypeProperty: <span class="type">Int</span> {</div><div class="line">        <span class="comment">// return an Int value here</span></div><div class="line">        <span class="keyword">get</span> {</div><div class="line">            <span class="keyword">return</span> <span class="number">0</span></div><div class="line">        }</div><div class="line">    }</div><div class="line">    <span class="keyword">class</span> <span class="keyword">var</span> overrideableComputedTypeProperty: <span class="type">Int</span> {</div><div class="line">        <span class="comment">// return an Int value here</span></div><div class="line">        <span class="keyword">get</span> {</div><div class="line">            <span class="keyword">return</span> <span class="number">0</span></div><div class="line">        }</div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<p>注意：例子中的计算型类型属性是只读的，但也可以定义可读可写的计算型类型属性，跟实例计算属性的语法类似。</p>
+<p>P.S：个人感觉，类型属性的定义语法似乎还没确定下来，以后或许还有变数！</p>
+<h3 id="获取和设置类型属性的值"><strong>获取和设置类型属性的值</strong></h3>
+<p>跟实例的属性一样，类型属性的访问也是通过点运算符来进行，但是，类型属性是通过类型本身来获取和设置，而不是通过实例。比如：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="built_in">println</span>(<span class="type">SomeClass</span>.computedTypeProperty)</div><div class="line"><span class="comment">// 输出 "0"</span></div><div class="line">	</div><div class="line"><span class="built_in">println</span>(<span class="type">SomeStructure</span>.storedTypeProperty)</div><div class="line"><span class="comment">// 输出 "Some value."</span></div><div class="line">	</div><div class="line"><span class="type">SomeStructure</span>.storedTypeProperty = <span class="string">"Another value."</span></div><div class="line"><span class="built_in">println</span>(<span class="type">SomeStructure</span>.storedTypeProperty)</div><div class="line"><span class="comment">// 输出 "Another value.”</span></div></pre></figure>
+
+<p>其实，关于「属性」还有很多内容，譬如「属性和继承」「属性和重载」「属性与作用域」等等，以后补充吧！</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Swift/">Swift</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/05/11/Swift-Properties/" data-title="Swift属性 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/05/12/Swift-Methods-and-Subscripts/" title="Swift方法和下标">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  Swift方法和下标</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/05/11/Swift-Classes-and-Structures/"  title="Swift类和结构体">
+ <strong>NEXT:</strong><br/> 
+ <span>Swift类和结构体
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/05/11/Swift-Properties/" data-title="Swift属性" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#属性概述"><span class="toc-number">1.</span> <span class="toc-text">属性概述</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#存储型属性和计算型属性"><span class="toc-number">1.1.</span> <span class="toc-text">存储型属性和计算型属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实例属性和类型属性"><span class="toc-number">1.2.</span> <span class="toc-text">实例属性和类型属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#属性监控"><span class="toc-number">1.3.</span> <span class="toc-text">属性监控</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#存储型属性"><span class="toc-number">2.</span> <span class="toc-text">存储型属性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#存储型属性的定义"><span class="toc-number">2.1.</span> <span class="toc-text">存储型属性的定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#存储型属性的初始化"><span class="toc-number">2.2.</span> <span class="toc-text">存储型属性的初始化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#延迟存储型属性"><span class="toc-number">2.3.</span> <span class="toc-text">延迟存储型属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#存储型属性和实例变量"><span class="toc-number">2.4.</span> <span class="toc-text">存储型属性和实例变量</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#计算型属性"><span class="toc-number">3.</span> <span class="toc-text">计算型属性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#计算型属性的定义"><span class="toc-number">3.1.</span> <span class="toc-text">计算型属性的定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#只读计算型属性"><span class="toc-number">3.2.</span> <span class="toc-text">只读计算型属性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#属性监视器（Property_Observers）"><span class="toc-number">4.</span> <span class="toc-text">属性监视器（Property Observers）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#类型属性"><span class="toc-number">5.</span> <span class="toc-text">类型属性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#类型属性语法"><span class="toc-number">5.1.</span> <span class="toc-text">类型属性语法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#获取和设置类型属性的值"><span class="toc-number">5.2.</span> <span class="toc-text">获取和设置类型属性的值</span></a></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

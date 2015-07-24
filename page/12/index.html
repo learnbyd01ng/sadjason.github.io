@@ -1,0 +1,468 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="张不坏的个人博客">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main">
+
+  <section class="post" itemscope itemprop="blogPost">
+  
+    <a href="/2015/02/11/add-activity-indicator-to-uibutton/" title="在UIButton上添加UIActivityIndicatorView" itemprop="url">
+  
+    <h1 itemprop="name">在UIButton上添加UIActivityIndicatorView</h1>
+    
+     
+           <p itemprop="description" >在iOS实际开发中，常常需要控制UIButton、UIImageView，如下是一个登录界面的一部分：
+
+在点击登录button时，app会与服务器进行交互，网络比较差的情况会花费一些时间，在此过程中，得确保button处于不可被点击状态，最好还得让用户知道正在登录中，就我目前所</p>
+        
+    
+    <time datetime="2015-02-11T04:48:05.000Z" itemprop="datePublished">2015-02-11</time>
+  </a>
+</section>
+
+
+  <section class="post" itemscope itemprop="blogPost">
+  
+    <a href="/2015/02/01/using-GCD-part3/" title="GCD的使用（3）使用dispatch_once来执行只需运行一次的线程安全代码" itemprop="url">
+  
+    <h1 itemprop="name">GCD的使用（3）使用dispatch_once来执行只需运行一次的线程安全代码</h1>
+    
+     
+           <p itemprop="description" >单例模式（singleton）对Objective-C开发者而言并不陌生，常见的实现方式为：在类编写名为sharedInstance的方法，该方法只会返回全类共用的单例实例，而不会在每次调用时都创建新的实例。假设有一个类叫TestClass，那么这个共享实例一般会这么写：
++ (</p>
+        
+    
+    <time datetime="2015-02-01T05:53:40.000Z" itemprop="datePublished">2015-02-01</time>
+  </a>
+</section>
+
+
+  <section class="post" itemscope itemprop="blogPost">
+  
+    <a href="/2015/02/01/using-GCD-part2/" title="GCD的使用（2）多用GCD，少用performSelector系列方法" itemprop="url">
+  
+    <h1 itemprop="name">GCD的使用（2）多用GCD，少用performSelector系列方法</h1>
+    
+     
+           <p itemprop="description" >写在前面
+本文几乎全部参考《Effective Objective-C 2.0》 Item 42。
+performSelector介绍
+Objective-C本质上是一门非常动态的语言，NSObject定义了几个方法，令开发者可以随意调用任何方法。这几个方法可以推迟执行方法调用，</p>
+        
+    
+    <time datetime="2015-02-01T05:53:22.000Z" itemprop="datePublished">2015-02-01</time>
+  </a>
+</section>
+
+
+  <section class="post" itemscope itemprop="blogPost">
+  
+    <a href="/2015/01/28/copy-in-Objective-C/" title="Objective-C copy那些事儿" itemprop="url">
+  
+    <h1 itemprop="name">Objective-C copy那些事儿</h1>
+    
+     
+           <p itemprop="description" >写在前面
+Objective-C中的copy相关内容比我想象中要丰富多了。
+NSCopying和NSMutableCopying协议
+使用对象时经常需要拷贝它。在Objective-C中，此操作是通过copy和mutableCopy方法完成的，基类NSObject中与copy相关</p>
+        
+    
+    <time datetime="2015-01-28T01:14:48.000Z" itemprop="datePublished">2015-01-28</time>
+  </a>
+</section>
+
+
+  <section class="post" itemscope itemprop="blogPost">
+  
+    <a href="/2015/01/27/how-to-use-nsoperation-and-nsoperationqueue/" title="使用NSOperation和NSOperationQueue" itemprop="url">
+  
+    <h1 itemprop="name">使用NSOperation和NSOperationQueue</h1>
+    
+     
+           <p itemprop="description" >NSOperation
+NSOperation其实是对task的一种Objective-C封装。
+NSOperation是个抽象类
+
+The NSOperation class itself is an abstract base class that must be subcl</p>
+        
+    
+    <time datetime="2015-01-27T02:24:41.000Z" itemprop="datePublished">2015-01-27</time>
+  </a>
+</section>
+
+
+  <section class="post" itemscope itemprop="blogPost">
+  
+    <a href="/2015/01/26/using-GCD-part1/" title="GCD的使用（1）使用GCD保护property" itemprop="url">
+  
+    <h1 itemprop="name">GCD的使用（1）使用GCD保护property</h1>
+    
+     
+           <p itemprop="description" >写在前面
+作为一个iOS开发者，必须要熟练使用GCD，本文是站在实际应用的角度总结GCD的用法之一 —— 使用barrier保护property。
+在多线程环境下，如果有多个线程要执行同一份代码，那么有时会出现问题，为了保证某些资源操作的可控性，需要一些手段来对这些「公共资源」进</p>
+        
+    
+    <time datetime="2015-01-26T13:49:05.000Z" itemprop="datePublished">2015-01-26</time>
+  </a>
+</section>
+
+
+  <section class="post" itemscope itemprop="blogPost">
+  
+    <a href="/2015/01/26/GCD基础知识/" title="GCD基础知识" itemprop="url">
+  
+    <h1 itemprop="name">GCD基础知识</h1>
+    
+     
+           <p itemprop="description" >并行和并发
+在英文世界里，「并行」和「并发」的区别比较清晰，「并行」对应parallelism，「并发」对应concurrency；但在中文世界里二者仅一字之差，两个概念非常容易弄混淆；
+各种资料对「并行」和「并发」有各种各样的解释和比喻。我比较喜欢的一种是播客节目内核恐慌中的主</p>
+        
+    
+    <time datetime="2015-01-26T12:05:56.000Z" itemprop="datePublished">2015-01-26</time>
+  </a>
+</section>
+
+
+  <section class="post" itemscope itemprop="blogPost">
+  
+    <a href="/2015/01/26/iOS设备闪光灯控制/" title="iOS设备闪光灯控制" itemprop="url">
+  
+    <h1 itemprop="name">iOS设备闪光灯控制</h1>
+    
+     
+           <p itemprop="description" >很多时候都需要在APP中控制闪光灯的开关状态，譬如扫描二维码。控制iOS设备的闪光灯代码非常简单，短短几行代码就可以搞定：
+AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaT</p>
+        
+    
+    <time datetime="2015-01-26T09:54:41.000Z" itemprop="datePublished">2015-01-26</time>
+  </a>
+</section>
+
+
+  <section class="post" itemscope itemprop="blogPost">
+  
+    <a href="/2015/01/22/ZBarSDK使用总结/" title="ZBarSDK使用总结" itemprop="url">
+  
+    <h1 itemprop="name">ZBarSDK使用总结</h1>
+    
+     
+           <p itemprop="description" >写在前面
+最近的项目需要添加二维码扫描功能。关于iOS二维码扫描，搜索到最多的关键字是ZBar和ZXing，这两个是热度最高的，前者可以直接扫描二维码和条形码，后者可以直接扫描二维码，如果要扫条形码，则需要改改代码花点功夫；除此之外，ZBar不直接给出源码，而是.a库（但是从官网</p>
+        
+    
+    <time datetime="2015-01-22T14:32:42.000Z" itemprop="datePublished">2015-01-22</time>
+  </a>
+</section>
+
+
+  <section class="post" itemscope itemprop="blogPost">
+  
+    <a href="/2015/01/21/iOS收起键盘/" title="iOS收起键盘" itemprop="url">
+  
+    <h1 itemprop="name">iOS收起键盘</h1>
+    
+     
+           <p itemprop="description" >在UIViewController中收起键盘，除了调用相应控件的resignFirstResponder方法之外，还有另外三种方法：
+
+重载UIViewController中的touchesBegin方法，然后在里面执行[self.view endEditing:YES];，这样</p>
+        
+    
+    <time datetime="2015-01-21T13:18:10.000Z" itemprop="datePublished">2015-01-21</time>
+  </a>
+</section>
+
+
+
+  <nav id="page-nav" class="clearfix">
+    <a class="extend prev" rel="prev" href="/page/11/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><span class="page-number current">12</span><a class="page-number" href="/page/13/">13</a><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/13/">Next &raquo;</a>
+  </nav>
+
+</div>
+      
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+
+
+
+
+
+
+  </body>
+ </html>

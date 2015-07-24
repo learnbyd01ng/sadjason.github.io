@@ -1,0 +1,486 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>回溯法 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="对回溯法进行简单概述
+常见回溯算法有些算法直接写在本文中，有些另开博客，譬如N皇后问题。
+反转整数的某个位
+Gray Code
+LeetCode有题：Gray Code，描述如下：
+
+The gray code is a binary numeral system where two success">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/06/05/back-tracking/" title="回溯法" itemprop="url">回溯法</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-06-05T15:07:33.000Z" itemprop="datePublished">2015-06-05</time>
+    更新日期:<time datetime="2015-07-04T08:51:03.000Z" itemprop="dateModified">2015-07-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Gray_Code"><span class="toc-number">1.</span> <span class="toc-text">Gray Code</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Generate_Parentheses"><span class="toc-number">2.</span> <span class="toc-text">Generate Parentheses</span></a></li></ol>
+		</div>
+		
+		<p>对回溯法进行简单概述</p>
+<p>常见回溯算法<br>有些算法直接写在本文中，有些另开博客，譬如N皇后问题。</p>
+<p>反转整数的某个位</p>
+<h3 id="Gray_Code"><strong>Gray Code</strong></h3>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/gray-code/" target="_blank" rel="external">Gray Code</a>，描述如下：</p>
+<blockquote>
+<p>The gray code is a binary numeral system where two successive values differ in only one bit.<br>&nbsp;<br>Given a non-negative integer n representing the total number of bits in the code, print the sequence of gray code. A gray code sequence must begin with 0.<br>&nbsp;<br>For example, given n = 2, return [0,1,3,2]. Its gray code sequence is:<br>&nbsp;<br>00 - 0<br>01 - 1<br>11 - 3<br>10 - 2<br>Note:<br>For a given n, a gray code sequence is not uniquely defined.<br>&nbsp;<br>For example, [0,2,3,1] is also a valid gray code sequence according to the above definition.<br>&nbsp;<br>For now, the judge is able to judge based on one instance of gray code sequence. Sorry about that.</p>
+</blockquote>
+<p>我的Solution如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution1</span>:</span></div><div class="line">    <span class="comment"># @param {integer} n</span></div><div class="line">    <span class="comment"># @return {integer[]}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">grayCode</span><span class="params">(self, n)</span>:</span></div><div class="line">        <span class="keyword">if</span> n == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> [<span class="number">0</span>]</div><div class="line">	</div><div class="line">        <span class="comment"># 假设n&lt;32</span></div><div class="line">        total = <span class="number">1</span>&lt;&lt;n            <span class="comment"># total：n位二进制数一共可以组成2^n个整数，</span></div><div class="line">        ret = [<span class="number">0</span>] * total</div><div class="line">        cnt = <span class="number">1</span>                 <span class="comment"># cnt：表示已处理的个数</span></div><div class="line">        <span class="keyword">while</span> cnt &lt; total:</div><div class="line">            cur = ret[cnt-<span class="number">1</span>]</div><div class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> xrange(n):</div><div class="line">                mask = <span class="number">1</span> &lt;&lt; i</div><div class="line">                target = cur ^ mask</div><div class="line">                <span class="keyword">if</span> self.isOK(ret, cnt, target):</div><div class="line">                    ret[cnt] = target</div><div class="line">                    <span class="keyword">break</span></div><div class="line">            cnt += <span class="number">1</span></div><div class="line">        <span class="keyword">return</span> ret</div><div class="line">	</div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">isOK</span><span class="params">(self, nums, cnt, target)</span>:</span></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(cnt):</div><div class="line">            <span class="keyword">if</span> nums[i] == target:</div><div class="line">                <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line">        <span class="keyword">return</span> <span class="keyword">True</span></div></pre></figure>
+
+<p>代码提交被<code>Accepted</code>，但速度太慢了，在LeetCode数据库中算是下游成绩了；想了半天，没有啥比较好的优化策略，无奈，决定使用set这个大杀器，空间换时间，忒低级：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer} n</span></div><div class="line">    <span class="comment"># @return {integer[]}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">grayCode</span><span class="params">(self, n)</span>:</span></div><div class="line">        <span class="keyword">if</span> n == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> [<span class="number">0</span>]</div><div class="line">	</div><div class="line">        cacheSet = set()</div><div class="line">	</div><div class="line">        <span class="comment"># 假设n&lt;32</span></div><div class="line">        total = <span class="number">1</span>&lt;&lt;n            <span class="comment"># total：n位二进制数一共可以组成2^n个整数，</span></div><div class="line">        ret = [-<span class="number">1</span>] * total</div><div class="line">        ret[<span class="number">0</span>] = <span class="number">0</span></div><div class="line">        cacheSet.add(<span class="number">0</span>)</div><div class="line">        cnt = <span class="number">1</span>                 <span class="comment"># cnt：表示已处理的个数</span></div><div class="line">        <span class="keyword">while</span> cnt &lt; total:</div><div class="line">            cur = ret[cnt-<span class="number">1</span>]</div><div class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> xrange(n):</div><div class="line">                mask = <span class="number">1</span> &lt;&lt; i</div><div class="line">                target = cur ^ mask</div><div class="line">                <span class="keyword">if</span> target <span class="keyword">not</span> <span class="keyword">in</span> cacheSet:</div><div class="line">                    ret[cnt] = target</div><div class="line">                    cacheSet.add(target)</div><div class="line">                    <span class="keyword">break</span></div><div class="line">            cnt += <span class="number">1</span></div><div class="line">        <span class="keyword">return</span> ret</div></pre></figure>
+
+<p>再次提交，执行速度总算排到LeetCode数据库上游了；但这种方式显然太low了，有没想到比较好的办法，无赖寻求网友的帮助，在LeetCode discuss模块找到了一位大神的<a href="https://leetcode.com/discuss/2978/what-solution-gray-code-problem-extra-space-used-recursion" target="_blank" rel="external">Solution</a>，使用Python翻译一下，代码如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer} n</span></div><div class="line">    <span class="comment"># @return {integer[]}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">grayCode</span><span class="params">(self, n)</span>:</span></div><div class="line">        total = <span class="number">1</span> &lt;&lt; n</div><div class="line">        ret = [<span class="number">0</span>] * total</div><div class="line">        cnt = <span class="number">1</span></div><div class="line">        mask = <span class="number">1</span></div><div class="line">        <span class="keyword">while</span> cnt &lt; total:</div><div class="line">            t = <span class="number">0</span></div><div class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, cnt)[::-<span class="number">1</span>]:</div><div class="line">                ret[cnt+t] = (ret[i] ^ mask)</div><div class="line">                t += <span class="number">1</span></div><div class="line">            cnt += t</div><div class="line">            mask &lt;&lt;= <span class="number">1</span></div><div class="line">        <span class="keyword">return</span> ret</div></pre></figure>
+
+<p>瞬间清爽了，只是这种方式貌似和「回溯法」没太大关系…</p>
+<h3 id="Generate_Parentheses"><strong>Generate Parentheses</strong></h3>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/generate-parentheses/" target="_blank" rel="external">Generate Parentheses</a>，描述如下：</p>
+<blockquote>
+<p>Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.<br>&nbsp;<br>For example, given n = 3, a solution set is:<br>&nbsp;<br>“((()))”, “(()())”, “(())()”, “()(())”, “()()()”</p>
+</blockquote>
+<p>这是一道典型的可以用「回溯法」解决的算法问题。解题思路：<br>可以把满足题目要求的括号序列看成一棵从根节点到叶子节点的二叉树路径；根据题目要求，根节点自然是’(‘；事实上，可以构建一棵深度为2n的完全二叉树，如下图：<br><img src="/img/201506/20150620-02.png" width="400" height="270"></p>
+<p>显然，并不是每个<code>根-叶子</code>路径都满足题目要求，很容易就能分析出约束，然后凭借着约束将有些枝叶给砍掉，避免没必要的搜索（这也整数回溯法的核心思想），因此，我的Solution如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer} n</span></div><div class="line">    <span class="comment"># @return {string[]}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">generateParenthesis</span><span class="params">(self, n)</span>:</span></div><div class="line">        <span class="keyword">if</span> n &lt;= <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> [<span class="string">''</span>]</div><div class="line">        </div><div class="line">        ret = []</div><div class="line">        stack = [<span class="string">''</span>] * (<span class="number">2</span> * n)</div><div class="line">        stack[<span class="number">0</span>] = <span class="string">'('</span>              <span class="comment"># 左括号入栈</span></div><div class="line">        stackSize = <span class="number">1</span>               <span class="comment"># 为避免没必要的push和pop操作，stackSize用于记录「栈」信息</span></div><div class="line">        lefts, rights = <span class="number">1</span>, <span class="number">0</span>        <span class="comment"># 分别记录已入栈的左括号和右括号的数量</span></div><div class="line">        </div><div class="line">        down, up = <span class="number">1</span>, <span class="number">2</span>             <span class="comment"># 分别表示「下探」和「回溯」</span></div><div class="line">        pre, dir = <span class="number">0</span>, down          <span class="comment"># pre记录上一个处理（或压栈、或弹出）的结点，dir记录方向</span></div><div class="line">        </div><div class="line">        <span class="keyword">while</span> stackSize &gt; <span class="number">0</span>:</div><div class="line">            cur = stack[stackSize-<span class="number">1</span>]</div><div class="line">            <span class="keyword">if</span> stackSize == <span class="number">2</span>*n:    <span class="comment"># 已有2n个结点入栈</span></div><div class="line">                ret.append(<span class="string">""</span>.join(stack))</div><div class="line">                stackSize, pre, dir, rights = stackSize-<span class="number">1</span>, cur, up, rights-<span class="number">1</span></div><div class="line">                <span class="keyword">continue</span></div><div class="line">            </div><div class="line">            <span class="keyword">if</span> dir == down:</div><div class="line">                <span class="keyword">if</span> lefts &lt; n:</div><div class="line">                    stack[stackSize] = <span class="string">'('</span></div><div class="line">                    stackSize, pre, dir, lefts = stackSize+<span class="number">1</span>, cur, down, lefts+<span class="number">1</span></div><div class="line">                <span class="keyword">else</span>:</div><div class="line">                    stack[stackSize] = <span class="string">')'</span></div><div class="line">                    stackSize, pre, dir, rights = stackSize+<span class="number">1</span>, cur, down, rights+<span class="number">1</span></div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                <span class="keyword">if</span> pre <span class="keyword">is</span> <span class="string">'('</span> <span class="keyword">and</span> lefts &gt; rights:</div><div class="line">                    stack[stackSize] = <span class="string">')'</span></div><div class="line">                    stackSize, pre, dir, rights = stackSize+<span class="number">1</span>, cur, down, rights+<span class="number">1</span></div><div class="line">                <span class="keyword">elif</span> cur <span class="keyword">is</span> <span class="string">'('</span>:</div><div class="line">                    stackSize, pre, dir, lefts = stackSize-<span class="number">1</span>, cur, up, lefts-<span class="number">1</span></div><div class="line">                <span class="keyword">elif</span> cur <span class="keyword">is</span> <span class="string">')'</span>:</div><div class="line">                    stackSize, pre, dir, rights = stackSize-<span class="number">1</span>, cur, up, rights-<span class="number">1</span></div><div class="line">        <span class="keyword">return</span> ret</div></pre></figure>
+
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Backtracking/">Backtracking</a><a href="/tags/LeetCode/">LeetCode</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/06/05/back-tracking/" data-title="回溯法 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/06/07/n-queens/" title="N皇后问题">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  N皇后问题</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/06/05/TSP-problem/"  title="TSP-problem">
+ <strong>NEXT:</strong><br/> 
+ <span>TSP-problem
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/06/05/back-tracking/" data-title="回溯法" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Gray_Code"><span class="toc-number">1.</span> <span class="toc-text">Gray Code</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Generate_Parentheses"><span class="toc-number">2.</span> <span class="toc-text">Generate Parentheses</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

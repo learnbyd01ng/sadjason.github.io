@@ -1,0 +1,536 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Objective-C中的+initialize和+load | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="写在前面
+近几天花了一些时间了解了一下Objective-C runtime相关的东西，其中涉及到了+load方法，譬如method  swizzling通常在category的+load方法中完成。之前对initializer和load的使用就比较疑惑，但一直没有详细去对比了解，以此为契机，集各方">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/04/28/initialize-and-load-in-Objective-C/" title="Objective-C中的+initialize和+load" itemprop="url">Objective-C中的+initialize和+load</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-04-28T06:14:13.000Z" itemprop="datePublished">2015-04-28</time>
+    更新日期:<time datetime="2015-07-04T08:59:00.000Z" itemprop="dateModified">2015-07-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#+initialize"><span class="toc-number">2.</span> <span class="toc-text">+initialize</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#+load"><span class="toc-number">3.</span> <span class="toc-text">+load</span></a></li></ol>
+		</div>
+		
+		<h2 id="写在前面"><strong>写在前面</strong></h2>
+<p>近几天花了一些时间了解了一下Objective-C runtime相关的东西，其中涉及到了+load方法，譬如method  swizzling通常在category的+load方法中完成。之前对initializer和load的使用就比较疑惑，但一直没有详细去对比了解，以此为契机，集各方资源，分析一下吧！</p>
+<p>关于了解<code>+initialize</code>和<code>+load</code>，个人感觉参考官方文档《NSObject Class Reference》就够了。</p>
+<h2 id="+initialize"><strong>+initialize</strong></h2>
+<p>关于<code>+initialize</code>方法，《NSObject Class Reference》的介绍如下：</p>
+<blockquote>
+<p>Initializes the class before it receives its first message.</p>
+</blockquote>
+<p>可以理解<code>+initialize的</code>作用是为了该Class在使用前创建合适的环境；</p>
+<p>关于其使用，《NSObject Class Reference》的说明如下：</p>
+<blockquote>
+<p>The runtime sends initialize to each class in a program just before the class, or any class that inherits from it, is sent its first message from within the program. The runtime sends the initialize message to classes in a thread-safe manner. Superclasses receive this message before their subclasses. The superclass implementation may be called multiple times if subclasses do not implement initialize—the runtime will call the inherited implementation—or if subclasses explicitly call [super initialize].</p>
+</blockquote>
+<p>这上面这段话，可以得出如下这么一些意思：</p>
+<ul>
+<li><code>+initialize</code>方法是在runtime被调用的；</li>
+<li>对于某个类，其类<code>+initialize</code>方法都会在该对象接受任何消息之前被调用；</li>
+<li>如果父类和子类的+initialize方法都被调用，父类的调用一定在子类之前，这是系统自动完成的，子类+initialize中没必要显式调用<code>[super initialize];</code>；</li>
+<li>runtime系统处理+initialize消息的方式是线程安全的，所以没必要在+initialize中为了保证线程安全而使用lock、mutex之类的线程安全工具；</li>
+<li>某个类的+initialize的方法不一定只被调用一次，至少有两种情况会被调用多次：<ul>
+<li>子类显式调用<code>[super initialize];</code>；</li>
+<li>子类没有实现+initialize方法；</li>
+</ul>
+</li>
+</ul>
+<p>下面以示例演示某个类的<code>+initialize</code>被多次执行的现象。</p>
+<p>定义三个类：Person、Student、Teacher，Student和Teacher继承自Person，Person继承自NSObject。Person和Student都实现了<code>+initialize</code>方法，Teacher没有实现该方法，如下：</p>
+<figure class="highlight Objective-C"><pre><div class="line"><span class="comment">// Person的+initialize方法的实现</span></div><div class="line">+ (<span class="keyword">void</span>)initialize {</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"Person initialize"</span>);</div><div class="line">}</div><div class="line">	</div><div class="line"><span class="comment">// Student的+initialize方法的实现</span></div><div class="line">+ (<span class="keyword">void</span>)initialize {</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"Student initialize"</span>);</div><div class="line">}</div></pre></figure>
+
+<p>执行效果如下：</p>
+<figure class="highlight Objective-C"><pre><div class="line">- (void)viewDidLoad {</div><div class="line">    Student <span class="keyword">*</span>aStudent = [[Student alloc] init];</div><div class="line">    Teacher <span class="keyword">*</span>aTeacher = [[Teacher alloc] init];</div><div class="line">    </div><div class="line">    [super viewDidLoad];</div><div class="line">}</div><div class="line">	</div><div class="line">/<span class="keyword">*</span> 输出：</div><div class="line">Person initialize</div><div class="line">Student initialize</div><div class="line">Person initialize</div><div class="line"><span class="keyword">*</span>/</div></pre></figure>
+
+<p>可以看到，对于Student，在其<code>+initialize</code>方法被调用之前，其super class（Person）的<code>+initialize</code>方法被率先调用；对于Teacher，没有定义<code>+initialize</code>方法，所以它会直接调用super class（Person）的<code>+initialize</code>方法，这就导致了Person的<code>+initialize</code>方法被执行两次。</p>
+<p>有没有办法避免Person的<code>+initialize</code>方法被多次调用？当然可以：</p>
+<figure class="highlight Objective-C"><pre><div class="line"><span class="comment">// Person的+initialize方法的实现</span></div><div class="line">+ (<span class="keyword">void</span>)initialize {</div><div class="line">    <span class="keyword">static</span> <span class="built_in">BOOL</span> b = <span class="literal">false</span>;</div><div class="line">    <span class="keyword">if</span> (!b) {</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"Person initialize"</span>);</div><div class="line">        b = <span class="literal">true</span>;</div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<p>也可以这样：</p>
+<figure class="highlight Objective-C"><pre><div class="line"><span class="comment">// Person的+initialize方法的实现</span></div><div class="line">+ (void)initialize {</div><div class="line">    <span class="keyword">if</span> (<span class="keyword">self</span> == [<span class="type">Person</span> <span class="class"><span class="keyword">class</span>]) </span>{</div><div class="line">        <span class="type">NSLog</span>(@<span class="string">"Person initialize"</span>);</div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<p>《NSObject Class Reference》中还对<code>+initialize</code>方法的使用做了一些警告：</p>
+<blockquote>
+<p>Because initialize is called in a thread-safe manner and the order of initialize being called on different classes is not guaranteed, it’s important to do the minimum amount of work necessary in initialize methods. Specifically, any code that takes locks that might be required by other classes in their initialize methods is liable to lead to deadlocks. Therefore you should not rely on initialize for complex initialization, and should instead limit it to straightforward, class local initialization.</p>
+</blockquote>
+<p>总结一下，就是这样：</p>
+<ul>
+<li>不要在<code>+initialize</code>中处理复杂的逻辑；</li>
+</ul>
+<p>那么+initialize可以做些什么事情呢？可以做一些简单的初始化工作，譬如对于某个继承自UICollectionViewCell的自定义类PhotoViewCell，PhotoViewCell的对象可能会有一些公用资源，譬如label color，label font等等，没必要在-initXXOO方法中创建这些完全一样的资源，此时就可以放在PhotoViewCell中的+initialize中完成，如下：</p>
+<figure class="highlight Objective-C"><pre><div class="line">+ (void)initialize {</div><div class="line">    <span class="variable">titleFont       =</span> [UIFont systemFontOfSize:<span class="number">12</span>];</div><div class="line">    <span class="variable">titleHeight     =</span> <span class="number">20.0</span>f;</div><div class="line">    <span class="variable">videoIcon       =</span> [UIImage imageNamed:@<span class="string">"CTAssetsPickerVideo"</span>];</div><div class="line">    <span class="variable">titleColor      =</span> [UIColor whiteColor];</div><div class="line">    <span class="variable">checkedIcon     =</span> [UIImage imageNamed:@<span class="string">"CTAssetsPickerChecked"</span>];</div><div class="line">    <span class="variable">selectedColor   =</span> [UIColor colorWithWhite:<span class="number">1</span> alpha:<span class="number">0.3</span>];</div><div class="line">}</div></pre></figure>
+
+<p><code>+initialize</code>终究还是带来惊人的信息量，颇为失望。</p>
+<h2 id="+load"><strong>+load</strong></h2>
+<p>二者都户只执行一次（在不考虑开发者主动使用的情况下，系统最多会调用一次）；<br>load在类被加载到系统时执行；<br>如果父类和子类都被调用，父类的调用一定在子类之前<br>都是为了应用运行提前创建合适的运行环境<br>在使用时都不要过重地依赖于这两个方法，除非真正必要</p>
+<p>关于<code>+load</code>方法，《NSObject Class Reference》的介绍如下：</p>
+<blockquote>
+<p>Invoked whenever a class or category is added to the Objective-C runtime; implement this method to perform class-specific behavior upon loading.</p>
+</blockquote>
+<p>关于其使用，《NSObject Class Reference》的说明如下：</p>
+<blockquote>
+<p>The load message is sent to classes and categories that are both dynamically loaded and statically linked, but only if the newly loaded class or category implements a method that can respond.</p>
+<p>The order of initialization is as follows:</p>
+<blockquote>
+<ol>
+<li>All initializers in any framework you link to.</li>
+<li>All +load methods in your image.</li>
+<li>All C++ static initializers and C/C++ <strong>attribute</strong>(constructor) functions in your image.</li>
+<li>All initializers in frameworks that link to you.</li>
+</ol>
+</blockquote>
+<p>In addition:</p>
+<ul>
+<li>A class’s +load method is called after all of its superclasses’ +load methods.</li>
+<li>A category +load method is called after the class’s own +load method.<br>In a custom implementation of load you can therefore safely message other unrelated classes from the same image, but any load methods implemented by those classes may not have run yet.</li>
+</ul>
+</blockquote>
+<p>从这段文字可以读出如下信息：</p>
+<ul>
+<li>在一个程序（main函数）运行之前，所用到的库被加载到runtime之后，被添加到的runtime系统的各种类和category的<code>+load</code>方法就被调用；（关于这点很容易通过打印语句来验证）；</li>
+<li>如果父类和子类的+load方法都被调用，父类的调用一定在子类之前，这是系统自动完成的，子类+load中没必要显式调用<code>[super load];</code>；</li>
+<li>文档没有讲明+load的执行是否是线程安全的，但考虑到它是在runtime之前就调用，所以谈论它是否是线程安全没啥必要，根据我的理解，多线程在runtime才有谈论意义；</li>
+<li>若某个类由一个主类和多个category组成，则允许主类和category中各自有自己的+load方法，只是category中的+load的执行在主类的+load之后；</li>
+</ul>
+<p>关于<code>+load</code>的使用场景，笔者知道的至少有一个，method swizzling的处理一般都在category的<code>+load</code>中完成的，参考<a href="/2015/04/27/unstanding-the-Objective-C-Runtime-part4/">这里</a>。</p>
+<p><strong>参考</strong></p>
+<ol>
+<li>《NSObject Class Reference》；</li>
+</ol>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Objective-C/">Objective-C</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/04/28/initialize-and-load-in-Objective-C/" data-title="Objective-C中的+initialize和+load | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/04/29/understanding-KVO/" title="深入理解KVO">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  深入理解KVO</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/04/28/unstanding-the-Objective-C-Runtime-part5/"  title="理解Objective-C Runtime（五）占坑">
+ <strong>NEXT:</strong><br/> 
+ <span>理解Objective-C Runtime（五）占坑
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/04/28/initialize-and-load-in-Objective-C/" data-title="Objective-C中的+initialize和+load" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#+initialize"><span class="toc-number">2.</span> <span class="toc-text">+initialize</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#+load"><span class="toc-number">3.</span> <span class="toc-text">+load</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,696 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>单链表与算法 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="写在前面
+和数组一样，链表是一种非常基础的数据结构，链表包括单向链表（简称「单链表」）、双向链表以及循环链表。围绕链表结构有很多操作，譬如增加/修改/删除/查找节点，旋转链表，反转链表，对链表进行排序，合并多个单链表等等。
+LeetCode中有二十多道与链表相关的算法题，这些算法题在LeetCode">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/06/09/linked-list/" title="单链表与算法" itemprop="url">单链表与算法</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-06-09T01:52:18.000Z" itemprop="datePublished">2015-06-09</time>
+    更新日期:<time datetime="2015-07-04T08:55:15.000Z" itemprop="dateModified">2015-07-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#反转链表"><span class="toc-number">2.</span> <span class="toc-text">反转链表</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#反转整个链表"><span class="toc-number">2.1.</span> <span class="toc-text">反转整个链表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#反转部分链表"><span class="toc-number">2.2.</span> <span class="toc-text">反转部分链表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#根据条件反转"><span class="toc-number">2.3.</span> <span class="toc-text">根据条件反转</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#旋转链表"><span class="toc-number">3.</span> <span class="toc-text">旋转链表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#排序"><span class="toc-number">4.</span> <span class="toc-text">排序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#删除结点"><span class="toc-number">5.</span> <span class="toc-text">删除结点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#删除倒数第N个结点"><span class="toc-number">5.1.</span> <span class="toc-text">删除倒数第N个结点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除指定值的结点"><span class="toc-number">5.2.</span> <span class="toc-text">删除指定值的结点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除链表冗余结点"><span class="toc-number">5.3.</span> <span class="toc-text">删除链表冗余结点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除链表重复结点"><span class="toc-number">5.4.</span> <span class="toc-text">删除链表重复结点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#对链表进行分区"><span class="toc-number">6.</span> <span class="toc-text">对链表进行分区</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#合并链表"><span class="toc-number">7.</span> <span class="toc-text">合并链表</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#合并两个链表"><span class="toc-number">7.1.</span> <span class="toc-text">合并两个链表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#合并k个链表"><span class="toc-number">7.2.</span> <span class="toc-text">合并k个链表</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#链表环问题"><span class="toc-number">8.</span> <span class="toc-text">链表环问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#判断链表是否存在环"><span class="toc-number">8.1.</span> <span class="toc-text">判断链表是否存在环</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#定位环的开始位置"><span class="toc-number">8.2.</span> <span class="toc-text">定位环的开始位置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#定位两条链表的交界点"><span class="toc-number">8.3.</span> <span class="toc-text">定位两条链表的交界点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#链表与二叉树"><span class="toc-number">9.</span> <span class="toc-text">链表与二叉树</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#已排序链表转二叉搜索树"><span class="toc-number">9.1.</span> <span class="toc-text">已排序链表转二叉搜索树</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#拷贝链表"><span class="toc-number">10.</span> <span class="toc-text">拷贝链表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他算法问题"><span class="toc-number">11.</span> <span class="toc-text">其他算法问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Swap_Nodes_in_Pairs"><span class="toc-number">11.1.</span> <span class="toc-text">Swap Nodes in Pairs</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Reorder_List"><span class="toc-number">11.2.</span> <span class="toc-text">Reorder List</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Add_Two_Numbers"><span class="toc-number">11.3.</span> <span class="toc-text">Add Two Numbers</span></a></li></ol></li></ol>
+		</div>
+		
+		<h2 id="写在前面"><strong>写在前面</strong></h2>
+<p>和数组一样，链表是一种非常基础的数据结构，链表包括单向链表（简称「单链表」）、双向链表以及循环链表。围绕链表结构有很多操作，譬如增加/修改/删除/查找节点，旋转链表，反转链表，对链表进行排序，合并多个单链表等等。</p>
+<p>LeetCode中有二十多道与链表相关的<a href="https://leetcode.com/tag/linked-list/" target="_blank" rel="external">算法题</a>，这些算法题在LeetCode中的难度中等偏下，笔者刷完了所有LeetCode中关于linked list的题目（大部分原创，因为愚钝，有些题实在无法找到被能够<code>Accepted</code>的答案进而参考了一些资料），本文算是对这些算法题的一些总结。</p>
+<p>P.S：当然，本文持续更新，可能也会包括一些来自于其他地方（LeetCode之外）的题目。</p>
+<p>本文的算法实现代码全部使用Python，使用Python实现算法的愉悦感是C/C++等语言无法比拟的！</p>
+<p><strong><em>占坑占坑占坑占坑占坑占坑占坑占坑占坑占坑占坑占坑占坑占坑</em></strong></p>
+<p>除了总结算法之外，我觉得还应该补充一些单链表算法之外的一些更详细知识，譬如：<br><strong>单链表有哪些应用场景？双向链表呢？循环链表呢？</strong></p>
+<hr>
+<h2 id="反转链表"><strong>反转链表</strong></h2>
+<p>反转单链表是单链表相关算法题中比较简答而基础的问题，最简单的是反转整个链表，其他的都是对这个问题的衍生。</p>
+<h3 id="反转整个链表"><strong>反转整个链表</strong></h3>
+<p><a href="Reverse a singly linked list.">LeetCode</a>上有这么一道题：</p>
+<blockquote>
+<p>Reverse a singly linked list.</p>
+</blockquote>
+<p>最直观简单的办法是对链表进行遍历，顺便将链表结点按顺序存到一个数组中，然后从数组中以倒序方式将结点取出来并设置next指针，如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">ListNode</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, x)</span>:</span></div><div class="line">        self.val = x</div><div class="line">        self.next = <span class="keyword">None</span></div><div class="line">	</div><div class="line">	</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {ListNode} head</span></div><div class="line">    <span class="comment"># @return {ListNode}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">reverseList</span><span class="params">(self, head)</span>:</span></div><div class="line">        aList = []</div><div class="line">        node = head</div><div class="line">	</div><div class="line">        <span class="comment"># 将链表结点存到数组中</span></div><div class="line">        <span class="keyword">while</span> node <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">            aList.append(node)</div><div class="line">            node = node.next</div><div class="line">	</div><div class="line">        n = len(aList)</div><div class="line">        <span class="keyword">if</span> n == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> <span class="keyword">None</span></div><div class="line">	</div><div class="line">        <span class="comment"># 将数组中的结点倒序取出来，并设置next</span></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>,len(aList))[::-<span class="number">1</span>]:</div><div class="line">            aList[i].next = aList[i-<span class="number">1</span>]</div><div class="line">        aList[<span class="number">0</span>].next = <span class="keyword">None</span></div><div class="line">        <span class="keyword">return</span> aList[-<span class="number">1</span>]</div></pre></figure>
+
+<p>这个算法的时间复杂度为O(n)，空间复杂度也为O(n)，但这种方法不是很好，换种做法，可以将空间复杂度缩减到O(1)，如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {ListNode} head</span></div><div class="line">    <span class="comment"># @return {ListNode}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">reverseList</span><span class="params">(self, head)</span>:</span></div><div class="line">        successor = <span class="keyword">None</span>	<span class="comment"># 后继</span></div><div class="line">        node = head</div><div class="line">        <span class="keyword">while</span> node <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">            next = node.next</div><div class="line">            node.next = successor</div><div class="line">            successor = node</div><div class="line">            node = next</div><div class="line">        <span class="keyword">return</span> successor</div></pre></figure>
+
+<p>显然，第二种Solution的代码漂亮多了！</p>
+<h3 id="反转部分链表"><strong>反转部分链表</strong></h3>
+<p>上面是反转全部链表，比较简单直观，有时候，可能要求反转链表的一部分，譬如<a href="https://leetcode.com/problems/reverse-linked-list-ii/" target="_blank" rel="external">LeetCode</a>中的题目要求：</p>
+<blockquote>
+<p>Reverse a linked list from position m to n. Do it in-place and in one-pass.<br>&nbsp;<br>For example:<br>Given 1-&gt;2-&gt;3-&gt;4-&gt;5-&gt;NULL, m = 2 and n = 4, return 1-&gt;4-&gt;3-&gt;2-&gt;5-&gt;NULL.<br>&nbsp;<br>Note:<br>Given m, n satisfy the following condition:<br>1 ≤ m ≤ n ≤ length of list.</p>
+</blockquote>
+<p>题目要求反转区间为[m,n]的nodes；其实也简单，只是首先要找到第m-1个node以及第n+1个node，具体操作如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {ListNode} head</span></div><div class="line">    <span class="comment"># @param {integer} m</span></div><div class="line">    <span class="comment"># @param {integer} n</span></div><div class="line">    <span class="comment"># @return {ListNode}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">reverseBetween</span><span class="params">(self, head, m, n)</span>:</span></div><div class="line">        fakeNode = ListNode(<span class="number">0</span>)</div><div class="line">        fakeNode.next = head</div><div class="line">	</div><div class="line">        <span class="comment"># 找到第m-1个node</span></div><div class="line">        node = fakeNode</div><div class="line">        t = <span class="number">0</span></div><div class="line">        <span class="keyword">while</span> t &lt; m-<span class="number">1</span>:</div><div class="line">            node = node.next</div><div class="line">            t += <span class="number">1</span></div><div class="line">	</div><div class="line">        mark1 = node         <span class="comment"># 第m-1个node</span></div><div class="line">	</div><div class="line">        <span class="comment"># 找到第n+1个node</span></div><div class="line">        node = mark1.next</div><div class="line">        t = m</div><div class="line">        <span class="keyword">while</span> t &lt; n+<span class="number">1</span>:</div><div class="line">            node = node.next</div><div class="line">            t += <span class="number">1</span></div><div class="line">        successor = node    <span class="comment"># 第n+1个node（可能是None）</span></div><div class="line">	</div><div class="line">        <span class="comment"># 反转</span></div><div class="line">        node = mark1.next   <span class="comment"># 从第m个node开始</span></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(m, n+<span class="number">1</span>):</div><div class="line">            next = node.next</div><div class="line">            node.next = successor</div><div class="line">            successor = node</div><div class="line">            node = next</div><div class="line">	</div><div class="line">        mark1.next = successor</div><div class="line">        <span class="keyword">return</span> fakeNode.next</div></pre></figure>
+
+<h3 id="根据条件反转"><strong>根据条件反转</strong></h3>
+<p>LeetCode有题目<a href="https://leetcode.com/problems/reverse-nodes-in-k-group/" target="_blank" rel="external"><strong>Reverse Nodes in k-Group</strong></a>，描述如下：</p>
+<blockquote>
+<p>Given a linked list, reverse the nodes of a linked list k at a time and return its modified list.<br>&nbsp;<br>If the number of nodes is not a multiple of k then left-out nodes in the end should remain as it is.<br>&nbsp;<br>You may not alter the values in the nodes, only nodes itself may be changed.<br>&nbsp;<br>Only constant memory is allowed.<br>&nbsp;<br>For example:<br>Given this linked list: 1-&gt;2-&gt;3-&gt;4-&gt;5<br>For k = 2, you should return: 2-&gt;1-&gt;4-&gt;3-&gt;5<br>For k = 3, you should return: 3-&gt;2-&gt;1-&gt;4-&gt;5</p>
+</blockquote>
+<p>换汤不换药，这道题也没啥难的，我的Solution（Python）如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {ListNode} head</span></div><div class="line">    <span class="comment"># @param {integer} k</span></div><div class="line">    <span class="comment"># @return {ListNode}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">reverseKGroup</span><span class="params">(self, head, k)</span>:</span></div><div class="line">        <span class="comment"># 计算链表长度</span></div><div class="line">        n = <span class="number">0</span></div><div class="line">        node = head</div><div class="line">        <span class="keyword">while</span> node <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">            n += <span class="number">1</span></div><div class="line">            node = node.next</div><div class="line">	</div><div class="line">        <span class="keyword">if</span> k &lt;= <span class="number">1</span>:          <span class="comment"># 不需要reverse</span></div><div class="line">            <span class="keyword">return</span> head</div><div class="line">	</div><div class="line">        node = head</div><div class="line">        m = n               <span class="comment"># m记录如下待处理的node的数量</span></div><div class="line">	</div><div class="line">        ret = ListNode(<span class="number">0</span>)</div><div class="line">        ret.next = head</div><div class="line">        tail = ret</div><div class="line">        <span class="keyword">while</span> m &gt;= k:</div><div class="line">            tail = reverseNodes(tail, k)</div><div class="line">            m -= k</div><div class="line">	</div><div class="line">        <span class="keyword">return</span> ret.next</div><div class="line">	</div><div class="line">	</div><div class="line"><span class="comment"># reverse tail后面的k个node</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">reverseNodes</span><span class="params">(tail, k)</span>:</span></div><div class="line">    nextTail = tail.next</div><div class="line">	</div><div class="line">    node = tail.next</div><div class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> xrange(k):</div><div class="line">        node = node.next</div><div class="line">    successor = node</div><div class="line">	</div><div class="line">    node = tail.next</div><div class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> xrange(k):</div><div class="line">        next = node.next</div><div class="line">        node.next = successor</div><div class="line">        successor = node</div><div class="line">        node = next</div><div class="line">	</div><div class="line">    tail.next = successor</div><div class="line">    <span class="keyword">return</span> nextTail</div></pre></figure>
+
+<hr>
+<h2 id="旋转链表"><strong>旋转链表</strong></h2>
+<p>反转（rotate）和旋转（reverse）是不一样的操作，LeetCode中有一道关于单链表旋转的问题<a href="https://leetcode.com/problems/rotate-list/" target="_blank" rel="external">Rotate List</a>，描述如下：</p>
+<blockquote>
+<p>Given a list, rotate the list to the right by k places, where k is non-negative.<br>&nbsp;<br>For example:<br>Given 1-&gt;2-&gt;3-&gt;4-&gt;5-&gt;NULL and k = 2,<br>return 4-&gt;5-&gt;1-&gt;2-&gt;3-&gt;NULL.</p>
+</blockquote>
+<p>可以看到，rotate有些类似于位移操作（<code>&lt;&lt;</code>和<code>&gt;&gt;</code>），题目指明了rotate方向：向右。解题思路也非常容易，简单来说，就是把链表的<strong>后k个结点</strong>移到链表的前面，但有一点需要注意：k有可能大于n！我的Solution如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {ListNode} head</span></div><div class="line">    <span class="comment"># @param {integer} k</span></div><div class="line">    <span class="comment"># @return {ListNode}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">rotateRight</span><span class="params">(self, head, k)</span>:</span></div><div class="line">        <span class="comment"># 计算链表的长度</span></div><div class="line">        n = <span class="number">0</span></div><div class="line">        node = head</div><div class="line">        <span class="keyword">while</span> node <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">            n += <span class="number">1</span></div><div class="line">            node = node.next</div><div class="line">        </div><div class="line">        <span class="keyword">if</span> n == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> <span class="keyword">None</span></div><div class="line">        <span class="keyword">if</span> k % n == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> head</div><div class="line">        </div><div class="line">        <span class="comment"># 找到第(n-k%n-1)个node和第(n-k%n)个node</span></div><div class="line">        node = head     <span class="comment"># 第(n-k%n)个node</span></div><div class="line">        pre = <span class="keyword">None</span>      <span class="comment"># 第(n-k%n-1)个node</span></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(n-k%n):</div><div class="line">            pre = node</div><div class="line">            node = node.next</div><div class="line">        pre.next = <span class="keyword">None</span></div><div class="line">        newHead = node</div><div class="line">        </div><div class="line">        <span class="comment"># 找到最后一个node</span></div><div class="line">        tail = newHead</div><div class="line">        <span class="keyword">while</span> tail.next <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">            tail = tail.next</div><div class="line">        tail.next = head</div><div class="line">        <span class="keyword">return</span> newHead</div></pre></figure>
+
+<hr>
+<h2 id="排序"><strong>排序</strong></h2>
+<p>Sort List<br>Insertion Sort List</p>
+<hr>
+<h2 id="删除结点"><strong>删除结点</strong></h2>
+<p>删除node也是非常基础的链表操作，通常包括如下操作：</p>
+<ul>
+<li>删除第N个结点；</li>
+<li>删除倒数第N个结点；</li>
+<li>删除指定值的结点；</li>
+<li>从已排序的链表中删除重复值的结点（同一值多次出现的结点全部删掉）；</li>
+<li>从已排序的链表中删除重复值的结点（同一值多次出现则只保留一个）；</li>
+</ul>
+<h3 id="删除倒数第N个结点"><strong>删除倒数第N个结点</strong></h3>
+<p>LeetCode有题<a href="https://leetcode.com/problems/remove-nth-node-from-end-of-list/" target="_blank" rel="external">Remove Nth Node From End of List</a>，描述如下：</p>
+<blockquote>
+<p>Given a linked list, remove the nth node from the end of list and return its head.<br>&nbsp;<br>For example:<br>Given linked list: 1-&gt;2-&gt;3-&gt;4-&gt;5, and n = 2. After removing the second node from the end, the linked list becomes 1-&gt;2-&gt;3-&gt;5.<br>&nbsp;<br>Note:<br>Given n will always be valid.<br>Try to do this in one pass.</p>
+</blockquote>
+<p>我的Solution如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @return a ListNode</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">removeNthFromEnd</span><span class="params">(self, head, n)</span>:</span></div><div class="line">        <span class="keyword">if</span> head <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">            <span class="keyword">return</span> <span class="keyword">None</span></div><div class="line">        </div><div class="line">        <span class="comment"># 计算链表的的长度</span></div><div class="line">        listLen = <span class="number">0</span></div><div class="line">        node = head</div><div class="line">        <span class="keyword">while</span> node <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">            listLen += <span class="number">1</span></div><div class="line">            node = node.next</div><div class="line">	</div><div class="line">        <span class="comment"># 获取要删除的node的index，从0开始</span></div><div class="line">        targetIndex = listLen - n</div><div class="line">	</div><div class="line">        index = <span class="number">0</span></div><div class="line">        node = head</div><div class="line">        pre = <span class="keyword">None</span></div><div class="line">        <span class="keyword">while</span> index != targetIndex:</div><div class="line">            pre = node</div><div class="line">            node = node.next</div><div class="line">            index += <span class="number">1</span></div><div class="line">        </div><div class="line">        <span class="keyword">if</span> pre <span class="keyword">is</span> <span class="keyword">None</span>:     <span class="comment"># targetIndex == 0</span></div><div class="line">            <span class="keyword">return</span> head.next</div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            pre.next = node.next</div><div class="line">        <span class="keyword">return</span> head</div></pre></figure>
+
+<h3 id="删除指定值的结点"><strong>删除指定值的结点</strong></h3>
+<p>LeetCode有题<a href="https://leetcode.com/problems/remove-linked-list-elements/" target="_blank" rel="external">Remove Linked List Elements</a>，描述如下：</p>
+<blockquote>
+<p>Remove all elements from a linked list of integers that have value val.<br>&nbsp;<br>Example<br>Given: 1 —&gt; 2 —&gt; 6 —&gt; 3 —&gt; 4 —&gt; 5 —&gt; 6, val = 6<br>Return: 1 —&gt; 2 —&gt; 3 —&gt; 4 —&gt; 5</p>
+</blockquote>
+<p>题意很简单，删除指定值的结点，值得注意的是，该值可能出现多次。</p>
+<p>很容易解决，我的Solution如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {ListNode} head</span></div><div class="line">    <span class="comment"># @param {integer} val</span></div><div class="line">    <span class="comment"># @return {ListNode}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">removeElements</span><span class="params">(self, head, val)</span>:</span></div><div class="line">        fakeHead = ListNode(<span class="number">0</span>)</div><div class="line">        tail = fakeHead</div><div class="line">        </div><div class="line">        node = head</div><div class="line">        <span class="keyword">while</span> node <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">            <span class="keyword">if</span> node.val != val:</div><div class="line">                tail.next = node</div><div class="line">                tail = node</div><div class="line">            node = node.next</div><div class="line">        tail.next = <span class="keyword">None</span></div><div class="line">	</div><div class="line">        <span class="keyword">return</span> fakeHead.next</div></pre></figure>
+
+<h3 id="删除链表冗余结点"><strong>删除链表冗余结点</strong></h3>
+<p>LeetCode中有题<a href="https://leetcode.com/problems/remove-duplicates-from-sorted-list/" target="_blank" rel="external">Remove Duplicates from Sorted List</a>，描述如下：</p>
+<blockquote>
+<p>Given a sorted linked list, delete all duplicates such that each element appear only once.<br>&nbsp;<br>For example,<br>Given 1-&gt;1-&gt;2, return 1-&gt;2.<br>Given 1-&gt;1-&gt;2-&gt;3-&gt;3, return 1-&gt;2-&gt;3.</p>
+</blockquote>
+<p>题意很简单，针对<strong>已排序</strong>链表，确保所有值至多只能出现一次。该题也出奇简单，我的Solution如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param head, a ListNode</span></div><div class="line">    <span class="comment"># @return a ListNode</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">deleteDuplicates</span><span class="params">(self, head)</span>:</span></div><div class="line">        <span class="keyword">if</span> head <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">            <span class="keyword">return</span> head</div><div class="line">            </div><div class="line">        tail = head</div><div class="line">        node = head.next</div><div class="line">        <span class="keyword">while</span> node <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">            <span class="keyword">if</span> node.val != tail.val:</div><div class="line">                tail.next = node</div><div class="line">                tail = node</div><div class="line">            node = node.next</div><div class="line">        tail.next = <span class="keyword">None</span></div><div class="line">        <span class="keyword">return</span> head</div></pre></figure>
+
+<h3 id="删除链表重复结点"><strong>删除链表重复结点</strong></h3>
+<p>LeetCode中有题<a href="https://leetcode.com/problems/remove-duplicates-from-sorted-list-ii/" target="_blank" rel="external">Remove Duplicates from Sorted List II</a>，描述如下：</p>
+<blockquote>
+<p>Given a sorted linked list, delete all nodes that have duplicate numbers, leaving only distinct numbers from the original list.<br>&nbsp;<br>For example,<br>Given 1-&gt;2-&gt;3-&gt;3-&gt;4-&gt;4-&gt;5, return 1-&gt;2-&gt;5.<br>Given 1-&gt;1-&gt;1-&gt;2-&gt;3, return 2-&gt;3.</p>
+</blockquote>
+<p>这道题由上面一道题衍生而来，不同的是它要求删除重复值对应的所有结点，其实也蛮简单，我的Solution如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param head, a ListNode</span></div><div class="line">    <span class="comment"># @return a ListNode</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">deleteDuplicates</span><span class="params">(self, head)</span>:</span></div><div class="line">        fakeHead = ListNode(<span class="number">0</span>)  <span class="comment"># fakeHead引导的list的nodes值都不相同</span></div><div class="line">        tail = fakeHead</div><div class="line">        </div><div class="line">        node = head</div><div class="line">        <span class="keyword">while</span> node <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">            <span class="keyword">if</span> node.next <span class="keyword">is</span> <span class="keyword">None</span> <span class="keyword">or</span> node.val != node.next.val:</div><div class="line">                <span class="comment"># node满足要求，加入fakeHead链表</span></div><div class="line">                tail.next = node</div><div class="line">                tail = node</div><div class="line">                node = node.next</div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                <span class="comment"># node不满足要求，pass掉与node.val值相同的node</span></div><div class="line">                tNode = node.next</div><div class="line">                <span class="keyword">while</span> tNode <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span> <span class="keyword">and</span> tNode.val == node.val:</div><div class="line">                    tNode = tNode.next</div><div class="line">                node = tNode</div><div class="line">        </div><div class="line">        tail.next = <span class="keyword">None</span></div><div class="line">        <span class="keyword">return</span> fakeHead.next</div></pre></figure>
+
+<hr>
+<h2 id="对链表进行分区"><strong>对链表进行分区</strong></h2>
+<p>LeetCode中有题<a href="https://leetcode.com/problems/partition-list/" target="_blank" rel="external">Partition List</a>，描述如下：</p>
+<blockquote>
+<p>Given a linked list and a value x, partition it such that all nodes less than x come before nodes greater than or equal to x.<br>&nbsp;<br>You should preserve the original relative order of the nodes in each of the two partitions.<br>&nbsp;<br>For example,<br>Given 1-&gt;4-&gt;3-&gt;2-&gt;5-&gt;2 and x = 3,<br>return 1-&gt;2-&gt;2-&gt;4-&gt;3-&gt;5.</p>
+</blockquote>
+<p>这个操作有些类似于快速排序中的partition操作，只是它比针对数组的partition更简单，<br>不涉及啥高深算法，我的Solution如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {ListNode} head</span></div><div class="line">    <span class="comment"># @param {integer} x</span></div><div class="line">    <span class="comment"># @return {ListNode}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">partition</span><span class="params">(self, head, x)</span>:</span></div><div class="line">        <span class="comment"># 定义两个链表，前者中的node的val值都小于x，后者的node的val值大于或等于x</span></div><div class="line">        fakeHead1 = ListNode(<span class="number">0</span>)</div><div class="line">        fakeHead2 = ListNode(<span class="number">0</span>)</div><div class="line">        tail1, tail2 = fakeHead1, fakeHead2</div><div class="line">        node = head</div><div class="line">        <span class="keyword">while</span> node <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">            <span class="keyword">if</span> node.val &lt; x:</div><div class="line">                tail1.next = node</div><div class="line">                tail1 = node</div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                tail2.next = node</div><div class="line">                tail2 = node</div><div class="line">            node = node.next</div><div class="line">        </div><div class="line">        tail2.next = <span class="keyword">None</span></div><div class="line">        tail1.next = fakeHead2.next</div><div class="line">        <span class="keyword">return</span> fakeHead1.next</div></pre></figure>
+
+<hr>
+<h2 id="合并链表"><strong>合并链表</strong></h2>
+<h3 id="合并两个链表"><strong>合并两个链表</strong></h3>
+<p>LeetCode有题<a href="https://leetcode.com/problems/merge-two-sorted-lists/" target="_blank" rel="external">Merge Two Sorted Lists</a>，描述如下：</p>
+<blockquote>
+<p>Merge two sorted linked lists and return it as a new list. The new list should be made by splicing together the nodes of the first two lists.</p>
+</blockquote>
+<p>题意很简单，对两个已排序链表进行合并。上文的Partion List题目的灵感想必来自于快速排序，而本题的应该取自于归并排序，解题步骤非常简单，我的Solution如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param two ListNodes</span></div><div class="line">    <span class="comment"># @return a ListNode</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">mergeTwoLists</span><span class="params">(self, l1, l2)</span>:</span></div><div class="line">        fakeHead = ListNode(<span class="number">0</span>)</div><div class="line">        tail = fakeHead</div><div class="line">        </div><div class="line">        <span class="keyword">while</span> l1 <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span> <span class="keyword">and</span> l2 <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">            <span class="keyword">if</span> l1.val &gt; l2.val:</div><div class="line">                tail.next = l2</div><div class="line">                l2 = l2.next</div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                tail.next = l1</div><div class="line">                l1 = l1.next</div><div class="line">            tail = tail.next</div><div class="line">        </div><div class="line">        <span class="keyword">if</span> l1 <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">            tail.next = l1</div><div class="line">        <span class="keyword">elif</span> l2 <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">            tail.next = l2</div><div class="line">        </div><div class="line">        <span class="keyword">return</span> fakeHead.next</div></pre></figure>
+
+<p>Merge Two Sorted Lists    非常简单</p>
+<h3 id="合并k个链表"><strong>合并k个链表</strong></h3>
+<p>合并两个链表比较直观，但若要合并k个链表呢？若k非常大呢？有什么好办法呢？</p>
+<p>LeetCode有题<a href="https://leetcode.com/problems/merge-k-sorted-lists/" target="_blank" rel="external">Merge k Sorted Lists</a>，描述如下：</p>
+<blockquote>
+<p>Merge k sorted linked lists and return it as one sorted list. Analyze and describe its complexity.</p>
+</blockquote>
+<p>LeetCode中的<a href="https://leetcode.com/discuss/oj/merge-k-sorted-lists" target="_blank" rel="external">discuss</a>中有很多讨论，我借鉴了这位<a href="https://leetcode.com/discuss/20774/sharing-straightforward-solution-without-structure-vector" target="_blank" rel="external">网友</a>的思路，Solution如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {ListNode[]} lists</span></div><div class="line">    <span class="comment"># @return {ListNode}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">mergeKLists</span><span class="params">(self, lists)</span>:</span></div><div class="line">        <span class="keyword">if</span> len(lists) == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> <span class="keyword">None</span></div><div class="line">	</div><div class="line">        curIndex = <span class="number">0</span></div><div class="line">        <span class="keyword">while</span> curIndex &lt; len(lists)-<span class="number">1</span>:</div><div class="line">            l1 = lists[curIndex]</div><div class="line">            l2 = lists[curIndex+<span class="number">1</span>]</div><div class="line">            lists.append(self.mergeTwoLists(l1, l2))</div><div class="line">            curIndex += <span class="number">2</span></div><div class="line">	</div><div class="line">        <span class="keyword">return</span> lists[-<span class="number">1</span>]</div><div class="line">	</div><div class="line">    <span class="comment"># 合并两个链表</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">mergeTwoLists</span><span class="params">(self, l1, l2)</span>:</span></div><div class="line">        fakeHead = ListNode(<span class="number">0</span>)</div><div class="line">        tail = fakeHead</div><div class="line">	</div><div class="line">        <span class="keyword">while</span> l1 <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span> <span class="keyword">and</span> l2 <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">            <span class="keyword">if</span> l1.val &gt; l2.val:</div><div class="line">                tail.next = l2</div><div class="line">                l2 = l2.next</div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                tail.next = l1</div><div class="line">                l1 = l1.next</div><div class="line">            tail = tail.next</div><div class="line">	</div><div class="line">        <span class="keyword">if</span> l1 <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">            tail.next = l1</div><div class="line">        <span class="keyword">elif</span> l2 <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">            tail.next = l2</div><div class="line">	</div><div class="line">        <span class="keyword">return</span> fakeHead.next</div></pre></figure>
+
+<hr>
+<h2 id="链表环问题"><strong>链表环问题</strong></h2>
+<p>链表环问题是链表算法中非常重要的一个问题，单链表中可能存在一个或多个环，笔者目前所接触的问题都是针对一个环，常见基础问题如下：</p>
+<ul>
+<li>判断单链表是否存在环；</li>
+<li>找出单链表环的第一个结点；</li>
+<li>解环；</li>
+<li>判断两个链表（无环）是否存在交界；</li>
+</ul>
+<p>P.S：so stupid，单链表怎么可能有多个环？</p>
+<h3 id="判断链表是否存在环"><strong>判断链表是否存在环</strong></h3>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/linked-list-cycle/" target="_blank" rel="external">Linked List Cycle</a>，描述如下：</p>
+<blockquote>
+<p>Given a linked list, determine if it has a cycle in it.<br>&nbsp;<br>Follow up:<br>Can you solve it without using extra space?</p>
+</blockquote>
+<p>笔者愚钝，想了很久都没想到解决方案，后来只能在晚上找答案，几乎所有答案都是一致的：<br>设置两个指针fast和slow，初始值都指向链表头，slow指针每次前进1步，fast每次前进2步，如果链表存在环，则fast必定先进入环，而slow后进入环，之后两个指针指针必定相遇，否则两个指针必定会遍历完链表。</p>
+<p>为什么fast一定能追上slow呢？结合下图简单分析一下。</p>
+<p><img src="/img/201506/20150617-01.png" width="340" height="230"></p>
+<p>在环内，fast总会逼近slow，当fast快追上slow时（t时刻）会有上图两种情况：相对位移分别为1和2：</p>
+<ul>
+<li>当t时刻fast和slow相对位移为1时，t+1时刻fast的位置对应3+2=5，slow的位置也对应4+1=5，意味着t+1时刻，fast和slow重逢；</li>
+<li>当t时刻fast和slow相对位移为2时，t+1时刻fast的位置对应4，slow的位置对应5，相对位移转为1了，t+2时刻二者重合；</li>
+</ul>
+<p>P.S：fast和slow的行进速度分别为2和1，这种设定满巧妙的！</p>
+<p>基于这种指导思想，我的Solution如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param head, a ListNode</span></div><div class="line">    <span class="comment"># @return a boolean</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">hasCycle</span><span class="params">(self, head)</span>:</span></div><div class="line">        fast = head</div><div class="line">        slow = head</div><div class="line">	</div><div class="line">        <span class="keyword">while</span> fast <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span> <span class="keyword">and</span> slow <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">            <span class="keyword">if</span> fast.next <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">                <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line">            fast = fast.next.next</div><div class="line">            slow = slow.next</div><div class="line">            <span class="keyword">if</span> fast <span class="keyword">is</span> slow:</div><div class="line">                <span class="keyword">return</span> <span class="keyword">True</span></div><div class="line">	</div><div class="line">        <span class="keyword">return</span> <span class="keyword">False</span></div></pre></figure>
+
+<p>代码非常简洁！</p>
+<h3 id="定位环的开始位置"><strong>定位环的开始位置</strong></h3>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/linked-list-cycle-ii/" target="_blank" rel="external">Linked List Cycle II</a>，描述如下：</p>
+<blockquote>
+<p>Given a linked list, return the node where the cycle begins. If there is no cycle, return null.<br>&nbsp;<br>Follow up:<br>Can you solve it without using extra space?</p>
+</blockquote>
+<p>问题的具体描述是，若链表存在环，则找到这个环的开始位置。</p>
+<p>这个问题比「判断链表是否存在环」要复杂一些。我仍然无法凭一己之力解决这个问题，求助于网络，所有答案几乎一致；下面将结合下图来阐述Solution。</p>
+<p><img src="/img/201506/20150617-02.png" width="240" height="200"></p>
+<p>依然定义fast和slow两个指针，二者仍然从head出发（对应上图H点），分别以2和1的速度行进，上图将环的起点定义为S，依然是fast指针先进入环（顺时针），之后与slow在X点相遇。</p>
+<p>如上图所示，设H-S的距离为<code>m</code>，环的长度为<code>n</code>，fast和slow相遇的点X与S相对位移为<code>x</code>。假设fast和slow指针第一次相遇时fast已经在环内游走<code>k</code>圈（k&gt;=0），依据fast的速度等于slow速度的两倍，所以我们很容易得出这样的等式：<code>2(m + x) = m + x + kn</code>。</p>
+<p>P.S：左式中的<code>m+x</code>表示slow在第一次在与fast相遇时所走的距离，为什么是m+x呢？而不是m+x+pn(p为自然数)呢？自己想吧，很容易想明白！</p>
+<p><code>2(m + x) = m + x + kn</code>等价于<code>m = kn-x</code>。假设fast和slow第一次相遇的时刻为t，此时若在t时刻将slow指针重新定位到链表头（即H位置），fast位置不变（在X位置），之后让它们继续行进，只是二者的速度都为1…为什么要这样做呢？</p>
+<p>t时刻，fast在X位置，slow重新移到在H位置，slow再次到达S位置的时间为m/1=m，此时fast在哪儿呢？fast在此m时间内走的距离为m（根据上述等式，m=kn-x），之前离S的距离为x，所以fast此时的位置为S！而S就是我们需要找到的node。</p>
+<p>OK，到了这里，处理逻辑比较清晰明了：</p>
+<ul>
+<li>定义两个指针fast和slow；</li>
+<li>0时刻，fast和slow均从head出发，分别以2和1的速度行进；</li>
+<li>某时刻，fast进入环，在环内游走，slow继续龟速前进；</li>
+<li>t时刻，fast和slow在环内第一次相遇，此时将slow重新定位到head，fast保持不变，然后二者均以速度1行进；</li>
+<li>某时刻，fast和slow相遇，所在位置即为目标结点。</li>
+</ul>
+<p>思路很清晰了，我的Solution如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param head, a ListNode</span></div><div class="line">    <span class="comment"># @return a list node</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">detectCycle</span><span class="params">(self, head)</span>:</span></div><div class="line">        fast, slow = head, head</div><div class="line">        </div><div class="line">        hasCycle = <span class="keyword">False</span>    <span class="comment"># 链表是否存在环标志位</span></div><div class="line">	</div><div class="line">        <span class="keyword">while</span> fast <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span> <span class="keyword">and</span> slow <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">            <span class="keyword">if</span> fast.next <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">                <span class="keyword">return</span> <span class="keyword">None</span></div><div class="line">            fast = fast.next.next</div><div class="line">            slow = slow.next</div><div class="line">            <span class="keyword">if</span> fast <span class="keyword">is</span> slow:</div><div class="line">                hasCycle = <span class="keyword">True</span></div><div class="line">                <span class="keyword">break</span></div><div class="line">        </div><div class="line">        <span class="keyword">if</span> hasCycle <span class="keyword">is</span> <span class="keyword">False</span>:</div><div class="line">            <span class="keyword">return</span> <span class="keyword">None</span></div><div class="line">        </div><div class="line">        slow = head</div><div class="line">        <span class="keyword">while</span> slow <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">            <span class="keyword">if</span> slow <span class="keyword">is</span> fast:</div><div class="line">                <span class="keyword">return</span> slow</div><div class="line">            slow = slow.next</div><div class="line">            fast = fast.next</div></pre></figure>
+
+<p>OK，既然找到了环的开始结点，那么解环操作就是啥难事儿呢！</p>
+<h3 id="定位两条链表的交界点"><strong>定位两条链表的交界点</strong></h3>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/intersection-of-two-linked-lists/" target="_blank" rel="external">Intersection of Two Linked Lists</a>，描述如下：</p>
+<blockquote>
+<p>Write a program to find the node at which the intersection of two singly linked lists begins.</p>
+</blockquote>
+<p>两条链表存在交界的情况如下所示：<br><img src="/img/201506/20150617-03.png" width="270" height="90"></p>
+<p>看到这张图就应该有思路了！话不多说，我的Solution如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param two ListNodes</span></div><div class="line">    <span class="comment"># @return the intersected ListNode</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">getIntersectionNode</span><span class="params">(self, headA, headB)</span>:</span></div><div class="line">        </div><div class="line">        <span class="comment"># 计算两条链表的长度</span></div><div class="line">        n1, n2 = <span class="number">0</span>, <span class="number">0</span>                   <span class="comment"># 记录两条链表的长度</span></div><div class="line">        node1, node2 = headA, headB     <span class="comment"># 遍历两个链表</span></div><div class="line">        tail1, tail2 = <span class="keyword">None</span>, <span class="keyword">None</span>       <span class="comment"># 记录两条链表的最后一个结点</span></div><div class="line">        <span class="keyword">while</span> node1 <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span> <span class="keyword">or</span> node2 <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">            <span class="keyword">if</span> node1 <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">                n1, tail1, node1 = n1+<span class="number">1</span>, node1, node1.next</div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                n2, tail2, node2 = n2+<span class="number">1</span>, node2, node2.next</div><div class="line">        </div><div class="line">        <span class="keyword">if</span> tail1 <span class="keyword">is</span> <span class="keyword">not</span> tail2:          <span class="comment"># 不存在交界结点</span></div><div class="line">            <span class="keyword">return</span> <span class="keyword">None</span></div><div class="line">            </div><div class="line">        <span class="comment"># 再次遍历两条链表</span></div><div class="line">        node1, node2 = headA, headB</div><div class="line">        <span class="keyword">if</span> n1 &gt; n2:</div><div class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> xrange(n1-n2):</div><div class="line">                node1 = node1.next</div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> xrange(n2-n1):</div><div class="line">                node2 = node2.next</div><div class="line">        </div><div class="line">        <span class="keyword">while</span> node1 <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span> <span class="keyword">and</span> node2 <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">            <span class="keyword">if</span> node1 <span class="keyword">is</span> node2:</div><div class="line">                <span class="keyword">return</span> node1</div><div class="line">            node1 = node1.next</div><div class="line">            node2 = node2.next</div><div class="line">        </div><div class="line">        <span class="keyword">return</span> <span class="keyword">None</span></div></pre></figure>
+
+<hr>
+<h2 id="链表与二叉树"><strong>链表与二叉树</strong></h2>
+<h3 id="已排序链表转二叉搜索树"><strong>已排序链表转二叉搜索树</strong></h3>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/convert-sorted-list-to-binary-search-tree/" target="_blank" rel="external">Convert Sorted List to Binary Search Tree</a>，描述如下：</p>
+<blockquote>
+<p>Given a singly linked list where elements are sorted in ascending order, convert it to a height balanced BST.</p>
+</blockquote>
+<p>咋一看，还以为是将链表转为一个二叉搜索树，定睛一看，原来是sorted list，这样就好办了，我的解题思路很简单低级：找到链表中点，然后左右分割，左子链表用于构建左子树，右子链表用于构建右子树，「talk is cheap, show me the code」，话不多说，代码如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {ListNode} head</span></div><div class="line">    <span class="comment"># @return {TreeNode}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">sortedListToBST</span><span class="params">(self, head)</span>:</span></div><div class="line">        <span class="keyword">return</span> buildBST(head)</div><div class="line">	</div><div class="line">	</div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">buildBST</span><span class="params">(head)</span>:</span></div><div class="line">    <span class="comment"># 计算链表的长度</span></div><div class="line">    node = head</div><div class="line">    n = <span class="number">0</span></div><div class="line">    <span class="keyword">while</span> node <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">        n, node = n+<span class="number">1</span>, node.next</div><div class="line">    <span class="keyword">if</span> n == <span class="number">0</span>:</div><div class="line">        <span class="keyword">return</span> <span class="keyword">None</span></div><div class="line">    <span class="keyword">elif</span> n == <span class="number">1</span>:</div><div class="line">        <span class="keyword">return</span> TreeNode(head.val)</div><div class="line">    </div><div class="line">    <span class="comment"># 找到中间结点，并切割为两个链表</span></div><div class="line">    node = head</div><div class="line">    i = <span class="number">0</span></div><div class="line">    <span class="keyword">while</span> i &lt; n/<span class="number">2</span>-<span class="number">1</span>:</div><div class="line">        i += <span class="number">1</span></div><div class="line">        node = node.next</div><div class="line">    mid = node.next</div><div class="line">    node.next = <span class="keyword">None</span></div><div class="line">    </div><div class="line">    <span class="comment"># 递归</span></div><div class="line">    root = TreeNode(mid.val)</div><div class="line">    root.left = buildBST(head)</div><div class="line">    root.right = buildBST(mid.next)</div><div class="line">    <span class="keyword">return</span> root</div></pre></figure>
+
+<hr>
+<h2 id="拷贝链表"><strong>拷贝链表</strong></h2>
+<p>这里的「拷贝」当然指的是深拷贝了。链表拷贝看似非常容易，但似乎也不是那么简单，根据我的理解，不同的链表结构的问题复杂度是不一样的。对于无环链表，从头到尾一次搞定，挨个儿拷贝，然后设置next指针；对于有环链表，也不难，只是步骤多一点，先找到环的开始结点，以此作为哨兵结点，在对链表进行遍历，挨个拷贝，直到第二次遇到哨兵结点…</p>
+<p>但LeetCode中有一个更难的！</p>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/copy-list-with-random-pointer/" target="_blank" rel="external">Copy List with Random Pointer</a>，描述如下：</p>
+<blockquote>
+<p>A linked list is given such that each node contains an additional random pointer which could point to any node in the list or null.<br>&nbsp;<br>Return a deep copy of the list.</p>
+</blockquote>
+<p>笔者暂时还没找到自己的Solution，留个坑吧！以后填上！</p>
+<hr>
+<h2 id="其他算法问题"><strong>其他算法问题</strong></h2>
+<p>LeetCode中还有一些其他算法问题，不是很具有代表性，然而比较简答，本文直接给答案，不进行分析了。</p>
+<h3 id="Swap_Nodes_in_Pairs"><strong>Swap Nodes in Pairs</strong></h3>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/swap-nodes-in-pairs/" target="_blank" rel="external">Swap Nodes in Pairs</a>，描述如下：</p>
+<blockquote>
+<p>Given a linked list, swap every two adjacent nodes and return its head.<br>&nbsp;<br>For example,<br>Given 1-&gt;2-&gt;3-&gt;4, you should return the list as 2-&gt;1-&gt;4-&gt;3.<br>&nbsp;<br>Your algorithm should use only constant space. You may not modify the values in the list, only nodes itself can be changed.</p>
+</blockquote>
+<p>我的Solution代码如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {ListNode} head</span></div><div class="line">    <span class="comment"># @return {ListNode}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">swapPairs</span><span class="params">(self, head)</span>:</span></div><div class="line">        </div><div class="line">        fakeHead = ListNode(<span class="number">0</span>)</div><div class="line">        fakeHead.next = head</div><div class="line">        tail = fakeHead</div><div class="line">        node = head</div><div class="line">        <span class="keyword">while</span> node <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span> <span class="keyword">and</span> node.next <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">            tail.next = node.next</div><div class="line">            node.next = tail.next.next</div><div class="line">            tail.next.next= node</div><div class="line">            tail = node</div><div class="line">            node = tail.next</div><div class="line">	</div><div class="line">        <span class="keyword">return</span> fakeHead.next</div></pre></figure>
+
+<h3 id="Reorder_List"><strong>Reorder List</strong></h3>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/reorder-list/" target="_blank" rel="external">Reorder List</a>，描述如下：</p>
+<blockquote>
+<p>Given a singly linked list L: L0→L1→…→Ln-1→Ln,<br>reorder it to: L0→Ln→L1→Ln-1→L2→Ln-2→…<br>&nbsp;<br>You must do this in-place without altering the nodes’ values.<br>&nbsp;<br>For example,<br>Given {1,2,3,4}, reorder it to {1,4,2,3}.</p>
+</blockquote>
+<p>简单介绍这道题的思路：</p>
+<ul>
+<li>将原链表一截为二：<ul>
+<li>l1: L(1)-&gt;L(2)-&gt;L(2)-&gt;…-&gt;L((n+1)/2-1)</li>
+<li>l2: L((n+1)/2)-&gt;…-&gt;L(n-2)-&gt;L(n-1)-&gt;L(n)</li>
+</ul>
+</li>
+<li>反转l2；</li>
+<li>合并l1和l2</li>
+</ul>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {ListNode} head</span></div><div class="line">    <span class="comment"># @return {void} Do not return anything, modify head in-place instead.</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">reorderList</span><span class="params">(self, head)</span>:</span></div><div class="line">        <span class="keyword">if</span> head <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">            <span class="keyword">return</span></div><div class="line">	</div><div class="line">        <span class="comment"># 计算链表的长度</span></div><div class="line">        n = <span class="number">0</span></div><div class="line">        node = head</div><div class="line">        <span class="keyword">while</span> node <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">            n, node = n+<span class="number">1</span>, node.next</div><div class="line"></div><div class="line">        <span class="comment"># 拆分链表</span></div><div class="line">        node, tail = head, <span class="keyword">None</span>     <span class="comment"># tail - l1最后一个结点</span></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange((n+<span class="number">1</span>)/<span class="number">2</span>):</div><div class="line">            tail, node = node, node.next</div><div class="line">        l1, l2 = head, <span class="keyword">None</span></div><div class="line">        <span class="keyword">if</span> tail <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">            l2 = tail.next</div><div class="line">            tail.next = <span class="keyword">None</span></div><div class="line">        </div><div class="line">        <span class="comment"># 反转l2</span></div><div class="line">        successor = <span class="keyword">None</span></div><div class="line">        node = l2</div><div class="line">        <span class="keyword">while</span> node <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">            next = node.next</div><div class="line">            node.next = successor</div><div class="line">            successor = node</div><div class="line">            node = next</div><div class="line">        l2 = successor</div><div class="line">        </div><div class="line">        <span class="comment"># 合并l1和l2</span></div><div class="line">        l1 = l1.next</div><div class="line">        tail = head</div><div class="line">        <span class="keyword">while</span> l1 <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span> <span class="keyword">and</span> l2 <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">            tail.next = l2</div><div class="line">            l2 = l2.next</div><div class="line">            tail.next.next = l1</div><div class="line">            l1 = l1.next</div><div class="line">            tail = tail.next.next</div><div class="line">        <span class="keyword">if</span> l2 <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">            tail.next = l2</div><div class="line">            tail = tail.next</div><div class="line">        tail.next = <span class="keyword">None</span></div></pre></figure>
+
+<h3 id="Add_Two_Numbers"><strong>Add Two Numbers</strong></h3>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/add-two-numbers/" target="_blank" rel="external">Add Two Numbers</a>，描述如下：</p>
+<blockquote>
+<p>You are given two linked lists representing two non-negative numbers. The digits are stored in reverse order and each of their nodes contain a single digit. Add the two numbers and return it as a linked list.<br>&nbsp;<br>Input: (2 -&gt; 4 -&gt; 3) + (5 -&gt; 6 -&gt; 4)<br>Output: 7 -&gt; 0 -&gt; 8</p>
+</blockquote>
+<p>这道题太简单了，直接上代码：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @return a ListNode</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">addTwoNumbers</span><span class="params">(self, l1, l2)</span>:</span></div><div class="line">        carry = <span class="number">0</span>               <span class="comment"># 进位</span></div><div class="line">        fakeHead = ListNode(<span class="number">0</span>)</div><div class="line">        tail = fakeHead</div><div class="line">        </div><div class="line">        <span class="keyword">while</span> l1 <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span> <span class="keyword">or</span> l2 <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">            <span class="keyword">if</span> l1 <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span> <span class="keyword">and</span> l2 <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">                sum = l1.val + l2.val + carry</div><div class="line">                l1.val = sum % <span class="number">10</span></div><div class="line">                carry = sum / <span class="number">10</span></div><div class="line">                tail.next = l1</div><div class="line">                tail = tail.next</div><div class="line">                l1 = l1.next</div><div class="line">                l2 = l2.next</div><div class="line">            <span class="keyword">elif</span> l1 <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">                <span class="keyword">if</span> carry == <span class="number">0</span>:</div><div class="line">                    tail.next = l1</div><div class="line">                    <span class="keyword">break</span></div><div class="line">                <span class="keyword">else</span>:</div><div class="line">                    sum = l1.val + carry</div><div class="line">                    l1.val = sum % <span class="number">10</span></div><div class="line">                    carry = sum / <span class="number">10</span></div><div class="line">                    tail.next = l1</div><div class="line">                    tail = tail.next</div><div class="line">                    l1 = l1.next</div><div class="line">            <span class="keyword">elif</span> l2 <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">                <span class="keyword">if</span> carry == <span class="number">0</span>:</div><div class="line">                    tail.next = l2</div><div class="line">                    <span class="keyword">break</span></div><div class="line">                <span class="keyword">else</span>:</div><div class="line">                    sum = l2.val + carry</div><div class="line">                    l2.val = sum % <span class="number">10</span></div><div class="line">                    carry = sum / <span class="number">10</span></div><div class="line">                    tail.next = l2</div><div class="line">                    tail = tail.next</div><div class="line">                    l2 = l2.next</div><div class="line">        <span class="keyword">if</span> carry == <span class="number">1</span>:		<span class="comment"># 这个if语句特别容易忘掉</span></div><div class="line">            tail.next = ListNode(<span class="number">1</span>)</div><div class="line">        <span class="keyword">return</span> fakeHead.next</div></pre></figure>
+
+<p>这段代码比较啰嗦（可以精简一点），但逻辑非常简单。</p>
+<p>P.S：往往比较容易遗忘最后一个<code>if</code>语句语句！</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linked-List/">Linked List</a><a href="/tags/LeetCode/">LeetCode</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/06/09/linked-list/" data-title="单链表与算法 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/06/10/binary-tree-part1/" title="二叉树与算法 第一弹">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  二叉树与算法 第一弹</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/06/07/n-queens/"  title="N皇后问题">
+ <strong>NEXT:</strong><br/> 
+ <span>N皇后问题
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/06/09/linked-list/" data-title="单链表与算法" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#反转链表"><span class="toc-number">2.</span> <span class="toc-text">反转链表</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#反转整个链表"><span class="toc-number">2.1.</span> <span class="toc-text">反转整个链表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#反转部分链表"><span class="toc-number">2.2.</span> <span class="toc-text">反转部分链表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#根据条件反转"><span class="toc-number">2.3.</span> <span class="toc-text">根据条件反转</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#旋转链表"><span class="toc-number">3.</span> <span class="toc-text">旋转链表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#排序"><span class="toc-number">4.</span> <span class="toc-text">排序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#删除结点"><span class="toc-number">5.</span> <span class="toc-text">删除结点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#删除倒数第N个结点"><span class="toc-number">5.1.</span> <span class="toc-text">删除倒数第N个结点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除指定值的结点"><span class="toc-number">5.2.</span> <span class="toc-text">删除指定值的结点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除链表冗余结点"><span class="toc-number">5.3.</span> <span class="toc-text">删除链表冗余结点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除链表重复结点"><span class="toc-number">5.4.</span> <span class="toc-text">删除链表重复结点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#对链表进行分区"><span class="toc-number">6.</span> <span class="toc-text">对链表进行分区</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#合并链表"><span class="toc-number">7.</span> <span class="toc-text">合并链表</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#合并两个链表"><span class="toc-number">7.1.</span> <span class="toc-text">合并两个链表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#合并k个链表"><span class="toc-number">7.2.</span> <span class="toc-text">合并k个链表</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#链表环问题"><span class="toc-number">8.</span> <span class="toc-text">链表环问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#判断链表是否存在环"><span class="toc-number">8.1.</span> <span class="toc-text">判断链表是否存在环</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#定位环的开始位置"><span class="toc-number">8.2.</span> <span class="toc-text">定位环的开始位置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#定位两条链表的交界点"><span class="toc-number">8.3.</span> <span class="toc-text">定位两条链表的交界点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#链表与二叉树"><span class="toc-number">9.</span> <span class="toc-text">链表与二叉树</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#已排序链表转二叉搜索树"><span class="toc-number">9.1.</span> <span class="toc-text">已排序链表转二叉搜索树</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#拷贝链表"><span class="toc-number">10.</span> <span class="toc-text">拷贝链表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他算法问题"><span class="toc-number">11.</span> <span class="toc-text">其他算法问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Swap_Nodes_in_Pairs"><span class="toc-number">11.1.</span> <span class="toc-text">Swap Nodes in Pairs</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Reorder_List"><span class="toc-number">11.2.</span> <span class="toc-text">Reorder List</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Add_Two_Numbers"><span class="toc-number">11.3.</span> <span class="toc-text">Add Two Numbers</span></a></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

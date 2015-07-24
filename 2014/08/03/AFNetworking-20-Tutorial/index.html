@@ -1,0 +1,734 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>AFNetworking 2.0教程 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="写在前面
+
+本文的原文是来自于raywenderlich的AFNetworking 2.0 Tutorial，文章理解起来简单，老美的博客都是这样，比较啰嗦，但比较容易读懂，笔者看到这篇博客后，没找到相应的中文翻译，所以刚开始就决定就把它翻译一下，毕竟这两天心情不太好，压一压情绪；再次啰嗦一下，ra">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2014/08/03/AFNetworking-20-Tutorial/" title="AFNetworking 2.0教程" itemprop="url">AFNetworking 2.0教程</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2014-08-03T12:33:55.000Z" itemprop="datePublished">2014-08-03</time>
+    更新日期:<time datetime="2015-01-21T13:27:24.000Z" itemprop="dateModified">2015-01-21</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#开始"><span class="toc-number">1.</span> <span class="toc-text">开始</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#处理JSON"><span class="toc-number">2.</span> <span class="toc-text">处理JSON</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#处理Property_Lists"><span class="toc-number">3.</span> <span class="toc-text">处理Property Lists</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#处理XML"><span class="toc-number">4.</span> <span class="toc-text">处理XML</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#让UI更风骚一点"><span class="toc-number">5.</span> <span class="toc-text">让UI更风骚一点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A_RESTful_Class"><span class="toc-number">6.</span> <span class="toc-text">A RESTful Class</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#World_Weather_Online"><span class="toc-number">7.</span> <span class="toc-text">World Weather Online</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#连接weather在线服务"><span class="toc-number">8.</span> <span class="toc-text">连接weather在线服务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#改善用户体验"><span class="toc-number">9.</span> <span class="toc-text">改善用户体验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新天气详情页背景图片"><span class="toc-number">10.</span> <span class="toc-text">更新天气详情页背景图片</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#接下来呢？"><span class="toc-number">11.</span> <span class="toc-text">接下来呢？</span></a></li></ol>
+		</div>
+		
+		<p><strong>写在前面</strong></p>
+<ol>
+<li>本文的原文是来自于raywenderlich的<a href="http://www.raywenderlich.com/59255/afnetworking-2-0-tutorial" target="_blank" rel="external">AFNetworking 2.0 Tutorial</a>，文章理解起来简单，老美的博客都是这样，比较啰嗦，但比较容易读懂，笔者看到这篇博客后，没找到相应的中文翻译，所以刚开始就决定就把它翻译一下，毕竟这两天心情不太好，压一压情绪；再次啰嗦一下，<a href="http://www.raywenderlich.com/" target="_blank" rel="external">raywenderlich</a>对于iOS初学者而言是一个非常不错的资源；</li>
+<li>本文属于半译文，为什么说是“半译文”呢？因为笔者英文功底实在太差，读懂英文文档没啥问题，但是翻译能力太差，中英文语序逻辑毕竟不太一样，逐句翻译经常要考虑调整语序，实在痛苦，翻译到一半实在受不了了，自己看得都恶心，又不能半途而废；无奈，好吧，换个思路，笔者决定不拘泥于原文的表述方式，按照自己的理解以自己的方式表述；若笔者写的不好，看客还是看<a href="http://www.raywenderlich.com/59255/afnetworking-2-0-tutorial" target="_blank" rel="external">原文</a>吧。</li>
+<li>笔者的<a href="http://zhangbuhuai.com" target="_blank" rel="external">博客</a>刚刚建立，没啥内容，找点东西填充一下；</li>
+</ol>
+<p>在iOS 7中，Apple更新了iOS中的网络基础架构，新推出的网络基础架构是NSURLSession（原来的网络基础架构NSURLConnection）。</p>
+<p>iOS开发中往往会涉及网络数据处理，像其他开发环境一样，iOS也提供了网络开发的基础架构（叫做“库”也可以），是谓“Apple原生网络基础架构”，在iOS 7之前，iOS提供的网络架构叫<code>NSURLConnection</code>；在iOS 7中，Apple更新的iOS中的网络基础架构，新推出的东东叫<code>NSURLSession</code>；  </p>
+<p>说明：NSURLSession和NSURLConnection都不是指一个类，而指的是一组构成Foundation框架中URL加载系统的相互关联的组件，譬如对于NSURLConnection，包括：NSURLRequest，NSURLResponse，NSURLProtocol，NSURLCache，NSHTTPCookieStorage，NSURLCredentialStorage，以及和它同名的NSURLConnection。</p>
+<p>关于NSURLSession和NSURLConnection更多内容，参考《<a href="http://blog.jobbole.com/52477/" target="_blank" rel="external">忘记NSURLConnection，拥抱NSURLSession吧</a>》。</p>
+<p>使用<code>Apple原生网络基础架构</code>显然能够写出网络处理相关的代码，<a href="http://www.raywenderlich.com/51127/nsurlsession-tutorial" target="_blank" rel="external">NSURLSession教程</a>中有介绍。然而，对于大多数人来说，Apple的原生网络基础架构太难用了，所以实际开发中，我们往往使用第三方开发的网络库（往往是对iOS原生库进行一些包装），AFNetworking就是其中的佼佼者。</p>
+<p>最新版本的AFNetworking（即AFNetworking 2.0）正是基于基于iOS 7中推出的NSURLSession，所以，新推出的iOS网络架构<code>NSURLSession</code>的种种好处在AFNetworking 2.0中也可得到体现。除了NSURLSession所带来的好处之外，AFNetworking还有一些其他非常酷的特性，譬如序列化（serialization）、可达性支持（reachability support）、以及对一些UIKit的功能进行扩展（比如对UIImageView进行了category扩展，使得能够很容易就能够从网络中下载图片到UIImageView中），</p>
+<p>AFNetworking非常受开发者欢迎，它甚至还赢得了<code>2012最佳iOS库大奖</code>，它也是使用最为广泛的iOS开源<a href="https://github.com/AFNetworking/AFNetworking" target="_blank" rel="external">项目</a>。</p>
+<p>在本文中，你会通过构建一个<code>天气App</code>进而了解AFNetworking的主要组件，该App从<a href="http://www.worldweatheronline.com/free-weather-feed.aspx" target="_blank" rel="external">World Weather Online</a>中获取数据。刚开始，该App处理的数据是静态（此时不必纠结这里的静态是什么意思，后面你自然明白了），到了最后，数据完全是在线实时数据。</p>
+<p>预测：一个很酷的iOS learner即将会掌握所有关于使用AFNetworking的知识并且能够把它应用于自己的App中，这个很酷的iOS learner会是你吗？话不多说，开始干活儿吧！</p>
+<h2 id="开始">开始</h2>
+<p>首先下载我们接下来学习中将要用到的<a href="http://cdn1.raywenderlich.com/wp-content/uploads/2014/01/WeatherStarter.zip" target="_blank" rel="external">project</a>。</p>
+<p>这个project只提供了基本的UI，目前还不含任何<code>AFNetworking</code>代码。</p>
+<p>打开project的MainStoryboard.storyboard，你会看到如下三个view controllers：</p>
+<p><img src="/img/201408/Weather-App-Overview.png" alt="Weather-App-Overview.png"></p>
+<p>从左到右分别对应：</p>
+<ol>
+<li>一个顶层navigation controller；</li>
+<li>一个tableview controller，用来显示天气，一行对应一天；</li>
+<li>一个自定义的view controller（WeatherAnimationViewController），用来显示一天中的天气详情；</li>
+</ol>
+<p>编译并运行project，目前在这个App的UI中你看不到任何有用的天气信息。因为这个App需要的数据来自网络，但是目前还没有添加这部分代码，而完成这些代码正是本文的工作。</p>
+<p>首先，<a href="https://github.com/AFNetworking/AFNetworking" target="_blank" rel="external">到GitHub</a>中，点击<code>Download Zip</code>链接下载最新的AFNetworking代码包。</p>
+<p>解压下载的文件包，你会看到几个子目录和一些project，我们感兴趣的的是其中的两个目录，<code>AFNetworking</code>和<code>UIKit+AFNetworking</code>，如下：<br><img src="/img/201408/AFnetworkingFolder.jpeg" alt="AFnetworkingFolder.jpeg"></p>
+<p>以拖拽方式将上述两个目录添加到project中，如下图：</p>
+<p><img src="/img/201408/include-afnetworking.png" alt="include-afnetworking.png"></p>
+<p>在添加过程中，会弹出一个对话框，其中有一些添加选项，确保两个选项<code>Copy items into destination group’s folder (if needed)</code>和<code>Create groups for any added folders</code>这两个选项都被勾选。<br>说明：说白了，就是确保那两个目录是以<code>全拷贝</code>形式添加到工程的，而非以链接形式添加的。</p>
+<p>接着，打开project中<code>Supporting Files</code>目录中的预编译头文件<code>Weather-Prefix.pch</code>，添加代码到<code>import</code>声明中，如下：</p>
+<figure class="highlight Objective-C"><pre><div class="line">#<span class="keyword">import</span> <span class="string">"AFNetworking.h"</span></div></pre></figure>
+
+<p>把AFNetworking添加到预编译头文件中的目的是，以后使用AFNetworking资源时无需再引入各种头文件。</p>
+<p>到目前为止，一切都很容易，难道不是吗？</p>
+<h2 id="处理JSON">处理JSON</h2>
+<p>AFNetworking is smart enough to load and process structured data over the network, as well as plain old HTTP requests. In particular, it supports JSON, XML and Property Lists (plists).</p>
+<p>AFNetworking非常强大，普通HTTP请求能够加载和处理结构化数据，AFNetworking也能，除此之外，它还支持JSON、XML和Property Lists（plists）。</p>
+<p>你可以下载一些JSON文件，然后<strong>自行</strong>通过一些JSON解析工具（譬如iOS内置的NSJSONSerialization）来处理这些JSON文件，但是这样岂不麻烦？AFNetworking能解决这些所有事情。</p>
+<p><img src="/img/201408/AFNetworkingHero.jpg" alt="AFNetworkingHero.jpg"></p>
+<p>首先，在接下来的测试中，你需要一个<code>base URL</code>，添加如下代码到WTTableViewController.m中（放置在import声明式下面即可）：</p>
+<figure class="highlight Objective-C"><pre><div class="line"><span class="keyword">static</span> <span class="built_in">NSString</span> * <span class="keyword">const</span> BaseURLString =<span class="string">@"http://www.raywenderlich.com/demos/weather_sample/"</span>;</div></pre></figure>
+
+<p>This is the URL to an incredibly simple “web service” that I created for you for this tutorial. If you’re curious what it looks like, you can download the source.</p>
+<p>这个URL是作者（not笔者）为本文所提供的，类似于提供一个<code>web service</code>，如果对该URL中的内容比较好奇，可以<a href="http://cdn3.raywenderlich.com/downloads/weather_sample.zip" target="_blank" rel="external">下载</a>来看看。</p>
+<p>上述的<code>web service</code>提供三种格式的数据：JSON、XML以及PLIST，它们三个的内容可以从如下链接中看到：</p>
+<ul>
+<li><a href="http://www.raywenderlich.com/demos/weather_sample/weather.php?format=json" target="_blank" rel="external">http://www.raywenderlich.com/demos/weather_sample/weather.php?format=json</a></li>
+<li><a href="http://www.raywenderlich.com/demos/weather_sample/weather.php?format=xml" target="_blank" rel="external">http://www.raywenderlich.com/demos/weather_sample/weather.php?format=xml</a></li>
+<li><a href="http://www.raywenderlich.com/demos/weather_sample/weather.php?format=plist（这个链接通过浏览器可能看不到）" target="_blank" rel="external">http://www.raywenderlich.com/demos/weather_sample/weather.php?format=plist（这个链接通过浏览器可能看不到）</a></li>
+</ul>
+<p>上述的第一种数据格式是JSON，JSON是JavScript衍生出来的对象格式，它一般的形式如下：</p>
+<figure class="highlight JSON"><pre><div class="line">{</div><div class="line">    "<span class="attribute">data</span>": <span class="value">{</span></div><div class="line">        "<span class="attribute">current_condition</span>": <span class="value">[</span></div><div class="line">            {</div><div class="line">                "<span class="attribute">cloudcover</span>": <span class="value"><span class="string">"16"</span></span>,</div><div class="line">                "<span class="attribute">humidity</span>": <span class="value"><span class="string">"59"</span></span>,</div><div class="line">                "<span class="attribute">observation_time</span>": <span class="value"><span class="string">"09:09 PM"</span></span>,</div><div class="line">            }</div><div class="line">        ]</div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<p>Note：如果你向对JSON了解更多，可参考<a href="http://www.raywenderlich.com/5492/working-with-json-in-ios-5" target="_blank" rel="external">JSON教程</a>。</p>
+<p>当用户触碰<code>JSON</code>按钮，App就会从上述URL中加载和处理JSON数据文件；在WTTableViewController.m文件中，找到<code>jsonTapped:</code>方法（该方法目前还是空的），填充如下代码：</p>
+<figure class="highlight Objective-C"><pre><div class="line">- (<span class="keyword">IBAction</span>)jsonTapped:(<span class="keyword">id</span>)sender</div><div class="line">{</div><div class="line">    <span class="comment">// 1</span></div><div class="line">    <span class="built_in">NSString</span> * string = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%@weather.php?format=json"</span>, BaseURLString];</div><div class="line">    <span class="built_in">NSURL</span>*url = [<span class="built_in">NSURL</span> URLWithString:string];</div><div class="line">    <span class="built_in">NSURLRequest</span> * request = [<span class="built_in">NSURLRequest</span> requestWithURL:url];</div><div class="line">    </div><div class="line">    <span class="comment">// 2</span></div><div class="line">    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];</div><div class="line">    operation<span class="variable">.responseSerializer</span> = [AFJSONResponseSerializer serializer];</div><div class="line">    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, <span class="keyword">id</span> responseObject){</div><div class="line">        </div><div class="line">        <span class="comment">// 3</span></div><div class="line">        <span class="keyword">self</span><span class="variable">.weather</span> = (<span class="built_in">NSDictionary</span> *)responseObject;</div><div class="line">        <span class="keyword">self</span><span class="variable">.title</span> = <span class="string">@"JSON Retrieved"</span>;</div><div class="line">        [<span class="keyword">self</span><span class="variable">.tableView</span> reloadData];</div><div class="line">    } failure:^(AFHTTPRequestOperation *operation, <span class="built_in">NSError</span>*error){</div><div class="line">        <span class="comment">// 4</span></div><div class="line">        UIAlertView *alertView =[[UIAlertView alloc] initWithTitle:<span class="string">@"Error Retrieving Weather"</span></div><div class="line">                                                           message:[error localizedDescription]</div><div class="line">                                                          delegate:<span class="literal">nil</span></div><div class="line">                                                 cancelButtonTitle:<span class="string">@"Ok"</span></div><div class="line">                                                 otherButtonTitles:<span class="literal">nil</span>];</div><div class="line">        [alertView show];</div><div class="line">    }];</div><div class="line">    <span class="comment">// 5</span></div><div class="line">    [operation start];</div><div class="line">}</div></pre></figure>
+
+<p>这可能还是你写的第一个AFNetworking代码，很酷对不对？下面对上述代码做下阐述：</p>
+<ol>
+<li>首先基于baseURLString创建一个全路径的string URL（指向JSON文件），然后利用该string创建一个NSURL对象url，然后基于url创建一个NSURLRequest对象；</li>
+<li>AFHTTPRequestOperation是一个<code>all-in-one</code>类，用户处理network中的HTTP传输，然后设置AFHTTPRequestOperation对象operation的属性responseSerializer，该属性用于指定JSON解析器，这里指定的JSON解析器是AFNetworking中的JSON解析器；</li>
+<li>指定success block，即若处理成功了，JSON解析器解析接收到的数据并返回一个NSDictionary对象，这里把该对象存在weather中；</li>
+<li>指定fail block，即若处理失败了，弹出一个AlertView；</li>
+<li>启动operation；</li>
+</ol>
+<p>由上面的例子可以看到，AFNetworking使用起来极其简单，仅仅通过几行代码就可以执行一个network任务，并对响应进行处理（即对响应的JSON进行解析）。</p>
+<p>OK，到目前为止，从<code>web service</code>中获取的天气数据被存在self.weather中了，现在你需要把它给展示出来，找到tableView:numberOfRowsInSection:方法，填充如下代码：</p>
+<figure class="highlight Objective-C"><pre><div class="line">- (<span class="built_in">NSInteger</span>)tableView:(<span class="built_in">UITableView</span> *)tableView numberOfRowsInSection:(<span class="built_in">NSInteger</span>)section</div><div class="line">{</div><div class="line">    <span class="keyword">if</span> (!<span class="keyword">self</span><span class="variable">.weather</span>) {</div><div class="line">        <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">    }</div><div class="line">    <span class="keyword">switch</span> (section) {</div><div class="line">        <span class="keyword">case</span> <span class="number">0</span>: {</div><div class="line">            <span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">        }</div><div class="line">        <span class="keyword">case</span> <span class="number">1</span>: {</div><div class="line">            <span class="built_in">NSArray</span>*upcomingWeather = [<span class="keyword">self</span><span class="variable">.weather</span> upcomingWeather];</div><div class="line">            <span class="keyword">return</span> [upcomingWeather count];</div><div class="line">        }</div><div class="line">        <span class="keyword">default</span>:</div><div class="line">            <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<p>这个table view将有两个section，第一个section用于展示当前的天气，第二个section用于展示将来的天气；</p>
+<p>你也许会想：“<code>[self.weather upcomingWeather];</code>是什么玩意儿？”，因为weather是一个<code>NSDictionary</code>对象，按照我们目前所知道的，它是不能对“upcomingWeather”这个消息响应的。</p>
+<p>稍微看一下源码就会发现，project中有两个NSDictionary <code>category</code>：</p>
+<ul>
+<li>NSDictionary+weather</li>
+<li>NSDictionary+weather_package<br>这两个categories中包含了一些便利的方法，使得我们可以更容易获取数据元素。对于本文，我们还是应该把重心放在网络这一部分吧，难道不是这样吗？</li>
+</ul>
+<p>Note：仅供参考，另一种便利处理JSON数据的方法（而不是想本文这样创建categories）是使用第三方库<a href="http://www.jsonmodel.com" target="_blank" rel="external">JSONModel</a>。</p>
+<p>仍然是在WTTableViewController.m中，找到<code>tableView:cellForRowAtIndexPath:</code>方法并填充代码如下：</p>
+<figure class="highlight Objective-C"><pre><div class="line">- (<span class="built_in">UITableViewCell</span> *)tableView:(<span class="built_in">UITableView</span> *)tableView cellForRowAtIndexPath:(<span class="built_in">NSIndexPath</span> *)indexPath</div><div class="line">{</div><div class="line">    <span class="keyword">static</span> <span class="built_in">NSString</span> * CellIdentifier = <span class="string">@"WeatherCell"</span>;</div><div class="line">    <span class="built_in">UITableViewCell</span> *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier</div><div class="line">                                                            forIndexPath:indexPath];</div><div class="line">    <span class="built_in">NSDictionary</span> * daysWeather =<span class="literal">nil</span>;</div><div class="line">    <span class="keyword">switch</span> (indexPath<span class="variable">.section</span>) {</div><div class="line">        <span class="keyword">case</span> <span class="number">0</span>:{</div><div class="line">            daysWeather = [<span class="keyword">self</span><span class="variable">.weather</span> currentCondition];</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">        }</div><div class="line">        <span class="keyword">case</span> <span class="number">1</span>: {</div><div class="line">            <span class="built_in">NSArray</span>*upcomingWeather = [<span class="keyword">self</span><span class="variable">.weather</span> upcomingWeather];</div><div class="line">            daysWeather = upcomingWeather[indexPath<span class="variable">.row</span>];</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">        }</div><div class="line">        <span class="keyword">default</span>:</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">    }</div><div class="line">    cell<span class="variable">.textLabel</span><span class="variable">.text</span> = [daysWeather weatherDescription];</div><div class="line">    <span class="comment">// You will add code here later to customize the cell, but it's good for now.</span></div><div class="line">    </div><div class="line">    <span class="keyword">return</span> cell;</div><div class="line">}</div></pre></figure>
+
+<p>和<code>tableView:numberOfRowsInSection:</code>一样，在<code>tableView:cellForRowAtIndexPath:</code>中也使用到了<code>NSDictionary</code>的categories提供的方法以便更容易获得数据；当天的天气对应一个<code>dictionary</code>，将来的天气存在一个<code>array</code>中。</p>
+<p>编译并运行你的project，点击JSON按钮，从<code>web service1</code>中读取数据，你将看到的UI如下：</p>
+<p><img src="/img/201408/weatherUIJSON.jpeg" alt="weatherUI.jpeg"></p>
+<p>显然，这意味着前面的工作一切正常。</p>
+<h2 id="处理Property_Lists">处理Property Lists</h2>
+<p>Property Lists（或者简称plists）其实就是一种XML文件，只是以一种具体的方式组织的，它由Apple推出，Apple在很多地方都用到了它，它长得像这样：</p>
+<figure class="highlight XML"><pre><div class="line"><span class="tag">&lt;<span class="title">dict</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="title">key</span>&gt;</span>data<span class="tag">&lt;/<span class="title">key</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="title">dict</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="title">key</span>&gt;</span>current_condition<span class="tag">&lt;/<span class="title">key</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="title">array</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="title">dict</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="title">key</span>&gt;</span>cloudcover<span class="tag">&lt;/<span class="title">key</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="title">string</span>&gt;</span>16<span class="tag">&lt;/<span class="title">string</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="title">key</span>&gt;</span>humidity<span class="tag">&lt;/<span class="title">key</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="title">string</span>&gt;</span>59<span class="tag">&lt;/<span class="title">string</span>&gt;</span></div><div class="line">            <span class="tag">&lt;/<span class="title">dict</span>&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="title">array</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="title">dict</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="title">dict</span>&gt;</span></div><div class="line">...</div></pre></figure>
+
+<p>这坨东西代表：</p>
+<ol>
+<li>一个dictionary有一个key叫data，其内容是其他的dictionary；</li>
+<li>次级的dictionary的key叫current_condition，其内容是一个array；</li>
+<li>array包含了一个dictionary，该dictionary中有几个key和对应的value；</li>
+</ol>
+<p>OK，现在来加载plist文件吧，找到<code>plistTapped:</code>方法，填充代码如下：</p>
+<figure class="highlight Objective-C"><pre><div class="line">-(<span class="keyword">IBAction</span>)plistTapped:(<span class="keyword">id</span>)sender</div><div class="line">{</div><div class="line">    <span class="built_in">NSString</span> *string = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%@weather.php?format=plist"</span>, BaseURLString];</div><div class="line">    <span class="built_in">NSURL</span> *url = [<span class="built_in">NSURL</span> URLWithString:string];</div><div class="line">    <span class="built_in">NSURLRequest</span> * request = [<span class="built_in">NSURLRequest</span> requestWithURL:url];</div><div class="line">    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]</div><div class="line">                                         initWithRequest:request];</div><div class="line">    </div><div class="line">    <span class="comment">// Make sure to set the responseSerializer correctly</span></div><div class="line">    operation<span class="variable">.responseSerializer</span> = [AFPropertyListResponseSerializer serializer];</div><div class="line">    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, <span class="keyword">id</span> responseObject){         <span class="keyword">self</span><span class="variable">.weather</span> = (<span class="built_in">NSDictionary</span>*)responseObject;</div><div class="line">        <span class="keyword">self</span><span class="variable">.title</span> = <span class="string">@"PLIST Retrieved"</span>;</div><div class="line">        [<span class="keyword">self</span><span class="variable">.tableView</span> reloadData];</div><div class="line">    } failure:^(AFHTTPRequestOperation *operation, <span class="built_in">NSError</span> * error) {</div><div class="line">        UIAlertView *alertView =[[UIAlertView alloc]</div><div class="line">                                 initWithTitle:<span class="string">@"Error Retrieving Weather"</span>                                                            message:[error localizedDescription]</div><div class="line">                                 delegate:<span class="literal">nil</span></div><div class="line">                                 cancelButtonTitle:<span class="string">@"Ok"</span></div><div class="line">                                 otherButtonTitles:<span class="literal">nil</span>];</div><div class="line">        [alertView show];</div><div class="line">    }];</div><div class="line">    [operation start];</div><div class="line">}</div></pre></figure>
+
+<p>注意，上述代码除了responseSerializer改变了之外，其他的和前面的JSONTapped:中的代码几乎一样；<br>这一点的改变使得project现在既能够处理JSON也能够PLIST数据。</p>
+<p>编译并运行你的project，点击底部的PLIST按钮，你可以看到如下界面：</p>
+<p><img src="/img/201408/weatherUIPLIST.jpeg" alt="weatherUI.jpeg"></p>
+<p>顺便说一下，顶部的<code>Clear</code>按钮可以用于清楚title和table view中的数据，以便重新来过。</p>
+<h2 id="处理XML">处理XML</h2>
+<p>相对于处理JSON和PLIST格式的数据，处理XML相对来说稍微复杂一点点；这一次，你要自己处理web service的返回结果（前面两个都是用AFNetworking提供的解析器）。<br>笔者注：以笔者目前短短几个月的经验，处理XML在iOS中并不多见，况且本文的重心是学习AFNetworking，所以余下对XML的处理代码看客可以快速略过，至少不要花太多心思在这个上面了。</p>
+<p>幸运的是，iOS内置的NSXMLParser类（它是一种<a href="https://en.wikipedia.org/wiki/Simple_API_for_XML" target="_blank" rel="external">SAM Parser</a>）可以为你解决这个问题。</p>
+<p>依然是在WTTableViewController.m文件中，找到xmlTapped:方法，填充如下代码：</p>
+<figure class="highlight Objective-C"><pre><div class="line">- (<span class="keyword">IBAction</span>)xmlTapped:(<span class="keyword">id</span>)sender</div><div class="line">{</div><div class="line">    <span class="built_in">NSString</span> * string = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%@weather.php?format=xml"</span>, BaseURLString];</div><div class="line">    <span class="built_in">NSURL</span> * url = [<span class="built_in">NSURL</span> URLWithString:string];</div><div class="line">    <span class="built_in">NSURLRequest</span> * request = [<span class="built_in">NSURLRequest</span> requestWithURL:url];</div><div class="line">    AFHTTPRequestOperation * operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];</div><div class="line">    <span class="comment">// Make sure to set the responseSerializer correctly</span></div><div class="line">    operation<span class="variable">.responseSerializer</span> = [AFXMLParserResponseSerializer serializer];</div><div class="line">    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, <span class="keyword">id</span> responseObject) {</div><div class="line">        NSXMLParser*XMLParser =(NSXMLParser*)responseObject;</div><div class="line">        [XMLParser setShouldProcessNamespaces:<span class="literal">YES</span>];</div><div class="line">        <span class="comment">// Leave these commented for now (you first need to add the delegate methods)</span></div><div class="line">        <span class="comment">// XMLParser.delegate = self;</span></div><div class="line">        <span class="comment">// [XMLParser parse];</span></div><div class="line">    } failure:^(AFHTTPRequestOperation *operation, <span class="built_in">NSError</span>*error){</div><div class="line">        UIAlertView *alertView =[[UIAlertView alloc] initWithTitle:<span class="string">@"Error Retrieving Weather"</span></div><div class="line">                                                           message:[error localizedDescription]</div><div class="line">                                                          delegate:<span class="literal">nil</span></div><div class="line">                                                 cancelButtonTitle:<span class="string">@"Ok"</span></div><div class="line">                                                 otherButtonTitles:<span class="literal">nil</span>];</div><div class="line">        [alertView show];</div><div class="line">    }];</div><div class="line">    [operation start];</div><div class="line">}</div></pre></figure>
+
+<p>上面的这个代码现在看起来应该非常熟悉了；最大的挑战应该是success block部分代码，在success block中，得到的不是一个简单的NSDictionary对象，而是一个NSXMLParser对象，后面会用这个对象来解析XML，在执行解析操作之前，还需要指定NSXMLParser对象的delegate，并实现delegate中定义的方法，这里需要设置“XMLParser.delegate = self;”。</p>
+<p>首先，编辑WTTableViewController.h文件，让WTTableViewController类遵守NSXMLParserDelegate协议，如下：</p>
+<figure class="highlight Objective-C"><pre><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">WTTableViewController</span> : <span class="title">UITableViewController</span>&lt;<span class="title">NSXMLParserDelegate</span>&gt;</span></div></pre></figure>
+
+<p>显然，这意味着<code>WTTableViewController</code>这个类要遵守<code>NSXMLParserDelegate</code>这个协议，接下来要实现该协议中定义的方法，不过在此之前，先添加几个属性吧：</p>
+<figure class="highlight Objective"><pre><div class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="built_in">NSMutableDictionary</span> *currentDictionary;    <span class="comment">// current section being parsed</span></div><div class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="built_in">NSMutableDictionary</span> *xmlWeather;           <span class="comment">// completed parsed xml response</span></div><div class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="built_in">NSString</span> *elementName;</div><div class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="built_in">NSMutableString</span> *outstring;</div></pre></figure>
+
+<p>这几个属性会在解析XML中用到。</p>
+<p>然后添加方法到WTTableViewController.m中：</p>
+<figure class="highlight Objective-C"><pre><div class="line">- (<span class="keyword">void</span>)parserDidStartDocument:(NSXMLParser *)parser</div><div class="line">{</div><div class="line">    <span class="keyword">self</span><span class="variable">.xmlWeather</span> =[<span class="built_in">NSMutableDictionary</span> dictionary];</div><div class="line">}</div></pre></figure>
+
+<p>紧接着添加如下代码：</p>
+<figure class="highlight Objective-C"><pre><div class="line">- (<span class="keyword">void</span>)parser:(NSXMLParser *)parser didStartElement:(<span class="built_in">NSString</span> *)elementName</div><div class="line">  namespaceURI:(<span class="built_in">NSString</span> *)namespaceURI</div><div class="line"> qualifiedName:(<span class="built_in">NSString</span> *)qName</div><div class="line">    attributes:(<span class="built_in">NSDictionary</span> *)attributeDict</div><div class="line">{</div><div class="line">    <span class="keyword">self</span><span class="variable">.elementName</span> = qName;</div><div class="line">    <span class="keyword">if</span>([qName isEqualToString:<span class="string">@"current_condition"</span>]</div><div class="line">       || [qName isEqualToString:<span class="string">@"weather"</span>]</div><div class="line">       || [qName isEqualToString:<span class="string">@"request"</span>])</div><div class="line">    {</div><div class="line">        <span class="keyword">self</span><span class="variable">.currentDictionary</span> = [<span class="built_in">NSMutableDictionary</span> dictionary];</div><div class="line">    }</div><div class="line">    <span class="keyword">self</span><span class="variable">.outstring</span> = [<span class="built_in">NSMutableString</span> string];</div><div class="line">}</div></pre></figure>
+
+
+
+<figure class="highlight Objective-C"><pre><div class="line"><span class="subst">-</span> (<span class="literal">void</span>)parser:(NSXMLParser <span class="subst">*</span>)parser foundCharacters:(NSString <span class="subst">*</span>)<span class="built_in">string</span></div><div class="line">{</div><div class="line">    <span class="keyword">if</span> (<span class="subst">!</span><span class="built_in">self</span><span class="built_in">.</span>elementName) {</div><div class="line">        <span class="keyword">return</span>;</div><div class="line">    }</div><div class="line">    <span class="preprocessor">[</span><span class="built_in">self</span><span class="built_in">.</span>outstring appendFormat:@<span class="string">"%@"</span>, <span class="built_in">string</span><span class="preprocessor">]</span><span class="markup">;</span></div><div class="line">}</div></pre></figure>
+
+
+
+<figure class="highlight Objective-C"><pre><div class="line">-(<span class="keyword">void</span>)parser:(NSXMLParser*)parser</div><div class="line">didEndElement:(<span class="built_in">NSString</span>*)elementName</div><div class="line"> namespaceURI:(<span class="built_in">NSString</span>*)namespaceURI</div><div class="line">qualifiedName:(<span class="built_in">NSString</span>*)qName</div><div class="line">{</div><div class="line">    <span class="comment">// 1</span></div><div class="line">    <span class="keyword">if</span> ([qName isEqualToString:<span class="string">@"current_condition"</span>]</div><div class="line">       || [qName isEqualToString:<span class="string">@"request"</span>])</div><div class="line">    {</div><div class="line">        <span class="keyword">self</span><span class="variable">.xmlWeather</span>[qName] = @[<span class="keyword">self</span><span class="variable">.currentDictionary</span>];</div><div class="line">        <span class="keyword">self</span><span class="variable">.currentDictionary</span> = <span class="literal">nil</span>;</div><div class="line">    }</div><div class="line">    <span class="comment">// 2</span></div><div class="line">    <span class="keyword">else</span> <span class="keyword">if</span> ([qName isEqualToString:<span class="string">@"weather"</span>]){</div><div class="line">        <span class="comment">// Initialize the list of weather items if it doesn't exist</span></div><div class="line">        <span class="built_in">NSMutableArray</span> *array = <span class="keyword">self</span><span class="variable">.xmlWeather</span>[<span class="string">@"weather"</span>] ? : [<span class="built_in">NSMutableArray</span> array];</div><div class="line">        <span class="comment">// Add the current weather object</span></div><div class="line">        [array addObject:<span class="keyword">self</span><span class="variable">.currentDictionary</span>];</div><div class="line">        <span class="comment">// Set the new array to the "weather" key on xmlWeather dictionary</span></div><div class="line">        <span class="keyword">self</span><span class="variable">.xmlWeather</span>[<span class="string">@"weather"</span>] = array;</div><div class="line">        <span class="keyword">self</span><span class="variable">.currentDictionary</span> = <span class="literal">nil</span>;</div><div class="line">    }</div><div class="line">    <span class="comment">// 3</span></div><div class="line">    <span class="keyword">else</span> <span class="keyword">if</span> ([qName isEqualToString:<span class="string">@"value"</span>]){</div><div class="line">        <span class="comment">// Ignore value tags, they only appear in the two conditions below</span></div><div class="line">    }</div><div class="line">    <span class="comment">// 4</span></div><div class="line">    <span class="keyword">else</span> <span class="keyword">if</span> ([qName isEqualToString:<span class="string">@"weatherDesc"</span>]</div><div class="line">            || [qName isEqualToString:<span class="string">@"weatherIconUrl"</span>]) {</div><div class="line">        <span class="built_in">NSDictionary</span> *dictionary = @{<span class="string">@"value"</span>: <span class="keyword">self</span><span class="variable">.outstring</span>};</div><div class="line">        <span class="built_in">NSArray</span> *array = @[dictionary];</div><div class="line">        <span class="keyword">self</span><span class="variable">.currentDictionary</span>[qName] = array;</div><div class="line">    }</div><div class="line">    <span class="comment">// 5</span></div><div class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (qName) {</div><div class="line">        <span class="keyword">self</span><span class="variable">.currentDictionary</span>[qName] = <span class="keyword">self</span><span class="variable">.outstring</span>;</div><div class="line">    }</div><div class="line">    <span class="keyword">self</span><span class="variable">.elementName</span> = <span class="literal">nil</span>;</div><div class="line">}</div></pre></figure>
+
+
+
+<figure class="highlight Objective-C"><pre><div class="line">-(<span class="keyword">void</span>) parserDidEndDocument:(NSXMLParser *)parser</div><div class="line">{</div><div class="line">    <span class="keyword">self</span><span class="variable">.weather</span> = @{<span class="string">@"data"</span>: <span class="keyword">self</span><span class="variable">.xmlWeather</span>};</div><div class="line">    <span class="keyword">self</span><span class="variable">.title</span> = <span class="string">@"XML Retrieved"</span>;</div><div class="line">    [<span class="keyword">self</span><span class="variable">.tableView</span> reloadData];</div><div class="line">}</div></pre></figure>
+
+<p>笔者注：原文中对<code>处理XML</code>的解释非常多，只是在笔者看来非常boring，就此略过了，若看客多这部分代码比较感兴趣，可以看<a href="http://www.raywenderlich.com/59255/afnetworking-2-0-tutorial" target="_blank" rel="external">原文</a>。</p>
+<p>OK，三种格式的数据都支持了！哦，对了，别忘了添加<code>XML</code>按钮的点击事件处理代码，如下：</p>
+<figure class="highlight Objective-C"><pre><div class="line">- (<span class="keyword">IBAction</span>)xmlTapped:(<span class="keyword">id</span>)sender</div><div class="line">{</div><div class="line">    <span class="built_in">NSString</span> * string = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%@weather.php?format=xml"</span>, BaseURLString];</div><div class="line">    <span class="built_in">NSURL</span> * url = [<span class="built_in">NSURL</span> URLWithString:string];</div><div class="line">    <span class="built_in">NSURLRequest</span> * request = [<span class="built_in">NSURLRequest</span> requestWithURL:url];</div><div class="line">    </div><div class="line">    AFHTTPRequestOperation * operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];</div><div class="line">    </div><div class="line">    <span class="comment">// Make sure to set the responseSerializer correctly</span></div><div class="line">    operation<span class="variable">.responseSerializer</span> = [AFXMLParserResponseSerializer serializer];</div><div class="line">    </div><div class="line">    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, <span class="keyword">id</span> responseObject){</div><div class="line">        NSXMLParser*XMLParser =(NSXMLParser*)responseObject;</div><div class="line">        [XMLParser setShouldProcessNamespaces:<span class="literal">YES</span>];</div><div class="line">        <span class="comment">// Leave these commented for now (you first need to add the delegate methods)</span></div><div class="line">        XMLParser<span class="variable">.delegate</span> = <span class="keyword">self</span>;</div><div class="line">        [XMLParser parse];</div><div class="line">    } failure:^(AFHTTPRequestOperation *operation, <span class="built_in">NSError</span>*error){</div><div class="line">        UIAlertView *alertView =[[UIAlertView alloc] initWithTitle:<span class="string">@"Error Retrieving Weather"</span></div><div class="line">                                                           message:[error localizedDescription]</div><div class="line">                                                          delegate:<span class="literal">nil</span></div><div class="line">                                                 cancelButtonTitle:<span class="string">@"Ok"</span></div><div class="line">                                                 otherButtonTitles:<span class="literal">nil</span>];</div><div class="line">        [alertView show];</div><div class="line">    }];</div><div class="line">    [operation start];</div><div class="line">}</div></pre></figure>
+
+<p>编译并运行你的project，点击<code>XML</code>按钮，你会看到如下UI：</p>
+<p><img src="/img/201408/weatherUIXML.jpeg" alt="weatherUIXML.jpeg"></p>
+<h2 id="让UI更风骚一点">让UI更风骚一点</h2>
+<p>UI目前看起来还比较沉闷，如何让它看起来更棒一点呢？添加图片吧，为每个weather添加一张图片。</p>
+<p>再来看一下weather的<a href="http://www.raywenderlich.com/demos/weather_sample/weather.php?format=json" target="_blank" rel="external">JSON文件</a>，你可以看到文本中每个weather item中分明有image相关的URL，有图片却留着不用，岂不傻瓜？</p>
+<p><code>AFNetworking</code>为<code>UIImageView</code>提供的category（即<code>UIImageView+AFNetworking</code>）提供了异步加载图片的功能，异步下载意味着加载图片的任务放在后台，APP的其他任务仍然保持畅通运行，不会因为加载图片而卡顿，为了要使用<code>UIImageView+AFNetworking</code>提供的方法，你得添加<code>UIImageView+AFNetworking</code>头文件，在WTTableViewController.m中添加如下代码：</p>
+<figure class="highlight Objective-C"><pre><div class="line">#<span class="keyword">import</span> <span class="string">"UIImageView+AFNetworking.h"</span></div></pre></figure>
+
+<p>找到<code>tableView:cellForRowAtIndexPath:</code>方法，然后添加代码，即在<code>retrun cell;</code>前添加如下代码：</p>
+<figure class="highlight Objective-C"><pre><div class="line"><span class="built_in">NSURL</span> *url = [<span class="built_in">NSURL</span> URLWithString:daysWeather<span class="variable">.weatherIconURL</span>];</div><div class="line"><span class="built_in">NSURLRequest</span> *request = [<span class="built_in">NSURLRequest</span> requestWithURL:url];</div><div class="line"><span class="built_in">UIImage</span> *placeholderImage = [<span class="built_in">UIImage</span> imageNamed:<span class="string">@"placeholder"</span>];</div><div class="line">__<span class="keyword">weak</span> <span class="built_in">UITableViewCell</span> *weakCell = cell;</div><div class="line">[cell<span class="variable">.imageView</span> setImageWithURLRequest:request</div><div class="line">                      placeholderImage:placeholderImage</div><div class="line">                               success:^(<span class="built_in">NSURLRequest</span> *request,</div><div class="line">                                         NSHTTPURLResponse *response,</div><div class="line">                                         <span class="built_in">UIImage</span> *image) {</div><div class="line">                                   weakCell<span class="variable">.imageView</span><span class="variable">.image</span> = image;</div><div class="line">                                   [weakCell setNeedsLayout];</div><div class="line">                               }</div><div class="line">                               failure:<span class="literal">nil</span></div><div class="line"> ];</div></pre></figure>
+
+<p><code>UIImageView+AFNetworking</code>扩展了<code>setImageWithURLRequest:</code>等几个相关方法。</p>
+<p><code>setImageWithURLRequest:</code>中的success block和failure block都是可选的，但是若指定了success block，你就应该像上述代码一样在success block中指定image view的image属性，即“weakCell.imageView.image = image;”；或者不指定success block，让<code>setImageWithURLRequest:</code>方法帮你自动处理；<br>笔者注：这很容易理解，因为下载图片是异步的，下载的图片会以UIImage的形式存在，下载完成之后当然要指定给对应的UImageView才能达到我们的效果。</p>
+<p>当cell（每个weather对应一个cell）第一次被创建时，其image view会显示占位符（placeholder）图片，直到从网络中加载的图片加载完成。</p>
+<p>重新build你的project，然后运行，你看到的UI会如下：</p>
+<p><img src="/img/201408/weatherUIJSONwithWeather.jpeg" alt="weatherUIJSONwithWeather.jpeg"></p>
+<p>OK，目前为止，异步加载图片似乎完成得挺棒。</p>
+<h2 id="A_RESTful_Class">A RESTful Class</h2>
+<p>到目前为止，你学会了使用<code>AFHTTPRequestOperation</code>来处理一次性的HTTP请求；</p>
+<p>事实上，除了AFHTTPRequestOperation之外，你还可以使用<code>AFHTTPRequestOperationManager</code>和<code>AFHTTPSessionManager</code>，它们能够用来很好的和单个<code>endpoint</code>（所谓endpoint，譬如<code>http://www.example.com:5000/</code>就是一个endpoint）的<code>web service</code>进行通信。</p>
+<p>使用AFHTTPSessionManager，你可以设置一个base URL，然后对一个endpoint进行多次http request，它们都能监测连接变化、对参数进行编码、处理多重表单请求、对批处理进行队列处理，并能够帮助你处理全套的RESTful操作（GET、POST、PUT以及DELETE）。<br>笔者注：总之，<code>AFHTTPRequestOperationManager</code>和<code>AFHTTPSessionManager</code>你也得掌握，只是前者是iOS 7之前会经常用到，而后者是iOS 7中新推出的，用来代替前者的，至于二者如何选择，就看你的App适配版本了。</p>
+<p>你如果像笔者一样对REST不甚了解，可以看看《<a href="http://rest.elkstein.org/2008/02/what-is-rest.html" target="_blank" rel="external">What is REST</a>》。</p>
+<p>到WTTableViewController.h中作如下更新：</p>
+<figure class="highlight Objective-C"><pre><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">WTTableViewController</span> : <span class="title">UITableViewController</span>&lt;<span class="title">NSXMLParserDelegate</span>,</span></div><div class="line">CLLocationManagerDelegate, UIActionSheetDelegate]]&gt;</div></pre></figure>
+
+<p>然后在WTTableViewController.m中找到clientTapped:方法，修改它如下：</p>
+<figure class="highlight Objective-C"><pre><div class="line">- (<span class="keyword">IBAction</span>)clientTapped:(<span class="keyword">id</span>)sender</div><div class="line">{</div><div class="line">    UIActionSheet *actionSheet =[[UIActionSheet alloc] initWithTitle:<span class="string">@"AFHTTPSessionManager"</span></div><div class="line">                                                            delegate:<span class="keyword">self</span></div><div class="line">                                                   cancelButtonTitle:<span class="string">@"Cancel"</span></div><div class="line">                                              destructiveButtonTitle:<span class="literal">nil</span></div><div class="line">                                                   otherButtonTitles:<span class="string">@"HTTP GET"</span>, <span class="string">@"HTTP POST"</span>, <span class="literal">nil</span>];</div><div class="line">    [actionSheet showFromBarButtonItem:sender animated:<span class="literal">YES</span>];</div><div class="line">}</div></pre></figure>
+
+<p>这个方法比较简单，不多说了，继续添加上面代码中actionSheet的点击事件处理代码：</p>
+<figure class="highlight Objective-C"><pre><div class="line">-(<span class="keyword">void</span>)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(<span class="built_in">NSInteger</span>)buttonIndex</div><div class="line">{</div><div class="line">    <span class="keyword">if</span> (buttonIndex == [actionSheet cancelButtonIndex]) {</div><div class="line">        <span class="comment">// User pressed cancel -- abort</span></div><div class="line">        <span class="keyword">return</span>;</div><div class="line">    }</div><div class="line">    <span class="comment">// 1</span></div><div class="line">    <span class="built_in">NSURL</span> *baseURL = [<span class="built_in">NSURL</span> URLWithString:BaseURLString];</div><div class="line">    <span class="built_in">NSDictionary</span> *parameters = @{<span class="string">@"format"</span>:<span class="string">@"json"</span>};</div><div class="line">    </div><div class="line">    <span class="comment">// 2</span></div><div class="line">    AFHTTPSessionManager *manager =[[AFHTTPSessionManager alloc] initWithBaseURL:baseURL];</div><div class="line">    manager<span class="variable">.responseSerializer</span> = [AFJSONResponseSerializer serializer];</div><div class="line">    </div><div class="line">    <span class="comment">// 3</span></div><div class="line">    <span class="keyword">if</span> (buttonIndex == <span class="number">0</span>) {</div><div class="line">        [manager GET:<span class="string">@"weather.php"</span></div><div class="line">          parameters:parameters</div><div class="line">             success:^(NSURLSessionDataTask *task, <span class="keyword">id</span> responseObject) {</div><div class="line">                 <span class="keyword">self</span><span class="variable">.weather</span> = responseObject;</div><div class="line">                 <span class="keyword">self</span><span class="variable">.title</span> = <span class="string">@"HTTP GET"</span>;</div><div class="line">                 [<span class="keyword">self</span><span class="variable">.tableView</span> reloadData];</div><div class="line">             }</div><div class="line">             failure:^(NSURLSessionDataTask *task, <span class="built_in">NSError</span>*error) {</div><div class="line">                 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:<span class="string">@"Error Retrieving Weather"</span></div><div class="line">                                                                     message:[error localizedDescription]</div><div class="line">                                                                    delegate:<span class="literal">nil</span></div><div class="line">                                                           cancelButtonTitle:<span class="string">@"Ok"</span></div><div class="line">                                                           otherButtonTitles:<span class="literal">nil</span>];</div><div class="line">                 [alertView show];</div><div class="line">             }];</div><div class="line">    }</div><div class="line">    <span class="comment">// 4</span></div><div class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (buttonIndex == <span class="number">1</span>) {</div><div class="line">        [manager POST:<span class="string">@"weather.php"</span></div><div class="line">           parameters:parameters</div><div class="line">              success:^(NSURLSessionDataTask *task, <span class="keyword">id</span> responseObject) {</div><div class="line">                  <span class="keyword">self</span><span class="variable">.weather</span> = responseObject;</div><div class="line">                  <span class="keyword">self</span><span class="variable">.title</span> = <span class="string">@"HTTP POST"</span>;</div><div class="line">                  [<span class="keyword">self</span><span class="variable">.tableView</span> reloadData];</div><div class="line">              }</div><div class="line">              failure:^(NSURLSessionDataTask *task, <span class="built_in">NSError</span> *error) {</div><div class="line">                  UIAlertView *alertView =[[UIAlertView alloc] initWithTitle:<span class="string">@"Error Retrieving Weather"</span></div><div class="line">                                                                     message:[error localizedDescription]</div><div class="line">                                                                    delegate:<span class="literal">nil</span></div><div class="line">                                                           cancelButtonTitle:<span class="string">@"Ok"</span></div><div class="line">                                                           otherButtonTitles:<span class="literal">nil</span>];</div><div class="line">                  [alertView show];</div><div class="line">              }];</div><div class="line">    }</div><div class="line">}</div></pre></figure>
+
+<p>Here’s what’s happening above:<br>OK，这个方法略长，对它做些解释：</p>
+<ol>
+<li>创建一个base URL，以及在http request中会用到的参数；</li>
+<li>创建一个AFHTTPSessionManager实例对象，并设置它的responseSerializer属性为AFNetworking默认的JSON解析器，这和前文<code>JSONTapped:</code>方法中的设置类似；</li>
+<li>如果用户选择的是HTTP GET请求，那么就执行AFHTTPSessionManager的HTTP GET请求；</li>
+<li>如果用户选择的是HTTP POST请求，那么就执行AFHTTPSessionManager的HTTP POST请求；</li>
+</ol>
+<p>这个示例中请求的是JSON数据，若想请求另外两种数据（PLIST或者XML），也是类似的处理。</p>
+<p>重新build你的project并运行app，你看到的UI如下：<br><img src="/img/201408/3合1.jpg" alt="3合1.jpg"></p>
+<p>到目前为止，你已经掌握了AFHTTPSessionManager，但是，依然可以以更好的方法写出更干净漂亮的代码，你接下来就能学习到…</p>
+<h2 id="World_Weather_Online">World Weather Online</h2>
+<p>恰如其名，全球范围内的天气数据在<a href="http://www.worldweatheronline.com/" target="_blank" rel="external">World Weather Online</a>中都能找到，通过其提供的API（即HTTP Request）就能够获取，在使用其API之前，你得称为它的用户，先<a href="https://developer.worldweatheronline.com" target="_blank" rel="external">注册</a>成为它的用户吧，很快就可以完成。</p>
+<p>完成注册后，你在注册时所填入的email邮箱会收到一个email，算是认证链接，点击这个链接，然后会跳转到一个页面，然后进入自己的个人页面，获取一个<code>free API key</code>，记下这个key，后文会用到。</p>
+<h2 id="连接weather在线服务">连接weather在线服务</h2>
+<p>到目前为止，你已经使用<code>AFHTTPRequestOperation</code>和<code>AFHTTPSessionManager</code>成功执行HTTP REQUEST获得天气数据，然而，上面所做的事实上无非是下载一个文件（譬如JSON文件），然而对这个文件进行解析，换句话说，天气数据是写死的，即本文刚开始的时候所提到的“静态数据”；在实际应用中，我们不会像本文之前那样下载一个JSON文件，而是通过服务器的API获取事实数据，所谓API，其实也是一个HTTP请求（只是这个请求中往往需要包含认证信息）。</p>
+<p>与服务器（或抽象的称“web service”）交互的HTTP请求的所有需要的东东AFHTTPSessionManager都有提供，它使得通信处理代码（可谓“连接部分”）和对数据处理代码（可谓“业务部分”）分开，起到松耦合的作用。看客稍微注意一下就会发现，前文代码的耦合度非常高，把连接处理和数据处理代码都放在一起了。</p>
+<p>关于AFHTTPSessionManager的使用，作者列出了两点最佳实践指南：</p>
+<ol>
+<li>为每一个web service创建一个子类。譬如，你想实现一个网络资源聚合器，你可能需要为Twitter、Facebook、Instragram（以及其他）各实现一个AFHTTPSessionManager子类；</li>
+<li>为每一个AFHTTPSession子类创建一个单例实例（即单例模式），单例模式能够节省资源；</li>
+</ol>
+<p>你的project目前还没有AFHTTPSessionManager的子类，来修复这个问题吧。</p>
+<p>首先，新建一个类，命名为WeatherHTTPClient，让该类继承AFHTTPSessionManager；</p>
+<p>你需要让这个子类干三件事情：处理HTTP requests、得到request请求数据（天气数据）后回调delegate、根据用户的物理位置获取正确的天气数据。</p>
+<p>修改WeatherHTTPClient.h文件如下：</p>
+<figure class="highlight Objective-C"><pre><div class="line"><span class="preprocessor">#import <span class="title">"AFHTTPSessionManager.h"</span></span></div><div class="line"><span class="class"><span class="keyword">@protocol</span> <span class="title">WeatherHTTPClientDelegate</span>;</span></div><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">WeatherHTTPClient</span> : <span class="title">AFHTTPSessionManager</span></span></div><div class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>, <span class="keyword">weak</span>) <span class="keyword">id</span>&lt;WeatherHTTPClientDelegate&gt;delegate;</div><div class="line">+ (WeatherHTTPClient *)sharedWeatherHTTPClient;</div><div class="line">- (instancetype)initWithBaseURL:(<span class="built_in">NSURL</span> *)url;</div><div class="line">- (<span class="keyword">void</span>)updateWeatherAtLocation:(CLLocation *)location forNumberOfDays:(NSUInteger)number;</div><div class="line"><span class="keyword">@end</span></div><div class="line"><span class="class"><span class="keyword">@protocol</span> <span class="title">WeatherHTTPClientDelegate</span> &lt;<span class="title">NSObject</span>]]&gt;</span></div><div class="line"><span class="keyword">@optional</span></div><div class="line">- (<span class="keyword">void</span>)weatherHTTPClient:(WeatherHTTPClient *)client didUpdateWithWeather:(<span class="keyword">id</span>)weather;</div><div class="line">- (<span class="keyword">void</span>)weatherHTTPClient:(WeatherHTTPClient *)client didFailWithError:(<span class="built_in">NSError</span> *)error;</div><div class="line"><span class="keyword">@end</span></div></pre></figure>
+
+<p>在实现这些方法的过程中你会对它们有更深刻的理解。<br>切换到WeatherHTTPClient.m文件，在import声明后面添加如下代码：</p>
+<figure class="highlight Objective-C"><pre><div class="line"><span class="comment">// Set this to your World Weather Online API Keystatic</span></div><div class="line"><span class="built_in">NSString</span> *<span class="keyword">const</span> WorldWeatherOnlineAPIKey = <span class="string">@"PASTE YOUR API KEY HERE"</span>;</div><div class="line"><span class="keyword">static</span> <span class="built_in">NSString</span> * <span class="keyword">const</span> WorldWeatherOnlineURLString = <span class="string">@"http://api.worldweatheronline.com/free/v1/"</span>;</div></pre></figure>
+
+<p>注意，刚刚不是让你保存<code>free API key</code>了吗？现在正是用到它们的时候了，用它来代替上面代码中的<code>PASTE YOUR API KEY HERE</code>。</p>
+<p>接着添加如下代码到<code>@implementation</code>下面：</p>
+<figure class="highlight Objective-C"><pre><div class="line">+ (WeatherHTTPClient *)sharedWeatherHTTPClient {</div><div class="line">    <span class="keyword">static</span> WeatherHTTPClient *_sharedWeatherHTTPClient =<span class="literal">nil</span>;</div><div class="line">    <span class="keyword">static</span> <span class="built_in">dispatch_once_t</span> onceToken;</div><div class="line">    <span class="built_in">dispatch_once</span>(&onceToken, ^{</div><div class="line">        _sharedWeatherHTTPClient = [[<span class="keyword">self</span> alloc] initWithBaseURL:[<span class="built_in">NSURL</span> URLWithString:WorldWeatherOnlineURLString]];</div><div class="line">    });</div><div class="line">    <span class="keyword">return</span> _sharedWeatherHTTPClient;</div><div class="line">}</div></pre></figure>
+
+
+
+<figure class="highlight Objective-C"><pre><div class="line">- (instancetype)initWithBaseURL:(<span class="built_in">NSURL</span>*)url{</div><div class="line">    <span class="keyword">self</span> =[<span class="keyword">super</span> initWithBaseURL:url];</div><div class="line">    <span class="keyword">if</span>(<span class="keyword">self</span>){</div><div class="line">        <span class="keyword">self</span><span class="variable">.responseSerializer</span> = [AFJSONResponseSerializer serializer];</div><div class="line">        <span class="keyword">self</span><span class="variable">.requestSerializer</span> = [AFJSONRequestSerializer serializer];</div><div class="line">    }</div><div class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</div><div class="line">}</div></pre></figure>
+
+<p>上述代码比较容易理解，稍微说明一下，在<code>sharedWeatherHTTPClient</code>方法中使用GCD进行了一下保护，至于为什么要这样，具体说明的可以参考<a href="http://zhangbuhuai.com/2014/08/01/grand-central-dispatch-in-depth-part-1/#%E8%AE%A9%E4%BD%A0%E7%9A%84%E5%8D%95%E4%BE%8B%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8" target="_blank" rel="external">让你的单例线程安全</a>；然后在初始化方法中指定处理JSON数据JSON解析器。</p>
+<p>接着粘贴如下代码：</p>
+<figure class="highlight Objective-C"><pre><div class="line">-(<span class="keyword">void</span>)updateWeatherAtLocation:(CLLocation *)location forNumberOfDays:(NSUInteger)number</div><div class="line">{</div><div class="line">    <span class="built_in">NSMutableDictionary</span>*parameters =[<span class="built_in">NSMutableDictionary</span> dictionary];</div><div class="line">    </div><div class="line">    parameters[<span class="string">@"num_of_days"</span>] = @(number);</div><div class="line">    parameters[<span class="string">@"q"</span>] = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%f,%f"</span>,location<span class="variable">.coordinate</span><span class="variable">.latitude</span>,location<span class="variable">.coordinate</span><span class="variable">.longitude</span>];</div><div class="line">    parameters[<span class="string">@"format"</span>] = <span class="string">@"json"</span>;</div><div class="line">    parameters[<span class="string">@"key"</span>] = WorldWeatherOnlineAPIKey;</div><div class="line">    </div><div class="line">    [<span class="keyword">self</span> GET:<span class="string">@"weather.ashx"</span> parameters:parameters</div><div class="line">      success:^(NSURLSessionDataTask *task, <span class="keyword">id</span> responseObject) {</div><div class="line">          <span class="keyword">if</span>([<span class="keyword">self</span><span class="variable">.delegate</span> respondsToSelector:<span class="keyword">@selector</span>(weatherHTTPClient:didUpdateWithWeather:)]) {</div><div class="line">              [<span class="keyword">self</span><span class="variable">.delegate</span> weatherHTTPClient:<span class="keyword">self</span> didUpdateWithWeather:responseObject];</div><div class="line">          }</div><div class="line">      }</div><div class="line">      failure:^(NSURLSessionDataTask *task, <span class="built_in">NSError</span> *error) {</div><div class="line">          <span class="keyword">if</span>([<span class="keyword">self</span><span class="variable">.delegate</span> respondsToSelector:<span class="keyword">@selector</span>(weatherHTTPClient:didFailWithError:)]) {</div><div class="line">              [<span class="keyword">self</span><span class="variable">.delegate</span> weatherHTTPClient:<span class="keyword">self</span> didFailWithError:error];</div><div class="line">          }</div><div class="line">      }</div><div class="line">     ];</div><div class="line">}</div></pre></figure>
+
+<p>这个方法根据指定的位置（location）获取指定时间长度（number）来获取天气数据；<br>笔者注：<code>updateWeatherAtLocation:</code>其实是对API进行一下包装。</p>
+<p>Now it’s time to put the final pieces together! The WeatherHTTPClient is expecting a location and has a defined delegate protocol, so you need to update the WTTableViewController class to take advantage of this.</p>
+<p>服务类（WeatherHTTPClient）创建好了，最后的工作就是来使用它了。</p>
+<p>打开WTTableViewController.h，让WTTableViewController遵守WeatherHTTPClientDelegate协议：</p>
+<figure class="highlight Objective-C"><pre><div class="line"><span class="preprocessor">#import <span class="title">"WeatherHTTPClient.h"</span></span></div><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">WTTableViewController</span> : <span class="title">UITableViewController</span>&lt;<span class="title">NSXMLParserDelegate</span>,</span></div><div class="line">CLLocationManagerDelegate, UIActionSheetDelegate, WeatherHTTPClientDelegate]]&gt;</div></pre></figure>
+
+<p>前面不是说好了根据位置获取天气数据吗？位置信息如何获取呢？这个简单，iOS已经集成了这一部分的功能。</p>
+<p>添加一个属性：</p>
+<figure class="highlight Objective-C"><pre><div class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) CLLocationManager *locationManager;</div></pre></figure>
+
+<p>在WTTableViewController.m文件中，在<code>viewDidLoad:</code>方法的最后添加两行代码：</p>
+<figure class="highlight Objective-C"><pre><div class="line"><span class="keyword">self</span>.locationManager =[[<span class="type">CLLocationManager</span> alloc] <span class="keyword">init</span>];</div><div class="line"><span class="keyword">self</span>.locationManager.delegate = <span class="keyword">self</span>;</div></pre></figure>
+
+<p>这两行代码对<code>locationManager</code>进行了初始化，并指定了其delegate，接下来就实现该delegate中定义的方法了。</p>
+<p>依然是WTTableViewController.m文件中，添加方法：</p>
+<figure class="highlight Objective-C"><pre><div class="line">- (<span class="keyword">void</span>)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray*)locations</div><div class="line">{</div><div class="line">    <span class="comment">// Last object contains the most recent location</span></div><div class="line">    CLLocation *newLocation = [locations lastObject];</div><div class="line">    <span class="comment">// If the location is more than 5 minutes old, ignore it</span></div><div class="line">    <span class="keyword">if</span> ([newLocation.timestamp timeIntervalSinceNow] &gt; <span class="number">300</span>) {</div><div class="line">        <span class="keyword">return</span>;</div><div class="line">    }</div><div class="line">    [self.locationManager stopUpdatingLocation];</div><div class="line">    WeatherHTTPClient *<span class="keyword">client</span> = [WeatherHTTPClient sharedWeatherHTTPClient];</div><div class="line">    <span class="keyword">client</span>.delegate = self;</div><div class="line">    [<span class="keyword">client</span> updateWeatherAtLocation:newLocation forNumberOfDays:<span class="number">5</span>];</div><div class="line">}</div></pre></figure>
+
+<p>顾名思义，这个方法在<code>定位</code>完成后被调用，在这个方法中创建了前文创建的类<code>WeatherHTTPClient</code>的实例，也指定了其delegate，然后调用<code>updateWeatherAtLocation:forNumberOfDays:</code>方法获取数据；</p>
+<p>OK，既然指定了<code>client.delegate = self;</code>，那么就得继续添加方法了：</p>
+<figure class="highlight Objective-C"><pre><div class="line">- (<span class="keyword">void</span>)weatherHTTPClient:(WeatherHTTPClient *)client didUpdateWithWeather:(<span class="keyword">id</span>)weather</div><div class="line">{</div><div class="line">    <span class="keyword">self</span><span class="variable">.weather</span> = weather;</div><div class="line">    <span class="keyword">self</span><span class="variable">.title</span> = <span class="string">@"API Updated"</span>;</div><div class="line">    [<span class="keyword">self</span><span class="variable">.tableView</span> reloadData];</div><div class="line">}</div></pre></figure>
+
+
+
+<figure class="highlight Objective-C"><pre><div class="line">- (<span class="keyword">void</span>)weatherHTTPClient:(WeatherHTTPClient *)client didFailWithError:(<span class="built_in">NSError</span>*)error</div><div class="line">{</div><div class="line">    UIAlertView *alertView =[[UIAlertView alloc] initWithTitle:<span class="string">@"Error Retrieving Weather"</span></div><div class="line">                                                       message:[<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%@"</span>,error]</div><div class="line">                                                      delegate:<span class="literal">nil</span></div><div class="line">                                             cancelButtonTitle:<span class="string">@"OK"</span></div><div class="line">                                             otherButtonTitles:<span class="literal">nil</span>];</div><div class="line">    [alertView show];</div><div class="line">}</div></pre></figure>
+
+<p>上面定义的两个方法分别在WeatherHTTPClient succeed和fail的时候被调用。</p>
+<p>似乎都做完了，真的完了吗？</p>
+<p>什么时候启动<code>定位</code>呢？当然在tap事件中处理了：</p>
+<figure class="highlight Objective-C"><pre><div class="line">- (<span class="keyword">IBAction</span>)apiTapped:(<span class="keyword">id</span>)sender</div><div class="line">{</div><div class="line">    [<span class="keyword">self</span><span class="variable">.locationManager</span> startUpdatingLocation];</div><div class="line">}</div></pre></figure>
+
+<p>编译并运行你的project（若你的模拟器不支持定位，就使用真机调试吧，笔者的模拟器是支持定位滴），点击顶部的API按钮你的UI会如下这样：<br><img src="/img/201408/weatherAPI.jpeg" alt="weatherAPI.jpeg"></p>
+<h2 id="改善用户体验">改善用户体验</h2>
+<p>You might have noticed that this external web service can take some time before it returns with data. It’s important to provide your users with feedback when doing network operations so they know the app hasn’t stalled or crashed.</p>
+<p>你可能也像笔者一样，在天气信息成功都会费点时间，在加载成功之前，屏幕上啥都没有，实际应用中，这会让用户很抓狂的，因为它也不晓得发生了什么事情，你得让他知道点什么，譬如弄个indicator转一转啊。<br><img src="/img/201408/whatisgoingon.png" alt="whatisgoingon.png"></p>
+<p>Luckily, AFNetworking comes with an easy way to provide this feedback: AFNetworkActivityIndicatorManager.</p>
+<p>网上提供了很多各种各样的方案，AFNetworking为此提供了简单却有效的解决方案，说“简单”，是因为只需要添加一行代码。</p>
+<p>在WTAppDelegate.m文件中找到didFinishLaunchingWithOptions:方法，添加一行代码如下：</p>
+<figure class="highlight Objective-C"><pre><div class="line">- (<span class="built_in">BOOL</span>)application:(<span class="built_in">UIApplication</span> *)application didFinishLaunchingWithOptions:(<span class="built_in">NSDictionary</span> *)launchOptions</div><div class="line">{</div><div class="line">    [AFNetworkActivityIndicatorManager sharedManager]<span class="variable">.enabled</span> =<span class="literal">YES</span>;</div><div class="line">    <span class="keyword">return</span> <span class="literal">YES</span>;</div><div class="line">}</div></pre></figure>
+
+<p>当然，在此之前，你需要添加头文件：</p>
+<figure class="highlight Objective-C"><pre><div class="line">#<span class="keyword">import</span> <span class="string">"AFNetworkActivityIndicatorManager.h"</span></div></pre></figure>
+
+<p>重新编译你的project并运行它，你会看到如图这样的东东：</p>
+<p><img src="/img/201408/afnetworkingDicator.jpeg" alt="afnetworkingDicator.jpeg"></p>
+<h2 id="更新天气详情页背景图片">更新天气详情页背景图片</h2>
+<p>目前，天气详情页面的背景很漂亮，但它不是实时的，若能够从网络上下载背景图片该多好，OK，本文将教你最后一招：<br>AFHTTPRequestOperation不仅能够请求并处理JSON、PLIST等格式化数据，也能够请求和处理图片数据，只是需要设置其responseSerializer属性为AFImageResponseSerializer对象。</p>
+<p>打开WeatherAnimationViewController.m文件，找到updateBackgroundImage:方法，实现其代码如下：</p>
+<figure class="highlight Objective-C"><pre><div class="line">- (<span class="keyword">IBAction</span>)updateBackgroundImage:(<span class="keyword">id</span>)sender</div><div class="line">{</div><div class="line">    <span class="built_in">NSURL</span>*url =[<span class="built_in">NSURL</span> URLWithString:<span class="string">@"http://www.raywenderlich.com/wp-content/uploads/2014/01/sunny-background.png"</span>];</div><div class="line">    <span class="built_in">NSURLRequest</span>*request =[<span class="built_in">NSURLRequest</span> requestWithURL:url];</div><div class="line">    AFHTTPRequestOperation *operation =[[AFHTTPRequestOperation alloc] initWithRequest:request];</div><div class="line">    operation<span class="variable">.responseSerializer</span> = [AFImageResponseSerializer serializer];</div><div class="line">    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, <span class="keyword">id</span> responseObject){</div><div class="line">        <span class="keyword">self</span><span class="variable">.backgroundImageView</span><span class="variable">.image</span> = responseObject;</div><div class="line">        [<span class="keyword">self</span> saveImage:responseObject withFilename:<span class="string">@"background.png"</span>];</div><div class="line">    } failure:^(AFHTTPRequestOperation *operation, <span class="built_in">NSError</span> *error){</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"Error: %@"</span>, error);</div><div class="line">    }];</div><div class="line">    [operation start];</div><div class="line">}</div></pre></figure>
+
+<p>这个方法从后台下载和处理图片数据。</p>
+<p>继续，找到deleteBackgroundImage:方法并实现如下：</p>
+<figure class="highlight Objective-C"><pre><div class="line">-(<span class="keyword">IBAction</span>)deleteBackgroundImage:(<span class="keyword">id</span>)sender</div><div class="line">{</div><div class="line">    <span class="built_in">NSArray</span>*paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, <span class="literal">YES</span>);</div><div class="line">    <span class="built_in">NSString</span>*path = [[paths objectAtIndex:<span class="number">0</span>] stringByAppendingPathComponent:<span class="string">@"WeatherHTTPClientImages/"</span>];</div><div class="line">    <span class="built_in">NSError</span>*error = <span class="literal">nil</span>;</div><div class="line">    [[<span class="built_in">NSFileManager</span> defaultManager] removeItemAtPath:path error:&error];</div><div class="line">    <span class="built_in">NSString</span>*desc = [<span class="keyword">self</span><span class="variable">.weatherDictionary</span> weatherDescription];</div><div class="line">    [<span class="keyword">self</span> start:desc];</div><div class="line">}</div></pre></figure>
+
+<p>This method deletes the downloaded background image so that you can download it again when testing the application.<br>这个方法会把下载下来的图片给删除掉，以便缓存的图片对测试造成影响，确保每次点击<code>Update Background</code>按钮的背景图片都是从网上下载而来的，而不是来自本地缓存的。</p>
+<p>最后一次，编译并运行你的project，加载天气信息后，选中一个天气，进入天气详细界面，点击<code>Update Background</code>按钮经过一段时间，发现背景图片会有变化，譬如笔者这样：</p>
+<p><img src="/img/201408/details3-合1.jpg" alt="details3-合1.jpg"></p>
+<h2 id="接下来呢？">接下来呢？</h2>
+<p>你可以下载本文最终的<a href="http://cdn3.raywenderlich.com/wp-content/uploads/2014/01/Weather_Final.zip" target="_blank" rel="external">代码</a>；<br>学习完本文，来总结一下你可以用AFNetworking来干些什么？</p>
+<ul>
+<li>结合<code>AFHTTPOperation</code>和<code>AFJSONResponseSerializer</code>/<code>AFPropertyListResponseSerializer</code>/<code>AFXMLParserResponseSerializer</code>通过HTTP REQUEST请求以及处理JSON/PLIST/XML这些结构化数据；</li>
+<li>使用<code>UIImageView+AFNetworking</code>来异步下载数据；</li>
+<li>自定义AFHTTPSessionManager的子类来获取实时的web数据；</li>
+<li>使用AFNetworkActivityIndicatorManager来改善用户体验；</li>
+</ul>
+<p>总之，AFNetworking的威力由你决定！</p>
+<p>最后，看客还是读一下<a href="http://www.raywenderlich.com/59255/afnetworking-2-0-tutorial" target="_blank" rel="external">原文</a>吧！</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/AFNetworking/">AFNetworking</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/iOS/">iOS</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2014/08/03/AFNetworking-20-Tutorial/" data-title="AFNetworking 2.0教程 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2014/08/24/python-code-style/" title="Python编程风格">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  Python编程风格</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2014/08/02/grand-central-dispatch-in-depth-part-2/"  title="GCD深入理解（2）">
+ <strong>NEXT:</strong><br/> 
+ <span>GCD深入理解（2）
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2014/08/03/AFNetworking-20-Tutorial/" data-title="AFNetworking 2.0教程" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#开始"><span class="toc-number">1.</span> <span class="toc-text">开始</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#处理JSON"><span class="toc-number">2.</span> <span class="toc-text">处理JSON</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#处理Property_Lists"><span class="toc-number">3.</span> <span class="toc-text">处理Property Lists</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#处理XML"><span class="toc-number">4.</span> <span class="toc-text">处理XML</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#让UI更风骚一点"><span class="toc-number">5.</span> <span class="toc-text">让UI更风骚一点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A_RESTful_Class"><span class="toc-number">6.</span> <span class="toc-text">A RESTful Class</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#World_Weather_Online"><span class="toc-number">7.</span> <span class="toc-text">World Weather Online</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#连接weather在线服务"><span class="toc-number">8.</span> <span class="toc-text">连接weather在线服务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#改善用户体验"><span class="toc-number">9.</span> <span class="toc-text">改善用户体验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新天气详情页背景图片"><span class="toc-number">10.</span> <span class="toc-text">更新天气详情页背景图片</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#接下来呢？"><span class="toc-number">11.</span> <span class="toc-text">接下来呢？</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,492 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>N皇后问题 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="写在前面
+八皇后问题是一个古老而著名的问题。该问题是国际西洋棋棋手马克斯·贝瑟尔于1848年提出：在8×8格的国际象棋上摆放八个皇后，使其不能互相攻击，即任意两个皇后都不能处于同一行、同一列或同一斜线上，问有多少种摆法。大数学家高斯认为有76种方案，1854年在柏林的象棋杂志上不同的作者发表了40种">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/06/07/n-queens/" title="N皇后问题" itemprop="url">N皇后问题</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-06-07T09:16:51.000Z" itemprop="datePublished">2015-06-07</time>
+    更新日期:<time datetime="2015-07-04T08:51:38.000Z" itemprop="dateModified">2015-07-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LeetCode中的N皇后问题"><span class="toc-number">2.</span> <span class="toc-text">LeetCode中的N皇后问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+		</div>
+		
+		<h2 id="写在前面"><strong>写在前面</strong></h2>
+<p>八皇后问题是一个古老而著名的问题。该问题是国际西洋棋棋手马克斯·贝瑟尔于1848年提出：在8×8格的国际象棋上摆放八个皇后，使其不能互相攻击，即任意两个皇后都不能处于同一行、同一列或同一斜线上，问有多少种摆法。大数学家高斯认为有76种方案，1854年在柏林的象棋杂志上不同的作者发表了40种不同的解，后来有人用图论的方法解出92种结果。</p>
+<p>既然有了八皇后问题，后来自然衍生到了N皇后问题。</p>
+<p>在基础算法领域有各种各样的归类，比较常见的有五种划分：归并、动态规划、贪心、回溯、分支界限。按照这种划分，N皇后问题属于「回溯法」，对于回溯法以及常见的回溯算法题，笔者在<a href="/2015/06/05/back-tracking/">回溯法</a>中一有所总结说明；只是N皇后问题太过著名了，所以觉得有必要单独用一篇博客进行分析说明。</p>
+<h2 id="LeetCode中的N皇后问题"><strong>LeetCode中的N皇后问题</strong></h2>
+<p>N皇后这么著名的问题，LeetCode自然也收录了，人家还收录了俩。</p>
+<p><strong>N-Queens II</strong></p>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/n-queens-ii/" target="_blank" rel="external">N-Queens II</a>，描述如下：</p>
+<blockquote>
+<p>Follow up for N-Queens problem.<br>&nbsp;<br>Now, instead outputting board configurations, return the total number of distinct solutions.<br><img style="margin-left:0" src="/img/201506/20150620-01.png" width="129" height="138"></p>
+</blockquote>
+<p><strong>N皇后问题分析</strong></p>
+<p>显然，每一行可以而且必须放一个皇后，所以N皇后问题的解可以用一个N元向量X(x1, x2, x3, …, xn)表示，其中xi的值表示第i行的皇后所在的列，即第i个皇后放在第xi列上。根据题意，第i行的皇后和第j行（i!=j）的皇后满足如下约束：</p>
+<ul>
+<li>xi != xj</li>
+<li>(xi-xj) != (i-j)</li>
+<li>(xi-xj) != (j-i)</li>
+</ul>
+<p>N皇后的问题分析比较容易，但编写代码又是另外一回事儿。我的编码逻辑是：<br>定义一个数组存放N行皇后的列位置信息，从上往下处理，假设已经处理了k行，现在需要寻找第k+1行皇后的列位置，假设用col表示，从0开始为col试探取值，将每个值与数组的前k个值（对应前k行皇后的列信息）进行约束判断。若满足，则说明k+1行的皇后已经找到了，接着寻找第k+2行的皇后；然而，也可能在定位k+1行皇后的时候，0-&gt;n-1的所有值都不能满足约束，那么说明前k行的皇后位置安排不正确，倒带，我们回过头去更新第k行的皇后列位置，即所谓的「回溯」…</p>
+<p>我的Solution采用迭代的策略，代码如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer} n</span></div><div class="line">    <span class="comment"># @return {integer}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">totalNQueens</span><span class="params">(self, n)</span>:</span></div><div class="line">        stack = [<span class="number">0</span>]</div><div class="line">        </div><div class="line">        down, up = <span class="number">1</span>, <span class="number">2</span>         <span class="comment"># down表示「下探」，up表示「回溯」</span></div><div class="line">        pre, dir = <span class="number">0</span>, down      <span class="comment"># pre表示上一次「下探」或「回溯」的值，dir表示方向（回溯or下探）</span></div><div class="line">        ret = <span class="number">0</span>                 <span class="comment"># 返回值</span></div><div class="line">        </div><div class="line">        <span class="keyword">while</span> len(stack) &gt; <span class="number">0</span>:</div><div class="line">            cur, stackSize = stack[-<span class="number">1</span>], len(stack)</div><div class="line">            </div><div class="line">            <span class="keyword">if</span> stackSize == n+<span class="number">1</span>:</div><div class="line">                ret += <span class="number">1</span></div><div class="line">                stack.pop()</div><div class="line">                pre, dir = cur, up</div><div class="line">                <span class="keyword">continue</span></div><div class="line">            </div><div class="line">            <span class="keyword">if</span> dir == down:</div><div class="line">                flag = <span class="keyword">False</span></div><div class="line">                target = <span class="number">0</span></div><div class="line">                <span class="keyword">while</span> target &lt; n:</div><div class="line">                    <span class="keyword">if</span> self.isOK(stack, target):</div><div class="line">                        flag = <span class="keyword">True</span></div><div class="line">                        <span class="keyword">break</span></div><div class="line">                    target += <span class="number">1</span></div><div class="line">                <span class="keyword">if</span> flag:</div><div class="line">                    stack.append(target)</div><div class="line">                    pre, dir = cur, down</div><div class="line">                <span class="keyword">else</span>:</div><div class="line">                    stack.pop()</div><div class="line">                    pre, dir = cur, up</div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                <span class="keyword">if</span> pre == n-<span class="number">1</span>:</div><div class="line">                    stack.pop()</div><div class="line">                    pre, dir = cur, up</div><div class="line">                <span class="keyword">else</span>:</div><div class="line">                    flag = <span class="keyword">False</span></div><div class="line">                    target = pre+<span class="number">1</span></div><div class="line">                    <span class="keyword">while</span> target &lt; n:</div><div class="line">                        <span class="keyword">if</span> self.isOK(stack, target):</div><div class="line">                            flag = <span class="keyword">True</span></div><div class="line">                            <span class="keyword">break</span></div><div class="line">                        target += <span class="number">1</span></div><div class="line">                    <span class="keyword">if</span> flag:</div><div class="line">                        stack.append(target)</div><div class="line">                        pre, dir = cur, down</div><div class="line">                    <span class="keyword">else</span>:</div><div class="line">                        stack.pop()</div><div class="line">                        pre, dir = cur, up</div><div class="line">        <span class="keyword">return</span> ret</div><div class="line">                    </div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">isOK</span><span class="params">(self, cols, target)</span>:</span></div><div class="line">        m = len(cols)</div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">1</span>, m):</div><div class="line">            <span class="keyword">if</span> cols[i] == target <span class="keyword">or</span> cols[i]-target == m - i <span class="keyword">or</span> cols[i]-target == i-m:</div><div class="line">                <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line">        <span class="keyword">return</span> <span class="keyword">True</span></div></pre></figure>
+
+<p>当然，可以做进一步优化。譬如：</p>
+<ul>
+<li>代码中的stack.append()和stack.pop()操作挺费时间的；</li>
+<li><code>while</code>循环中的代码也有些啰嗦，可以精简一下；</li>
+<li>还可以定义一个set来简化isOK中的搜索；</li>
+</ul>
+<p>优化后的代码如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer} n</span></div><div class="line">    <span class="comment"># @return {integer}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">totalNQueens</span><span class="params">(self, n)</span>:</span></div><div class="line">        cols = [-<span class="number">1</span>] * (n+<span class="number">1</span>)     <span class="comment"># 存储皇后的列位置</span></div><div class="line">        </div><div class="line">        down, up = <span class="number">1</span>, <span class="number">2</span>         <span class="comment"># down表示「下探」，up表示「回溯」</span></div><div class="line">        pre, dir = <span class="number">0</span>, down      <span class="comment"># pre表示上一次「下探」或「回溯」的值，dir表示方向（回溯or下探）</span></div><div class="line">        ret = <span class="number">0</span>                 <span class="comment"># 返回值</span></div><div class="line">        curRow = <span class="number">1</span>              <span class="comment"># 正在处理第curRow行的皇后位置</span></div><div class="line">        </div><div class="line">        cacheSet = set()        <span class="comment"># 定义一个set优化isOK</span></div><div class="line">        cacheSet.add(cols[<span class="number">0</span>])</div><div class="line">        </div><div class="line">        <span class="keyword">while</span> curRow &gt; <span class="number">0</span>:</div><div class="line">            cur = cols[curRow-<span class="number">1</span>]</div><div class="line">            </div><div class="line">            <span class="keyword">if</span> curRow == n+<span class="number">1</span>:   <span class="comment"># 已经确定N行皇后位置</span></div><div class="line">                ret += <span class="number">1</span></div><div class="line">                curRow -= <span class="number">1</span></div><div class="line">                cacheSet.remove(cur)</div><div class="line">                pre, dir = cur, up</div><div class="line">                <span class="keyword">continue</span></div><div class="line">            </div><div class="line">            <span class="keyword">if</span> dir == down <span class="keyword">or</span> pre &lt; n-<span class="number">1</span>:</div><div class="line">                target, flag = <span class="number">0</span>, <span class="keyword">False</span></div><div class="line">                <span class="keyword">if</span> dir == up:</div><div class="line">                    target = pre+<span class="number">1</span></div><div class="line">                <span class="keyword">while</span> target &lt; n:</div><div class="line">                    <span class="keyword">if</span> self.isOK(cols, curRow, cacheSet, target):</div><div class="line">                        flag = <span class="keyword">True</span></div><div class="line">                        <span class="keyword">break</span></div><div class="line">                    target += <span class="number">1</span></div><div class="line">                <span class="keyword">if</span> flag:        <span class="comment"># 找到合适的位置了</span></div><div class="line">                    cols[curRow] = target   <span class="comment"># 确定第curRow行皇后位置</span></div><div class="line">                    curRow += <span class="number">1</span></div><div class="line">                    cacheSet.add(target)</div><div class="line">                    pre, dir = cur, down</div><div class="line">                    <span class="keyword">continue</span></div><div class="line">            curRow -= <span class="number">1</span></div><div class="line">            cacheSet.remove(cur)</div><div class="line">            pre, dir = cur, up</div><div class="line">	</div><div class="line">        <span class="keyword">return</span> ret</div><div class="line">                    </div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">isOK</span><span class="params">(self, cols, curRow, cacheSet, target)</span>:</span></div><div class="line">        <span class="keyword">if</span> target <span class="keyword">in</span> cacheSet:</div><div class="line">            <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">1</span>, curRow):</div><div class="line">            <span class="keyword">if</span> cols[i] == target <span class="keyword">or</span> cols[i]-target == curRow - i <span class="keyword">or</span> cols[i]-target == i-curRow:</div><div class="line">                <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line">        <span class="keyword">return</span> <span class="keyword">True</span></div></pre></figure>
+
+<p><strong>N-Queens</strong></p>
+<p>LeetCode中还有一道与上题类似的衍生题：<a href="https://leetcode.com/problems/n-queens/" target="_blank" rel="external">N-Queens</a>，它的要求稍微过分一点，将问题结果给找出来，而不仅仅是统计解的个数。换汤不换药，我的Solution如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @return a list of lists of string</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">solveNQueens</span><span class="params">(self, n)</span>:</span></div><div class="line">        cols = [-<span class="number">1</span>] * (n+<span class="number">1</span>)     <span class="comment"># 存储皇后的列位置</span></div><div class="line">        </div><div class="line">        down, up = <span class="number">1</span>, <span class="number">2</span>         <span class="comment"># down表示「下探」，up表示「回溯」</span></div><div class="line">        pre, dir = <span class="number">0</span>, down      <span class="comment"># pre表示上一次「下探」或「回溯」的值，dir表示方向（回溯or下探）</span></div><div class="line">        ret = []                <span class="comment"># 返回值</span></div><div class="line">        curRow = <span class="number">1</span>              <span class="comment"># 正在处理第curRow行的皇后位置</span></div><div class="line">        </div><div class="line">        cacheSet = set()        <span class="comment"># 定义一个set优化isOK</span></div><div class="line">        cacheSet.add(cols[<span class="number">0</span>])</div><div class="line">        </div><div class="line">        <span class="keyword">while</span> curRow &gt; <span class="number">0</span>:</div><div class="line">            cur = cols[curRow-<span class="number">1</span>]</div><div class="line">            </div><div class="line">            <span class="keyword">if</span> curRow == n+<span class="number">1</span>:   <span class="comment"># 已经确定N行皇后位置</span></div><div class="line">                temp = []</div><div class="line">                <span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">1</span>, curRow):</div><div class="line">                    temp.append(<span class="string">'.'</span> * cols[i] + <span class="string">'Q'</span> + <span class="string">'.'</span> * (curRow-<span class="number">2</span>-cols[i]))</div><div class="line">                ret.append(temp)</div><div class="line">                curRow -= <span class="number">1</span></div><div class="line">                cacheSet.remove(cur)</div><div class="line">                pre, dir = cur, up</div><div class="line">                <span class="keyword">continue</span></div><div class="line">            </div><div class="line">            <span class="keyword">if</span> dir == down <span class="keyword">or</span> pre &lt; n-<span class="number">1</span>:</div><div class="line">                target, flag = <span class="number">0</span>, <span class="keyword">False</span></div><div class="line">                <span class="keyword">if</span> dir == up:</div><div class="line">                    target = pre+<span class="number">1</span></div><div class="line">                <span class="keyword">while</span> target &lt; n:</div><div class="line">                    <span class="keyword">if</span> self.isOK(cols, curRow, cacheSet, target):</div><div class="line">                        flag = <span class="keyword">True</span></div><div class="line">                        <span class="keyword">break</span></div><div class="line">                    target += <span class="number">1</span></div><div class="line">                <span class="keyword">if</span> flag:        <span class="comment"># 找到合适的位置了</span></div><div class="line">                    cols[curRow] = target   <span class="comment"># 确定第curRow行皇后位置</span></div><div class="line">                    curRow += <span class="number">1</span></div><div class="line">                    cacheSet.add(target)</div><div class="line">                    pre, dir = cur, down</div><div class="line">                    <span class="keyword">continue</span></div><div class="line">            curRow -= <span class="number">1</span></div><div class="line">            cacheSet.remove(cur)</div><div class="line">            pre, dir = cur, up</div><div class="line">	</div><div class="line">        <span class="keyword">return</span> ret</div><div class="line">                    </div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">isOK</span><span class="params">(self, cols, curRow, cacheSet, target)</span>:</span></div><div class="line">        <span class="keyword">if</span> target <span class="keyword">in</span> cacheSet:</div><div class="line">            <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">1</span>, curRow):</div><div class="line">            <span class="keyword">if</span> cols[i] == target <span class="keyword">or</span> cols[i]-target == curRow - i <span class="keyword">or</span> cols[i]-target == i-curRow:</div><div class="line">                <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line">        <span class="keyword">return</span> <span class="keyword">True</span></div></pre></figure>
+
+<h2 id="总结"><strong>总结</strong></h2>
+<p>N皇后问题是回溯法的案例，相对于贪心算法、动态规划，回溯法简直太直白了，没太多深奥的东西。</p>
+<p>只要搞清楚原理，基于回溯法解决N皇后问题并不难。笔者所实现的代码并不属于最快的，只能说在已有策略上尽可能做到了优化，在LeetCode数据库中也只算中上游。其实有更好的做法，可以参考<a href="http://blog.csdn.net/hackbuteer1/article/details/6657109" target="_blank" rel="external">这里</a>，借鉴<a href="http://blog.csdn.net/hackbuteer1/article/details/6657109" target="_blank" rel="external">这个</a>思路，可以实现更高效的算法，本文就不继续写代码了，以后有兴致了再补充吧！</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Backtracking/">Backtracking</a><a href="/tags/LeetCode/">LeetCode</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/06/07/n-queens/" data-title="N皇后问题 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/06/09/linked-list/" title="单链表与算法">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  单链表与算法</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/06/05/back-tracking/"  title="回溯法">
+ <strong>NEXT:</strong><br/> 
+ <span>回溯法
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/06/07/n-queens/" data-title="N皇后问题" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LeetCode中的N皇后问题"><span class="toc-number">2.</span> <span class="toc-text">LeetCode中的N皇后问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

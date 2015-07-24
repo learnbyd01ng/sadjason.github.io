@@ -1,0 +1,683 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Array和算法 第一弹 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="写在前面
+LeetCode中关于Array的算法题目非常多（足足有六十多道，并且数量仍在上升）。Array这个概念人人皆知，概念非常简单，但围绕它的算法问题层出不穷，有些问题是非常基础的问题，譬如排序、去重等等，有些题目会结合一些数学场景，譬如数组与盛水。笔者已经解决了LeetCode中绝大多数Ar">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/06/28/Array-and-Algorithm/" title="Array和算法 第一弹" itemprop="url">Array和算法 第一弹</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-06-28T15:51:38.000Z" itemprop="datePublished">2015-06-28</time>
+    更新日期:<time datetime="2015-07-05T03:45:49.000Z" itemprop="dateModified">2015-07-05</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Search_Insert_Position"><span class="toc-number">1.</span> <span class="toc-text">Search Insert Position</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#查找指定值元素"><span class="toc-number">2.</span> <span class="toc-text">查找指定值元素</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#二维数组查找"><span class="toc-number">2.1.</span> <span class="toc-text">二维数组查找</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#一维数组花样查找"><span class="toc-number">2.2.</span> <span class="toc-text">一维数组花样查找</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#重复元素处理"><span class="toc-number">3.</span> <span class="toc-text">重复元素处理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Contains_Duplicate"><span class="toc-number">3.1.</span> <span class="toc-text">Contains Duplicate</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#寻找特殊元素"><span class="toc-number">4.</span> <span class="toc-text">寻找特殊元素</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#旋转数组中寻找最小元素"><span class="toc-number">4.1.</span> <span class="toc-text">旋转数组中寻找最小元素</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#寻找Peak元素"><span class="toc-number">4.2.</span> <span class="toc-text">寻找Peak元素</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#寻找大多数元素"><span class="toc-number">4.3.</span> <span class="toc-text">寻找大多数元素</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最大子数组"><span class="toc-number">5.</span> <span class="toc-text">最大子数组</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最大毗邻积"><span class="toc-number">6.</span> <span class="toc-text">最大毗邻积</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#中位数"><span class="toc-number">7.</span> <span class="toc-text">中位数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#合并数组"><span class="toc-number">8.</span> <span class="toc-text">合并数组</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#重复元素处理-1"><span class="toc-number">9.</span> <span class="toc-text">重复元素处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#移除指定元素"><span class="toc-number">10.</span> <span class="toc-text">移除指定元素</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#旋转数组"><span class="toc-number">11.</span> <span class="toc-text">旋转数组</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#旋转一维数组"><span class="toc-number">11.1.</span> <span class="toc-text">旋转一维数组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#旋转二维数组"><span class="toc-number">11.2.</span> <span class="toc-text">旋转二维数组</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#螺旋矩阵"><span class="toc-number">12.</span> <span class="toc-text">螺旋矩阵</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-number">12.1.</span> <span class="toc-text">总结</span></a></li></ol></li></ol>
+		</div>
+		
+		<p><strong>写在前面</strong></p>
+<p>LeetCode中关于Array的算法题目非常多（足足有六十多道，并且数量仍在上升）。Array这个概念人人皆知，概念非常简单，但围绕它的算法问题层出不穷，有些问题是非常基础的问题，譬如排序、去重等等，有些题目会结合一些数学场景，譬如<a href="https://leetcode.com/problems/container-with-most-water/" target="_blank" rel="external">数组与盛水</a>。笔者已经解决了LeetCode中绝大多数Array问题，搞定一个问题的意义并不是指<code>Commit</code>-&gt;<code>Accepted</code>，笔者愚钝，容易忘记，习惯对自己做过的事情（解题过程中产生的思路）进行一些总结。</p>
+<p>Array相关算法题目太多，没办法把它们在一篇博客中全部涉及到。本文只对一些基础性算法题目进行汇总。何为「基础性算法题目」？很难客观讲清楚，我个人的选择标准有两条：</p>
+<ul>
+<li>非常具有普适性的题目；</li>
+<li>常见且能一句话描述题目要求的算法题目；</li>
+</ul>
+<p>像那些以生活场景进行包装的题目（譬如<a href="https://leetcode.com/problems/trapping-rain-water/" target="_blank" rel="external">Trapping Rain Water</a>）不属于讨论范围，那些可能会让人产生理解性障碍的题目也不属于本文讨论范围。</p>
+<hr>
+<p><strong>一维数组的增删查改</strong></p>
+<p>「增删查改」这几个字常常伴随着另外一个词语：「数据库」。数组和数据库有一点类似，它的最基础功能是存储数据，所以也难免涉及增、删、查等操作，下面将引入LeetCode中与数组的增、删、查操作相关的算法题目并探讨解决方法。</p>
+<h2 id="Search_Insert_Position"><strong>Search Insert Position</strong></h2>
+<p>直接在数组中插入元素似乎没啥分析意义，一个有意义的场景是在已排序数组中插入一个新元素，插入后确保数组仍然是sorted的。本题给出的应用场景是在已排序Array中插入指定元素，若元素已存在，则返回其索引位置，若不存在，则返回其应该插入的索引位置，描述如下：</p>
+<blockquote>
+<p>Given a sorted array and a target value, return the index if the target is found. If not, return the index where it would be if it were inserted in order.<br>&nbsp;<br>You may assume no duplicates in the array.<br>&nbsp;<br>Here are few examples.<br><code>[1,3,5,6]</code>, 5 → 2<br><code>[1,3,5,6]</code>, 2 → 1<br><code>[1,3,5,6]</code>, 7 → 4<br><code>[1,3,5,6]</code>, 0 → 0</p>
+</blockquote>
+<p>此题非常容易，很容易想到思路：二分法（递归处理）。直接上代码：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer[]} nums</span></div><div class="line">    <span class="comment"># @param {integer} target</span></div><div class="line">    <span class="comment"># @return {integer}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">searchInsert</span><span class="params">(self, nums, target)</span>:</span></div><div class="line">        n = len(nums)</div><div class="line">        <span class="keyword">if</span> n == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> <span class="number">0</span></div><div class="line">        <span class="keyword">return</span> self.aux(nums, <span class="number">0</span>, n, target)</div><div class="line">    </div><div class="line">    <span class="comment"># auxiliary method</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">aux</span><span class="params">(self, nums, start, stop, target)</span>:</span></div><div class="line">        <span class="keyword">if</span> stop-start &lt;= <span class="number">2</span>:         <span class="comment"># 小于等于两个元素</span></div><div class="line">            <span class="keyword">if</span> target &lt;= nums[start]:</div><div class="line">                <span class="keyword">return</span> start</div><div class="line">            <span class="keyword">elif</span> target &gt; nums[stop-<span class="number">1</span>]:</div><div class="line">                <span class="keyword">return</span> stop</div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                <span class="keyword">return</span> stop-<span class="number">1</span></div><div class="line">        </div><div class="line">        mid = (start + stop) / <span class="number">2</span></div><div class="line">        <span class="keyword">if</span> target == nums[mid]:</div><div class="line">            <span class="keyword">return</span> mid</div><div class="line">        <span class="keyword">elif</span> target &lt; nums[mid]:</div><div class="line">            <span class="keyword">return</span> self.aux(nums, start, mid, target)</div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            <span class="keyword">return</span> self.aux(nums, mid+<span class="number">1</span>, stop, target)</div></pre></figure>
+
+<p>也很容易写出迭代版本（效率会更好一些），详见我的<a href="https://github.com/sadjason/LeetCode/blob/master/search-insert-position.py" target="_blank" rel="external">github</a>。</p>
+<h2 id="查找指定值元素"><strong>查找指定值元素</strong></h2>
+<h3 id="二维数组查找"><strong>二维数组查找</strong></h3>
+<p>无论是unsorted还是sorted，在一维数组中查找元素根本不叫事儿，在二维数组中查找会如何呢？</p>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/search-a-2d-matrix/" target="_blank" rel="external">Search a 2D Matrix</a>，描述如下：</p>
+<blockquote>
+<p>Write an efficient algorithm that searches for a value in an m x n matrix. This matrix has the following properties:</p>
+<ul>
+<li>Integers in each row are sorted from left to right.</li>
+<li>The first integer of each row is greater than the last integer of the previous row.</li>
+</ul>
+</blockquote>
+<p>本题咋一看还蛮复杂的，毕竟是二维数组啊；但若读懂了题意，其实蛮简单的，解决问题方式几乎和处理「一维数组的二分查找」差不多。</p>
+<figure class="highlight Python"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">searchMatrix</span><span class="params">(self, matrix, target)</span>:</span></div><div class="line">        rows = len(matrix)</div><div class="line">        <span class="keyword">if</span> rows == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line">        cols = len(matrix[<span class="number">0</span>])</div><div class="line">        <span class="keyword">if</span> cols == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line">        </div><div class="line">        start, stop = <span class="number">0</span>, rows*cols</div><div class="line">        <span class="keyword">while</span> start &lt; stop:</div><div class="line">            <span class="keyword">if</span> stop-start &lt;= <span class="number">2</span>:</div><div class="line">                <span class="keyword">if</span> matrix[start/cols][start%cols] == target \</div><div class="line">                <span class="keyword">or</span> matrix[(stop-<span class="number">1</span>)/cols][(stop-<span class="number">1</span>)%cols] == target:</div><div class="line">                    <span class="keyword">return</span> <span class="keyword">True</span></div><div class="line">                <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line">            mid = (start + stop) / <span class="number">2</span></div><div class="line">            midValue = matrix[mid/cols][mid%cols]</div><div class="line">            <span class="keyword">if</span> midValue == target:</div><div class="line">                <span class="keyword">return</span> <span class="keyword">True</span></div><div class="line">            <span class="keyword">elif</span> midValue &gt; target:</div><div class="line">                stop = mid</div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                start = mid+<span class="number">1</span></div></pre></figure>
+
+<h3 id="一维数组花样查找"><strong>一维数组花样查找</strong></h3>
+<p>一位数组的search问题过于直接，一般不太可能有直接让「在一位数组中search某个元素」；但是，可能会有一些这样问题的变种，即所谓「花样查找」。</p>
+<p><strong>Search for a Range</strong></p>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/search-for-a-range/" target="_blank" rel="external">Search for a Range</a>，描述如下：</p>
+<blockquote>
+<p>Given a sorted array of integers, find the starting and ending position of a given target value.<br>&nbsp;<br>Your algorithm’s runtime complexity must be in the order of O(log <em>n</em>).<br>&nbsp;<br>If the target is not found in the array, return [-1, -1].<br>&nbsp;<br>For example,<br>Given <code>[5, 7, 7, 8, 8, 10]</code> and target value 8,<br>return <code>[3, 4]</code>.</p>
+</blockquote>
+<p>简单来说，本题是「在数组中寻找某个元素」的变种，要求返回指定元素在数组中第一次出现以及最后一次出现的index；仍然使用「二分法」解决问题：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer[]} nums</span></div><div class="line">    <span class="comment"># @param {integer} target</span></div><div class="line">    <span class="comment"># @return {integer[]}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">searchRange</span><span class="params">(self, nums, target)</span>:</span></div><div class="line">        n = len(nums)</div><div class="line">        <span class="keyword">if</span> n == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> [-<span class="number">1</span>,-<span class="number">1</span>]</div><div class="line">        (start, end) = self.aux(nums, <span class="number">0</span>, n, target)</div><div class="line">        <span class="keyword">return</span> [start, end]</div><div class="line">    </div><div class="line">    <span class="comment"># auxiliary method</span></div><div class="line">    <span class="comment"># return (begin, end)</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">aux</span><span class="params">(self, nums, start, stop, target)</span>:</span></div><div class="line">        <span class="keyword">if</span> stop - start &lt;= <span class="number">2</span>:</div><div class="line">            <span class="keyword">if</span> nums[start] == target <span class="keyword">and</span> nums[stop-<span class="number">1</span>] == target:</div><div class="line">                <span class="keyword">return</span> (start, stop-<span class="number">1</span>)</div><div class="line">            <span class="keyword">elif</span> nums[start] == target:</div><div class="line">                <span class="keyword">return</span> (start, start)</div><div class="line">            <span class="keyword">elif</span> nums[stop-<span class="number">1</span>] == target:</div><div class="line">                <span class="keyword">return</span> (stop-<span class="number">1</span>, stop-<span class="number">1</span>)</div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                <span class="keyword">return</span> (-<span class="number">1</span>, -<span class="number">1</span>)</div><div class="line">        </div><div class="line">        mid = (start + stop) / <span class="number">2</span></div><div class="line">        <span class="keyword">if</span> nums[mid] &gt; target:</div><div class="line">            <span class="keyword">return</span> self.aux(nums, start, mid, target)</div><div class="line">        <span class="keyword">elif</span> nums[mid] &lt; target:</div><div class="line">            <span class="keyword">return</span> self.aux(nums, mid+<span class="number">1</span>, stop, target)</div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            begin, end = mid, mid</div><div class="line">            begin1, end1 = self.aux(nums, start, mid, target)</div><div class="line">            <span class="keyword">if</span> begin1 != -<span class="number">1</span>:</div><div class="line">                begin = begin1</div><div class="line">            begin2, end2 = self.aux(nums, mid+<span class="number">1</span>, stop, target)</div><div class="line">            <span class="keyword">if</span> begin2 != -<span class="number">1</span>:</div><div class="line">                end = end2</div><div class="line">            <span class="keyword">return</span> (begin, end)</div></pre></figure>
+
+<p>本题<code>aux</code>方法中存在合并子问题过程，不太方便转化为「迭代处理」，除非借用<code>stack</code>，具体操作比较繁琐，本文略过。</p>
+<p>LeetCode中还有一些「花样查找」，譬如在rotate数组中查找。</p>
+<p><strong>Search in Rotated Sorted Array</strong></p>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/search-in-rotated-sorted-array/" target="_blank" rel="external">Search in Rotated Sorted Array</a>，描述如下：</p>
+<blockquote>
+<p>Suppose a sorted array is rotated at some pivot unknown to you beforehand.<br>&nbsp;<br>(i.e., <code>0 1 2 4 5 6 7</code> might become <code>4 5 6 7 0 1 2</code>).<br>&nbsp;<br>You are given a target value to search. If found in the array return its index, otherwise return -1.<br>&nbsp;<br>You may assume no duplicate exists in the array.</p>
+</blockquote>
+<p>题目虽然没有明说，但是可以认为该数组没有重复元素，解题思路仍然是二分法。</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer[]} nums</span></div><div class="line">    <span class="comment"># @param {integer} target</span></div><div class="line">    <span class="comment"># @return {integer}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">search</span><span class="params">(self, nums, target)</span>:</span></div><div class="line">        <span class="keyword">if</span> len(nums) == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> -<span class="number">1</span></div><div class="line">        <span class="keyword">return</span> self.aux(nums, <span class="number">0</span>, len(nums), target)</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">aux</span><span class="params">(self, nums, start, stop, target)</span>:</span></div><div class="line">        <span class="keyword">if</span> stop-start &lt;= <span class="number">2</span>:</div><div class="line">            <span class="keyword">if</span> nums[start] == target:</div><div class="line">                <span class="keyword">return</span> start</div><div class="line">            <span class="keyword">elif</span> nums[stop-<span class="number">1</span>] == target:</div><div class="line">                <span class="keyword">return</span> stop-<span class="number">1</span></div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                <span class="keyword">return</span> -<span class="number">1</span></div><div class="line">        </div><div class="line">        mid = (start + stop) / <span class="number">2</span></div><div class="line">        <span class="keyword">if</span> nums[mid] == target:</div><div class="line">            <span class="keyword">return</span> mid</div><div class="line">        <span class="keyword">elif</span> nums[mid] &gt; target:</div><div class="line">            <span class="keyword">if</span> nums[mid] &gt; nums[stop-<span class="number">1</span>] <span class="keyword">and</span> target &lt;= nums[stop-<span class="number">1</span>]:</div><div class="line">                <span class="keyword">return</span> self.aux(nums, mid+<span class="number">1</span>, stop, target)</div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                <span class="keyword">return</span> self.aux(nums, start, mid, target)</div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            <span class="keyword">if</span> nums[mid] &lt; nums[start] <span class="keyword">and</span> target &gt; nums[stop-<span class="number">1</span>]:</div><div class="line">                <span class="keyword">return</span> self.aux(nums, start, mid, target)</div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                <span class="keyword">return</span> self.aux(nums, mid+<span class="number">1</span>, stop, target)</div></pre></figure>
+
+<p>当考虑「数组可能含有重复元素」时又该如何？LeetCode中有一道衍伸题：<a href="">Search in Rotated Sorted Array II</a>，我的Solution详见<a href="">这里</a>。</p>
+<p><strong>总结</strong></p>
+<p>一位数组search问题无论花样如何变化，几乎都是使用二分法思想解决问题，只是有些问题稍微复杂一些，需要多写一些<code>if</code>语句，或者涉及更复杂的操作，譬如合并。</p>
+<h2 id="重复元素处理"><strong>重复元素处理</strong></h2>
+<p>确保数组元素唯一性也是数组处理的一个重要基础问题。</p>
+<h3 id="Contains_Duplicate"><strong>Contains Duplicate</strong></h3>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/contains-duplicate/" target="_blank" rel="external">Contains Duplicate</a>，描述如下：</p>
+<blockquote>
+<p>Given an array of integers, find if the array contains any duplicates. Your function should return true if any value appears at least twice in the array, and it should return false if every element is distinct.</p>
+</blockquote>
+<p>简单来说，该题题目要求是判断某个数组是否含有重复元素。</p>
+<p>有两个思路：</p>
+<ul>
+<li>使用hash表（空间换时间）；</li>
+<li>先排序，O(nlgn)，然后再遍历一遍；</li>
+</ul>
+<p>Solution代码如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="comment"># 使用hash表</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer[]} nums</span></div><div class="line">    <span class="comment"># @return {boolean}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">containsDuplicate</span><span class="params">(self, nums)</span>:</span></div><div class="line">        <span class="keyword">return</span> len(nums) != len(set(nums))</div><div class="line">	</div><div class="line">	</div><div class="line"><span class="comment"># 排序 - 遍历</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer[]} nums</span></div><div class="line">    <span class="comment"># @return {boolean}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">containsDuplicate</span><span class="params">(self, nums)</span>:</span></div><div class="line">        nums.sort()</div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">1</span>, len(nums)):</div><div class="line">            <span class="keyword">if</span> nums[i] == nums[i-<span class="number">1</span>]:</div><div class="line">                <span class="keyword">return</span> <span class="keyword">True</span></div><div class="line">        <span class="keyword">return</span> <span class="keyword">False</span></div></pre></figure>
+
+<p>LeetCode还有一道衍伸题，稍微复杂一些：<a href="https://leetcode.com/problems/contains-duplicate-ii/" target="_blank" rel="external">Contains Duplicate II</a>，此时似乎使用散列表才是比较靠谱的做法，我的Solution详见<a href="https://github.com/sadjason/LeetCode/blob/master/search-in-rotated-sorted-array-ii.py" target="_blank" rel="external">这里</a>。</p>
+<h2 id="寻找特殊元素"><strong>寻找特殊元素</strong></h2>
+<p>这一部分内容严格来说也属于「增删查改」中的「查」，只是这里往往需要寻找一些特殊元素，譬如中位数、最小值等等。</p>
+<h3 id="旋转数组中寻找最小元素"><strong>旋转数组中寻找最小元素</strong></h3>
+<p>此处的「旋转数组」指的是「已排序的旋转数组」。LeetCode中有两道关于「旋转数组中寻找最小元素」的题目：</p>
+<ul>
+<li><a href="https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/" target="_blank" rel="external">Find Minimum in Rotated Sorted Array</a></li>
+<li><a href="https://leetcode.com/problems/find-minimum-in-rotated-sorted-array-ii/" target="_blank" rel="external">Find Minimum in Rotated Sorted Array II</a></li>
+</ul>
+<p>前者给定的数组保证不会出现重复值的元素，后者不考虑，具有更强的兼容性。</p>
+<p><strong>Find Minimum in Rotated Sorted Array</strong></p>
+<p><a href="https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/" target="_blank" rel="external">Find Minimum in Rotated Sorted Array</a>的描述如下：</p>
+<blockquote>
+<p>Suppose a sorted array is rotated at some pivot unknown to you beforehand.<br>&nbsp;<br>(i.e., <code>0 1 2 4 5 6 7</code> might become <code>4 5 6 7 0 1 2</code>).<br>&nbsp;<br>Find the minimum element.<br>&nbsp;<br>You may assume no duplicate exists in the array.</p>
+</blockquote>
+<p>很简单，依然是二分法解题，如下代码分别给出了迭代实现：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param nums, a list of integer</span></div><div class="line">    <span class="comment"># @return an integer</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">findMin</span><span class="params">(self, nums)</span>:</span></div><div class="line">        n = len(nums)</div><div class="line">        <span class="keyword">if</span> n == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> <span class="number">0</span></div><div class="line">        </div><div class="line">        start, stop = <span class="number">0</span>, n</div><div class="line">        <span class="keyword">while</span> start &lt; stop:</div><div class="line">            <span class="keyword">if</span> stop - start == <span class="number">1</span>:   <span class="comment"># 只有一个元素，一定是的了</span></div><div class="line">                <span class="keyword">return</span> nums[start]</div><div class="line">            <span class="keyword">elif</span> stop - start == <span class="number">2</span>: <span class="comment"># 有两个元素，取最小的</span></div><div class="line">                <span class="keyword">return</span> min(nums[start], nums[start+<span class="number">1</span>])</div><div class="line">	</div><div class="line">            mid = (start + stop) / <span class="number">2</span></div><div class="line">            <span class="keyword">if</span> nums[mid] &gt; nums[stop-<span class="number">1</span>]:</div><div class="line">                start = mid</div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                stop = mid+<span class="number">1</span></div></pre></figure>
+
+<p>我的<a href="https://github.com/sadjason/LeetCode/blob/master/find-minimum-in-rotated-sorted-array.py" target="_blank" rel="external">github</a>中还有递归版本的实现。</p>
+<p>当考虑「数组中可能含有重复值元素」时又该如何处理呢？这正是衍生题目<a href="https://leetcode.com/problems/find-minimum-in-rotated-sorted-array-ii/" target="_blank" rel="external">Find Minimum in Rotated Sorted Array II</a>的问题描述，还是非常简单的二分处理，代码详见我的<a href="https://github.com/sadjason/LeetCode/blob/master/find-minimum-in-rotated-sorted-array-ii.py" target="_blank" rel="external">github</a>。</p>
+<h3 id="寻找Peak元素"><strong>寻找Peak元素</strong></h3>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/find-peak-element/" target="_blank" rel="external">Find Peak Element</a>，描述如下：</p>
+<blockquote>
+<p>A peak element is an element that is greater than its neighbors.<br>Given an input array where <code>num[i] ≠ num[i+1]</code>, find a peak element and return its index.<br>The array may contain multiple peaks, in that case return the index to any one of the peaks is fine.<br>You may imagine that <code>num[-1] = num[n] = -∞</code>.<br>&nbsp;<br>For example, in array <code>[1, 2, 3, 1]</code>, 3 is a peak element and your function should return the index number 2.<br>&nbsp;<br>Note:<br>Your solution should be in logarithmic complexity.</p>
+</blockquote>
+<h3 id="寻找大多数元素"><strong>寻找大多数元素</strong></h3>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/majority-element/" target="_blank" rel="external">Majority Element</a>，描述如下：</p>
+<blockquote>
+<p>Given an array of size n, find the majority element. The majority element is the element that appears more than <code>⌊n/2⌋</code> times.<br>&nbsp;<br>You may assume that the array is non-empty and the majority element always exist in the array.</p>
+</blockquote>
+<p>刚开始笔者没能解决这个问题，无奈点击<code>Show Tags</code>，看到<code>Bit Manipulation</code>这个关键字，这才有了思路，我的思路是：定义一个长度为32的数组<code>buf</code>，用来存储所给数组中所有数的二进制位为1的总计，譬如<code>buf[21]</code>记录所有数二进制形式bit[21]为1的个数；</p>
+<p>这个方法确实能够通过LeetCode的测试，但是不够好！代码详见</p>
+<p>后来在<a href="https://leetcode.com/discuss/24971/o-n-time-o-1-space-fastest-solution" target="_blank" rel="external">LeetCode Discuss</a>中找到更好的方法，如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param nums, a list of integers</span></div><div class="line">    <span class="comment"># @return an integer</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">majorityElement</span><span class="params">(self, nums)</span>:</span></div><div class="line">        ret, count = <span class="number">0</span>, <span class="number">0</span></div><div class="line">        <span class="keyword">for</span> num <span class="keyword">in</span> nums:</div><div class="line">            <span class="keyword">if</span> count == <span class="number">0</span>:</div><div class="line">                ret = num</div><div class="line">                count += <span class="number">1</span></div><div class="line">            <span class="keyword">elif</span> num == ret:</div><div class="line">                count += <span class="number">1</span></div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                count -= <span class="number">1</span></div><div class="line">        <span class="keyword">return</span> ret</div></pre></figure>
+
+<p>P.S：基于<code>Bit Manipulation</code>版本代码详见我的<a href="https://github.com/sadjason/LeetCode/blob/master/majority-element.py" target="_blank" rel="external">github</a>。</p>
+<p>LeetCode最近上传了一个加强版本：<a href="https://leetcode.com/problems/majority-element-ii/" target="_blank" rel="external">Majority Element II</a>，留着以后做吧！</p>
+<h2 id="最大子数组"><strong>最大子数组</strong></h2>
+<p><a href="https://leetcode.com/problems/maximum-subarray/" target="_blank" rel="external">最大子数组问题</a>是一个非常经典的问题，LeetCode的描述如下：</p>
+<blockquote>
+<p>Find the contiguous subarray within an array (containing at least one number) which has the largest sum.<br>&nbsp;<br>For example, given the array <code>[−2,1,−3,4,−1,2,1,−5,4]</code>,<br>the contiguous subarray <code>[4,−1,2,1]</code> has the largest sum = 6.<br>&nbsp;<br>If you have figured out the O(<em>n</em>) solution, try coding another solution using the divide and conquer approach, which is more subtle.</p>
+</blockquote>
+<p>题目要求采用时间复杂度为O(n)的Solution解决问题。</p>
+<p>暴力求解的时间复杂度很容易计算：O(n<sup>2</sup>)。如何能寻找一个O(<em>n</em>)时间复杂度的Solution呢？</p>
+<p>如果想清楚了这是个DP问题，其实也简单：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer[]} nums</span></div><div class="line">    <span class="comment"># @return {integer}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">maxSubArray</span><span class="params">(self, nums)</span>:</span></div><div class="line">        n = len(nums)</div><div class="line">        <span class="keyword">if</span> len(nums) == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> <span class="number">0</span></div><div class="line">        </div><div class="line">        ret = aux = nums[<span class="number">0</span>]</div><div class="line">        <span class="comment"># ret：返回值；aux：记录以nums[i]为末尾元素的最大子数组和</span></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">1</span>, n):</div><div class="line">            <span class="keyword">if</span> aux &gt; <span class="number">0</span>:</div><div class="line">                aux += nums[i]</div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                aux = nums[i]</div><div class="line">            <span class="keyword">if</span> aux &gt; ret:</div><div class="line">                ret = aux</div><div class="line">        <span class="keyword">return</span> ret</div></pre></figure>
+
+<p>这个DP Solution非常简单，同时也非常巧妙，属于一维DP问题。</p>
+<h2 id="最大毗邻积"><strong>最大毗邻积</strong></h2>
+<p>上述的「最大子数组问题」是一个非常简单的一维DP问题，再来看个稍微复杂点的一维DP问题。</p>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/maximum-product-subarray/" target="_blank" rel="external">Maximum Product Subarray</a>，描述如下：</p>
+<blockquote>
+<p>Find the contiguous subarray within an array (containing at least one number) which has the largest product.<br>&nbsp;<br>For example, given the array [2,3,-2,4],<br>the contiguous subarray [2,3] has the largest product = 6.</p>
+</blockquote>
+<p>简单来说，题目要求子数组的最大连续积。</p>
+<p>仍然使用DP策略解题。不同于「最大子数组问题」，这道题更复杂一些，因为要考虑两个负数相乘的情况，所以我们需要两个变量分别记录「以一个元素为末尾元素」的子数组的最大正积和最小负积。</p>
+<p>假设「以第i个元素为末尾元素」的子数组的最大正积和最小负积分别记为p[i]和n[i]，那么可以得到状态方程：</p>
+<ul>
+<li>若nums[i+1]&gt;0，则p[i+1], n[i+1] = p[i]×nums[i], n[i]×nums[i]；</li>
+<li>若nums[i+1]&lt;0，则p[i+1], n[i+1] = n[i]×nums[i], p[i]×nums[i]；</li>
+<li>若nums[i+1]==0，则p[i+1] = n[i+1] = 0；</li>
+</ul>
+<p>值得一提的是，要注意p[i]和n[i]为0的情况。我的Solution详细代码如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer[]} nums</span></div><div class="line">    <span class="comment"># @return {integer}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">maxProduct</span><span class="params">(self, nums)</span>:</span></div><div class="line">        n = len(nums)</div><div class="line">        <span class="keyword">if</span> n == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> <span class="number">0</span></div><div class="line">        ret = nums[<span class="number">0</span>]                   <span class="comment"># 返回值</span></div><div class="line">        aux_positive = max(nums[<span class="number">0</span>], <span class="number">0</span>)  <span class="comment"># 记录以第i个元素结尾的最大积（大于等于0）</span></div><div class="line">        aux_negative = min(nums[<span class="number">0</span>], <span class="number">0</span>)  <span class="comment"># 记录仪第j个元素结尾的最小积（小于等于0）</span></div><div class="line">	</div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">1</span>, n):</div><div class="line">            <span class="keyword">if</span> nums[i] == <span class="number">0</span>:</div><div class="line">                aux_positive = aux_negative = <span class="number">0</span></div><div class="line">            <span class="keyword">elif</span> nums[i] &gt; <span class="number">0</span>:</div><div class="line">                aux_negative = aux_negative * nums[i]</div><div class="line">                aux_positive = max(aux_positive, <span class="number">1</span>) * nums[i]</div><div class="line">            <span class="keyword">elif</span> nums[i] &lt; <span class="number">0</span>:</div><div class="line">                p, n = aux_positive, aux_negative</div><div class="line">                aux_positive = n * nums[i]</div><div class="line">                aux_negative = max(p, <span class="number">1</span>) * nums[i]</div><div class="line">	</div><div class="line">            <span class="keyword">if</span> aux_positive &gt; ret:</div><div class="line">                ret = aux_positive</div><div class="line">	</div><div class="line">        <span class="keyword">return</span> ret</div></pre></figure>
+
+<h2 id="中位数"><strong>中位数</strong></h2>
+<p>求已排序数组中位数太容易了！如何求出未排序数组中位数呢？至少有这么一种Solution：先排序，然后直接查找，时间复杂度为<code>O(n)</code>；</p>
+<p>LeetCode有一个问题：<a href="https://leetcode.com/problems/median-of-two-sorted-arrays/" target="_blank" rel="external">Median of Two Sorted Arrays</a>，大概的意思是让求两个已排序数组的中位数，描述如下：</p>
+<blockquote>
+<p>There are two sorted arrays nums1 and nums2 of size m and n respectively. Find the median of the two sorted arrays. The overall run time complexity should be O(log (m+n)).</p>
+</blockquote>
+<p>这是一道非常经典的题。这题更通用的形式是，给定两个已排序号的数组，找到两者所有元素中第k大的元素。</p>
+<p>比较直观的做法是直接merge两个数组，然后求第k大的元素。</p>
+<p>不过我们仅仅需要第<em>k</em>大的元素,是不需要「排序」这么复杂的操作的。可以用一个计数器，记录当前已经找到第m大的元素了。同时我们使用两个指针pA和pB，分别指向A和B数组的第1个元素，使用类似于merge sort的原理，如果数组A当前元素小，那么<code>pA++</code>，同时<code>m++</code>；如果数组B当前元素小，那么 <code>pB++</code>，同时<code>m++</code>。最终当m等于k的时候，就得到了我们的答案，<code>O(k)</code>时间，<code>O(1)</code>空间。但是，当k很接近m+n的时候，这个方法还是<code>O(m+n)</code>的。</p>
+<p>有没有更好的方案呢？我们可以考虑从k入手，如果我们每次都能够「删除」一个一定在第<em>k</em>大元素之前的元素，那么我们需要进行<em>k</em>次处理。但是如果每次我们都能删除一半呢？由于A和B都是有序的，所以我们应该结合「二分查找」的思想…</p>
+<p>应该有点思路了。</p>
+<p>假设A和B的元素个数都大于k/2，我们将A的第k/2个元素（即A[k/2-1]）和B的第k/2个元素（即B[k/2-1]）进行比较，有以下三种情况（为了简化这里先假设k为偶数，所得到的结论对于k是奇数也是成立的）：</p>
+<ul>
+<li>A[k/2-1] == B[k/2-1]</li>
+<li>A[k/2-1] &gt; B[k/2-1]</li>
+<li>A[k/2-1] &lt; B[k/2-1]</li>
+</ul>
+<p>如果 A[k/2-1] &lt; B[k/2-1]，意味着A[0]到A[k/2-1]的肯定在A∪B的top k元素的范围内，换句话说，A[k/2-1]不可能大于A∪B的第k大元素。留给读者证明。</p>
+<p>因此，我们可以放心的删除A数组的这k/2个元素。同理，当A[k/2-1] &gt; B[k/2-1]时，可以删除B数组的k/2个元素。</p>
+<p>当A[k/2-1] == B[k/2-1]时，说明找到了第k大的元素，直接返回A[k/2-1]或B[k/2-1]即可。</p>
+<p>因此,我们可以写一个递归函数。那么函数什么时候应该终止呢？</p>
+<ul>
+<li>当A或B是空时,直接返回B[k-1]或A[k-1]；</li>
+<li>当k=1是,返回<code>min(A[0],B[0])</code>；</li>
+<li>当A[k/2-1]==B[k/2-1]时,返回A[k/2-1]或B[k/2-1]；</li>
+</ul>
+<p>P.S：以上思路均借鉴自网友！</p>
+<p>思路虽然晓得了，但写代码又是另外一回事，按照此思路，我提交了N次都有各种各样的问题，烦了，饿了，以后再补充代码吧！</p>
+<h2 id="合并数组"><strong>合并数组</strong></h2>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/merge-sorted-array/" target="_blank" rel="external">Merge Sorted Array</a>，描述如下：</p>
+<blockquote>
+<p>Given two sorted integer arrays nums1 and nums2, merge nums2 into nums1 as one sorted array.<br>&nbsp;<br>Note:<br>You may assume that <em>nums1</em> has enough space (size that is greater or equal to <em>m</em> + <em>n</em>) to hold additional elements from <em>nums2</em>. The number of elements initialized in <em>nums1</em> and <em>nums2</em> are <em>m</em> and <em>n</em> respectively.</p>
+</blockquote>
+<p>此题太过简单，直接上代码：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param A  a list of integers</span></div><div class="line">    <span class="comment"># @param m  an integer, length of A</span></div><div class="line">    <span class="comment"># @param B  a list of integers</span></div><div class="line">    <span class="comment"># @param n  an integer, length of B</span></div><div class="line">    <span class="comment"># @return nothing(void)</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">merge</span><span class="params">(self, A, m, B, n)</span>:</span></div><div class="line">        <span class="comment"># A中的元素向右移动n个位置</span></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(m):</div><div class="line">            A[n+m-<span class="number">1</span>-i] = A[m-<span class="number">1</span>-i]</div><div class="line">        </div><div class="line">        <span class="comment"># 合并A[n:m+n]和B[0:n]</span></div><div class="line">        i, i1, i2 = <span class="number">0</span>, n, <span class="number">0</span></div><div class="line">        <span class="keyword">while</span> i1 &lt; n+m <span class="keyword">and</span> i2 &lt; n:</div><div class="line">            <span class="keyword">if</span> A[i1] &gt; B[i2]:</div><div class="line">                A[i], i2 = B[i2], i2+<span class="number">1</span></div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                A[i], i1 = A[i1], i1+<span class="number">1</span></div><div class="line">            i += <span class="number">1</span></div><div class="line">        </div><div class="line">        <span class="keyword">while</span> i1 &lt; m+n:</div><div class="line">            A[i] = A[i1]</div><div class="line">            i, i1 = i+<span class="number">1</span>, i1+<span class="number">1</span></div><div class="line">        </div><div class="line">        <span class="keyword">while</span> i2 &lt; n:</div><div class="line">            A[i] = B[i2]</div><div class="line">            i, i2 = i+<span class="number">1</span>, i2+<span class="number">1</span></div><div class="line">        <span class="keyword">return</span></div></pre></figure>
+
+<h2 id="重复元素处理-1"><strong>重复元素处理</strong></h2>
+<p>「处理重复元素」也是数组处理的一个基本算法。思路非常简单，对于unsorted数组，一般的做法是先对其进行排序，然后处理；对于sorted数组，更简单，直接处理。</p>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/remove-duplicates-from-sorted-array/" target="_blank" rel="external">Remove Duplicates from Sorted Array</a>，描述如下：</p>
+<blockquote>
+<p>Given a sorted array, remove the duplicates in place such that each element appear only once and return the new length.<br>&nbsp;<br>Do not allocate extra space for another array, you must do this in place with constant memory.<br>&nbsp;<br>For example,<br>Given input array nums = <code>[1,1,2]</code>,<br>&nbsp;<br>Your function should return length = 2, with the first two elements of nums being 1 and 2 respectively. It doesn’t matter what you leave beyond the new length.</p>
+</blockquote>
+<p>纯属细节题，几乎不涉及任何算法，直接上代码：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer[]} nums</span></div><div class="line">    <span class="comment"># @return {integer}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">removeDuplicates</span><span class="params">(self, nums)</span>:</span></div><div class="line">        n = len(nums)</div><div class="line">        <span class="keyword">if</span> n == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> <span class="number">0</span></div><div class="line">        tail, cnt = <span class="number">0</span>, <span class="number">1</span></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">1</span>, n):</div><div class="line">            <span class="keyword">if</span> nums[i] != nums[tail]:</div><div class="line">                nums[tail+<span class="number">1</span>], tail = nums[i], tail+<span class="number">1</span></div><div class="line">                cnt = <span class="number">1</span></div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                <span class="keyword">if</span> cnt &lt; <span class="number">2</span>:</div><div class="line">                    nums[tail+<span class="number">1</span>], tail = nums[i], tail+<span class="number">1</span></div><div class="line">                cnt += <span class="number">1</span></div><div class="line">                    </div><div class="line">        <span class="keyword">return</span> tail+<span class="number">1</span></div></pre></figure>
+
+<p>还有一道衍生题：<a href="https://leetcode.com/problems/remove-duplicates-from-sorted-array-ii/" target="_blank" rel="external">Remove Duplicates from Sorted Array II</a>，解法类似，只是需要处理更多的细节，代码详见<a href="https://github.com/sadjason/LeetCode/blob/master/remove-duplicates-from-sorted-array.py" target="_blank" rel="external">这里</a>。</p>
+<h2 id="移除指定元素"><strong>移除指定元素</strong></h2>
+<p>数组中移除指定元素，easy！<br>LeetCode有题：<a href="https://leetcode.com/problems/remove-element/" target="_blank" rel="external">Remove Element</a>，描述如下：</p>
+<blockquote>
+<p>Given an array and a value, remove all instances of that value in place and return the new length.<br>&nbsp;<br>The order of elements can be changed. It doesn’t matter what you leave beyond the new length.</p>
+</blockquote>
+<p>我的Solution如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param    A       a list of integers</span></div><div class="line">    <span class="comment"># @param    elem    an integer, value need to be removed</span></div><div class="line">    <span class="comment"># @return an integer</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">removeElement</span><span class="params">(self, A, elem)</span>:</span></div><div class="line">        ret = <span class="number">0</span></div><div class="line">        <span class="keyword">for</span> item <span class="keyword">in</span> A:</div><div class="line">            <span class="keyword">if</span> item != elem:</div><div class="line">                A[ret] = item</div><div class="line">                ret += <span class="number">1</span></div><div class="line">	</div><div class="line">        <span class="keyword">return</span> ret</div></pre></figure>
+
+<h2 id="旋转数组"><strong>旋转数组</strong></h2>
+<h3 id="旋转一维数组"><strong>旋转一维数组</strong></h3>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/rotate-array/" target="_blank" rel="external">Rotate Array</a>，描述如下：</p>
+<blockquote>
+<p>Rotate an array of n elements to the right by k steps.<br>&nbsp;<br>For example, with n = 7 and k = 3, the array <code>[1,2,3,4,5,6,7]</code> is rotated to <code>[5,6,7,1,2,3,4]</code>.<br>&nbsp;<br>Note:<br>Try to come up as many solutions as you can, there are at least 3 different ways to solve this problem.</p>
+</blockquote>
+<p>虽然LeetCode将本题定性为<code>Easy</code>范畴，但是我觉得并不是那么容易。题目的<code>Note</code>部分讲到了至少有三种办法解决本题问题。</p>
+<p>我这里也给出我想到的三种方法：</p>
+<ol>
+<li>第一种最简单粗暴，整体范围平移向右平移数组<code>k%n</code>次；时间复杂度为<code>kO(n)</code>，空间复杂度为<code>O(1)</code>；</li>
+<li>第二种采用空间换时间的策略，使用<code>O(k)</code>的空间存储需要移到前面的子数组，再将前面的n-k个元素向后移动k个位置，时间复杂度为<code>O(n)</code>；</li>
+<li>第三种稍微复杂点，完全是笔者原创思想（当然很可能不是唯一的），时间复杂度为O(1)，空间复杂度为<code>O(n)</code>，如下会用图文说明。</li>
+</ol>
+<p>一图解千言，如下：<br><img src="/img/201507/20150703-01.png" width="530" height="340"></p>
+<p>简单来说，本题的根本目的是将后k个元素移到数组前列，而之前的前n-k个元素移到数组的末尾；我的思路是慢慢儿来，后k个元素从后往前慢慢拱…</p>
+<p>处理过程中需要注意k值的处理，我的Solution代码如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer[]} nums</span></div><div class="line">    <span class="comment"># @param {integer} k</span></div><div class="line">    <span class="comment"># @return {void} Do not return anything, modify nums in-place instead.</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">rotate</span><span class="params">(self, nums, k)</span>:</span></div><div class="line">        start, stop = <span class="number">0</span>, len(nums)</div><div class="line">        </div><div class="line">        <span class="keyword">while</span> start &lt; stop:</div><div class="line">            <span class="keyword">if</span> stop - start &lt;= <span class="number">1</span>:</div><div class="line">                <span class="keyword">return</span></div><div class="line">            n = stop - start</div><div class="line">            k = k % n</div><div class="line">            <span class="keyword">if</span> k == <span class="number">0</span>:</div><div class="line">                <span class="keyword">return</span></div><div class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> xrange(k):</div><div class="line">                nums[start+i], nums[stop-k+i] = nums[stop-k+i], nums[start+i]</div><div class="line">            start += k</div></pre></figure>
+
+<h3 id="旋转二维数组"><strong>旋转二维数组</strong></h3>
+<p>LeetCode有题：<a href="https://leetcode.com/problems/rotate-image/" target="_blank" rel="external">Rotate Image</a>，描述如下：</p>
+<blockquote>
+<p>You are given an n x n 2D matrix representing an image.<br>&nbsp;<br>Rotate the image by 90 degrees (clockwise).<br>&nbsp;<br>Follow up:<br>Could you do this in-place?</p>
+</blockquote>
+<p>和上一道题一样，纯属细节题，细心就可以搞定。基本策略是由外向内一层一层旋转，如下给出的是递归版本Solution代码：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer[][]} matrix</span></div><div class="line">    <span class="comment"># @return {void} Do not return anything, modify matrix in-place instead.</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">rotate</span><span class="params">(self, matrix)</span>:</span></div><div class="line">        n = len(matrix)</div><div class="line">        self.rotateMatrix(matrix, n, <span class="number">1</span>)</div><div class="line">	</div><div class="line">    <span class="comment"># matrix表被旋转的matrix，layer表第几层</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">rotateMatrix</span><span class="params">(self, matrix, n, layer)</span>:</span></div><div class="line">        <span class="keyword">if</span> layer &gt; n / <span class="number">2</span>:</div><div class="line">            <span class="keyword">return</span></div><div class="line">        i = layer-<span class="number">1</span></div><div class="line">        cnt = n - (layer-<span class="number">1</span>) * <span class="number">2</span> - <span class="number">1</span></div><div class="line">        j = i</div><div class="line">        <span class="keyword">while</span> j &lt; i + cnt:</div><div class="line">            temp = matrix[i][j]</div><div class="line">            matrix[i][j] = matrix[n-<span class="number">1</span>-j][i]</div><div class="line">            matrix[n-<span class="number">1</span>-j][i] = matrix[n-<span class="number">1</span>-i][n-<span class="number">1</span>-j]</div><div class="line">            matrix[n-<span class="number">1</span>-i][n-<span class="number">1</span>-j] = matrix[j][n-<span class="number">1</span>-i]</div><div class="line">            matrix[j][n-<span class="number">1</span>-i] = temp</div><div class="line">            j += <span class="number">1</span></div><div class="line">        self.rotateMatrix(matrix, n, layer+<span class="number">1</span>)</div></pre></figure>
+
+<p>改为迭代版本也很容易。</p>
+<h2 id="螺旋矩阵"><strong>螺旋矩阵</strong></h2>
+<p>生成「螺旋矩阵」也是一个非常古老的算法题目，在很多面试书籍中都出现了，譬如《程序员面试宝典》，比较简单，不需要任何高深算法，纯属细节题，LeetCode中有两道相关的题目：</p>
+<ul>
+<li><a href="https://leetcode.com/problems/spiral-matrix/" target="_blank" rel="external">Spiral Matrix</a></li>
+<li><a href="https://leetcode.com/problems/spiral-matrix-ii/" target="_blank" rel="external">Spiral Matrix II</a></li>
+</ul>
+<p>这两道题分别面向<em>m</em>×<em>n</em>和<em>n</em>×<em>n</em>正方形矩阵，完全可以使用同一套代码，本文就列举，详见<a href="https://github.com/sadjason/LeetCode/blob/master/spiral-matrix.py" target="_blank" rel="external">这里</a>。</p>
+<h3 id="总结"><strong>总结</strong></h3>
+<p>本文涉及的Array相关的算法题目都非常简单基础，除了「最大子数组」和「最大毗邻积」问题涉及到「动态规划」思想，其他题目或者使用二分法解决问题，或者纯属细节题（不涉及任何算法）。</p>
+<p>但Array相关问题并不是这么简单，在其他的博文中会介绍更加复杂的算法题目和对应的Solution。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Array/">Array</a><a href="/tags/LeetCode/">LeetCode</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/06/28/Array-and-Algorithm/" data-title="Array和算法 第一弹 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/07/04/Array-and-Algorithm-II/" title="Array和算法 第二弹">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  Array和算法 第二弹</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/06/28/Container-With-Most-Water/"  title="Container With Most Water">
+ <strong>NEXT:</strong><br/> 
+ <span>Container With Most Water
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/06/28/Array-and-Algorithm/" data-title="Array和算法 第一弹" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Search_Insert_Position"><span class="toc-number">1.</span> <span class="toc-text">Search Insert Position</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#查找指定值元素"><span class="toc-number">2.</span> <span class="toc-text">查找指定值元素</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#二维数组查找"><span class="toc-number">2.1.</span> <span class="toc-text">二维数组查找</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#一维数组花样查找"><span class="toc-number">2.2.</span> <span class="toc-text">一维数组花样查找</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#重复元素处理"><span class="toc-number">3.</span> <span class="toc-text">重复元素处理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Contains_Duplicate"><span class="toc-number">3.1.</span> <span class="toc-text">Contains Duplicate</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#寻找特殊元素"><span class="toc-number">4.</span> <span class="toc-text">寻找特殊元素</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#旋转数组中寻找最小元素"><span class="toc-number">4.1.</span> <span class="toc-text">旋转数组中寻找最小元素</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#寻找Peak元素"><span class="toc-number">4.2.</span> <span class="toc-text">寻找Peak元素</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#寻找大多数元素"><span class="toc-number">4.3.</span> <span class="toc-text">寻找大多数元素</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最大子数组"><span class="toc-number">5.</span> <span class="toc-text">最大子数组</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最大毗邻积"><span class="toc-number">6.</span> <span class="toc-text">最大毗邻积</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#中位数"><span class="toc-number">7.</span> <span class="toc-text">中位数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#合并数组"><span class="toc-number">8.</span> <span class="toc-text">合并数组</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#重复元素处理-1"><span class="toc-number">9.</span> <span class="toc-text">重复元素处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#移除指定元素"><span class="toc-number">10.</span> <span class="toc-text">移除指定元素</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#旋转数组"><span class="toc-number">11.</span> <span class="toc-text">旋转数组</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#旋转一维数组"><span class="toc-number">11.1.</span> <span class="toc-text">旋转一维数组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#旋转二维数组"><span class="toc-number">11.2.</span> <span class="toc-text">旋转二维数组</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#螺旋矩阵"><span class="toc-number">12.</span> <span class="toc-text">螺旋矩阵</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-number">12.1.</span> <span class="toc-text">总结</span></a></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

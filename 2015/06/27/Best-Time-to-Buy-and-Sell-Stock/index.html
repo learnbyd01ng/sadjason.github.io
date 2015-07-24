@@ -1,0 +1,510 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Best Time to Buy and Sell Stock | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="写在前面
+中国最近股市新闻颇多，LeetCode中有几道非常典型的与股票相关的题目：
+
+Best Time to Buy and Sell Stock
+Best Time to Buy and Sell Stock II
+Best Time to Buy and Sell Stock III
+Bes">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/06/27/Best-Time-to-Buy-and-Sell-Stock/" title="Best Time to Buy and Sell Stock" itemprop="url">Best Time to Buy and Sell Stock</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-06-27T10:15:22.000Z" itemprop="datePublished">2015-06-27</time>
+    更新日期:<time datetime="2015-07-04T08:52:32.000Z" itemprop="dateModified">2015-07-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Best_Time_to_Buy_and_Sell_Stock"><span class="toc-number">2.</span> <span class="toc-text">Best Time to Buy and Sell Stock</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Best_Time_to_Buy_and_Sell_Stock_II"><span class="toc-number">3.</span> <span class="toc-text">Best Time to Buy and Sell Stock II</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Best_Time_to_Buy_and_Sell_Stock_III"><span class="toc-number">4.</span> <span class="toc-text">Best Time to Buy and Sell Stock III</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Best_Time_to_Buy_and_Sell_Stock_IV"><span class="toc-number">5.</span> <span class="toc-text">Best Time to Buy and Sell Stock IV</span></a></li></ol>
+		</div>
+		
+		<h2 id="写在前面"><strong>写在前面</strong></h2>
+<p>中国最近股市新闻颇多，LeetCode中有几道非常典型的与股票相关的题目：</p>
+<ul>
+<li><a href="https://leetcode.com/problems/best-time-to-buy-and-sell-stock/" target="_blank" rel="external">Best Time to Buy and Sell Stock</a></li>
+<li><a href="https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/" target="_blank" rel="external">Best Time to Buy and Sell Stock II</a></li>
+<li><a href="https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/" target="_blank" rel="external">Best Time to Buy and Sell Stock III</a></li>
+<li><a href="https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv/" target="_blank" rel="external">Best Time to Buy and Sell Stock IV</a></li>
+</ul>
+<p>这几道题围绕的场景是相同的，但是每道题的解法又大不相同，本文就来对这些问题进行集中分析。</p>
+<p>一如既往，本文所有算法全部使用Python语言编码。</p>
+<h2 id="Best_Time_to_Buy_and_Sell_Stock"><strong>Best Time to Buy and Sell Stock</strong></h2>
+<p>题目描述如下：</p>
+<blockquote>
+<p>Say you have an array for which the <em>i</em><sup>th</sup> element is the price of a given stock on day <em>i</em>.<br>&nbsp;<br>If you were only permitted to complete at most one transaction (ie, buy one and sell one share of the stock), design an algorithm to find the maximum profit.</p>
+</blockquote>
+<p>印象中《算法导论》中在介绍「最大子数组」时引入了这道题，一来说明这道题非常经典，二来说明本题的本质是「最大子数组问题」，笔者曾在博客《<a href="/2015/06/28/Array-and-Algorithm/#最大子数组">一些基础Array算法题</a>》中阐述过「最大子数组问题」，这种问题比较好的做法（也许是最好的做法）是采用「动态规划」策略；简单来说，本题属于一维DP问题，因此本题的Solution代码如下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer[]} prices</span></div><div class="line">    <span class="comment"># @return {integer}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">maxProfit</span><span class="params">(self, prices)</span>:</span></div><div class="line">        n = len(prices)</div><div class="line">        sell = [<span class="number">0</span>] * n      <span class="comment"># sell[i]表示第i天卖掉股票的最大收益（显然股票需要在第i天前买入）</span></div><div class="line">        ret = <span class="number">0</span></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">1</span>, n):</div><div class="line">            p = prices[i] - prices[i-<span class="number">1</span>]</div><div class="line">            sell[i] = max(sell[i-<span class="number">1</span>]+p, p)</div><div class="line">            ret = max(sell[i], ret)</div><div class="line">        <span class="keyword">return</span> ret</div></pre></figure>
+
+<p>显然，代码中消耗<code>O(n)</code>空间的sell数组是可以省掉的，因此可以简化一下：</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer[]} prices</span></div><div class="line">    <span class="comment"># @return {integer}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">maxProfit</span><span class="params">(self, prices)</span>:</span></div><div class="line">        ret, profit = <span class="number">0</span>, <span class="number">0</span></div><div class="line">        ret = <span class="number">0</span></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">1</span>, len(prices)):</div><div class="line">            p = prices[i] - prices[i-<span class="number">1</span>]</div><div class="line">            profit = max(profit+p, p)</div><div class="line">            ret = max(profit, ret)</div><div class="line">        <span class="keyword">return</span> ret</div></pre></figure>
+
+<h2 id="Best_Time_to_Buy_and_Sell_Stock_II"><strong>Best Time to Buy and Sell Stock II</strong></h2>
+<p>题目描述如下：</p>
+<blockquote>
+<p>Say you have an array for which the <em>i</em><sup>th</sup> element is the price of a given stock on day <em>i</em>.<br>&nbsp;<br>Design an algorithm to find the maximum profit. You may complete as many transactions as you like (ie, buy one and sell one share of the stock multiple times). However, you may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).</p>
+</blockquote>
+<p>本题与上一道题相比少了一个约束：只能进行一次交易（买一次卖一次），对于没有约束的本题而言，如何解题呢？更好办，贪心算法！</p>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer[]} prices</span></div><div class="line">    <span class="comment"># @return {integer}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">maxProfit</span><span class="params">(self, prices)</span>:</span></div><div class="line">        ret = <span class="number">0</span></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">1</span>, len(prices)):</div><div class="line">            c = prices[i] - prices[i-<span class="number">1</span>]</div><div class="line">            <span class="keyword">if</span> c &gt; <span class="number">0</span>:</div><div class="line">                ret += c</div><div class="line">        <span class="keyword">return</span> ret</div></pre></figure>
+
+<h2 id="Best_Time_to_Buy_and_Sell_Stock_III"><strong>Best Time to Buy and Sell Stock III</strong></h2>
+<p>题目描述如下：</p>
+<blockquote>
+<p>Say you have an array for which the <em>i</em><sup>th</sup> element is the price of a given stock on day <em>i</em>.<br>&nbsp;<br>Design an algorithm to find the maximum profit. You may complete at most two transactions.<br>&nbsp;<br>Note:<br>You may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).</p>
+</blockquote>
+<p>好吧，本题修改了约束，稍微变态一点：你可以进行两次交易。本题的难度相对于第一题俨然上升了一个台阶，笔者自己没能想出比较好的对策，参考网络资源，这才整理出了如下思路：</p>
+<ol>
+<li>分别以「动态规划」策略计算第i天买入股票和卖出股票的最大收益buy和sell，即buy[i]表示第i天买入股票（第i天后卖出）的最大收益，<code>sell[i]</code>表示第i天卖出（第i天前买入）的最大收益；</li>
+<li>基于sell和buy分别计算<strong>第i天前</strong>（包括第i天）卖出股票和<strong>第i天后</strong>（包括第i天）买入的最大收益profits1和profits2，即<code>profits1[i]</code>表示<strong>第i天前</strong>卖出股票的最大收益，<code>profits2[i]</code>表示<strong>第i天后</strong>买入股票的最大收益。</li>
+<li>我们需要的结果ret=max(profits1[i]+profits2[i], 0&lt;=i&lt;n)；</li>
+</ol>
+<figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer[]} prices</span></div><div class="line">    <span class="comment"># @return {integer}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">maxProfit</span><span class="params">(self, prices)</span>:</span></div><div class="line">        n = len(prices)</div><div class="line">        <span class="keyword">if</span> n &lt; <span class="number">2</span>:</div><div class="line">            <span class="keyword">return</span> <span class="number">0</span></div><div class="line">	</div><div class="line">        sell = [<span class="number">0</span>] * n</div><div class="line">        <span class="comment"># sell[i]表示第i天卖掉股票（显然需要在i天前买入）的最大收益</span></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">1</span>, n):</div><div class="line">            p = prices[i] - prices[i-<span class="number">1</span>]</div><div class="line">            sell[i] = max(sell[i-<span class="number">1</span>] + p, p)</div><div class="line">	</div><div class="line">        profits1 = sell</div><div class="line">        <span class="comment"># profits1[i]表示i天内卖掉的最大利润</span></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">1</span>, n):</div><div class="line">            profits1[i] = max(profits1[i], profits1[i-<span class="number">1</span>])</div><div class="line">	</div><div class="line">        buy = [<span class="number">0</span>] * n</div><div class="line">        <span class="comment"># buy[i]表示第i天买入股票（显然需要在i天后卖出）的最大收益</span></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(n-<span class="number">2</span>, -<span class="number">1</span>, -<span class="number">1</span>):</div><div class="line">            p = prices[i+<span class="number">1</span>] - prices[i]</div><div class="line">            buy[i] = max(buy[i+<span class="number">1</span>] + p, p)</div><div class="line"></div><div class="line">        profits2 = buy</div><div class="line">        <span class="comment"># profits2[i]表示第i天后买入股票的最大利益</span></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(n-<span class="number">2</span>, -<span class="number">1</span>, -<span class="number">1</span>):</div><div class="line">            profits2[i] = max(profits2[i+<span class="number">1</span>], profits2[i])</div><div class="line">        </div><div class="line">        ret = <span class="number">0</span></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">0</span>, n):</div><div class="line">            ret = max(ret, profits1[i] + profits2[i])</div><div class="line">        <span class="keyword">return</span> ret</div></pre></figure>
+
+<p>本题仍然属于一维DP问题，只是处理更复杂了。本Solution代码有些啰嗦，但我觉得逻辑还是蛮清晰的。</p>
+<h2 id="Best_Time_to_Buy_and_Sell_Stock_IV"><strong>Best Time to Buy and Sell Stock IV</strong></h2>
+<p>题目描述如下：</p>
+<blockquote>
+<p>Say you have an array for which the <em>i<sup>th</sup></em> element is the price of a given stock on day <em>i</em>.<br>&nbsp;<br>Design an algorithm to find the maximum profit. You may complete at most <strong>k</strong> transactions.<br>&nbsp;<br>Note:<br>You may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).</p>
+</blockquote>
+<p>本题更变态了，修改约束：您最多可以进行<strong>k</strong>次交易。</p>
+<p>笔者还没能想到比较好的解题方法，网上的思路大概都一样，<a href="http://segmentfault.com/a/1190000002565570" target="_blank" rel="external">这篇</a>写得相对比较详细准确。</p>
+<p>代码以后补上吧，因为今天很忙！</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Array/">Array</a><a href="/tags/LeetCode/">LeetCode</a><a href="/tags/Dynamic-Programming/">Dynamic Programming</a><a href="/tags/Greedy/">Greedy</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/06/27/Best-Time-to-Buy-and-Sell-Stock/" data-title="Best Time to Buy and Sell Stock | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/06/28/Container-With-Most-Water/" title="Container With Most Water">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  Container With Most Water</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/06/26/objc-new-features-in-2015/"  title="2015 Objective-C 新特性">
+ <strong>NEXT:</strong><br/> 
+ <span>2015 Objective-C 新特性
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/06/27/Best-Time-to-Buy-and-Sell-Stock/" data-title="Best Time to Buy and Sell Stock" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Best_Time_to_Buy_and_Sell_Stock"><span class="toc-number">2.</span> <span class="toc-text">Best Time to Buy and Sell Stock</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Best_Time_to_Buy_and_Sell_Stock_II"><span class="toc-number">3.</span> <span class="toc-text">Best Time to Buy and Sell Stock II</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Best_Time_to_Buy_and_Sell_Stock_III"><span class="toc-number">4.</span> <span class="toc-text">Best Time to Buy and Sell Stock III</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Best_Time_to_Buy_and_Sell_Stock_IV"><span class="toc-number">5.</span> <span class="toc-text">Best Time to Buy and Sell Stock IV</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

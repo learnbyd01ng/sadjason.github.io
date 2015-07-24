@@ -1,0 +1,529 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Swift控制语句 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="Control Flow指的是『逻辑控制语句』，包括if、if-else、for、for-in、while、do-while、switch等。其中大部分和OC中差不多，但Swift在某些方便增强了控制语句的功能。譬如for-in中引入..&amp;lt;和...操作符；switch语句更是大不一样了。本文也">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/05/05/Swift-Control-Flow/" title="Swift控制语句" itemprop="url">Swift控制语句</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-05-05T13:30:57.000Z" itemprop="datePublished">2015-05-05</time>
+    更新日期:<time datetime="2015-07-04T08:59:46.000Z" itemprop="dateModified">2015-07-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#For-In"><span class="toc-number">1.</span> <span class="toc-text">For-In</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Switch"><span class="toc-number">2.</span> <span class="toc-text">Switch</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#不存在隐式fallthrough"><span class="toc-number">2.1.</span> <span class="toc-text">不存在隐式fallthrough</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#范围匹配"><span class="toc-number">2.2.</span> <span class="toc-text">范围匹配</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#元组"><span class="toc-number">2.3.</span> <span class="toc-text">元组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Value_Bindings"><span class="toc-number">2.4.</span> <span class="toc-text">Value Bindings</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Where语句"><span class="toc-number">2.5.</span> <span class="toc-text">Where语句</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#控制转移语句"><span class="toc-number">3.</span> <span class="toc-text">控制转移语句</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#switch与break"><span class="toc-number">3.1.</span> <span class="toc-text">switch与break</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#fallthrough"><span class="toc-number">3.2.</span> <span class="toc-text">fallthrough</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Labeled_Statements"><span class="toc-number">3.3.</span> <span class="toc-text">Labeled Statements</span></a></li></ol></li></ol>
+		</div>
+		
+		<p>Control Flow指的是『逻辑控制语句』，包括if、if-else、for、for-in、while、do-while、switch等。其中大部分和OC中差不多，但Swift在某些方便增强了控制语句的功能。譬如for-in中引入<code>..&lt;</code>和<code>...</code>操作符；switch语句更是大不一样了。本文也只针对for-in和switch语句展开阐述。</p>
+<h2 id="For-In"><strong>For-In</strong></h2>
+<p>for-in语句基本上和OC中的for-in语句被太多区别，但新增了两个符号：<code>..&lt;</code>（类似于Python中的<code>range()</code>）和<code>...</code>：</p>
+<ul>
+<li><code>..&lt;</code>描述的区间是半闭区间（左闭右开），即<code>0..&lt;2</code>表示<code>[0,2)</code>（0&lt;=x&lt;2，其中x为整数）；</li>
+<li><code>...</code>描述的区间是全闭区间（左闭右闭），即<code>0...2</code>表示<code>[0,2]</code>（0&lt;=x&lt;=2，其中x为整数）；</li>
+</ul>
+<p>P.S：Swift刚开始推出来的时候，<code>..&lt;</code>的原型是<code>..</code>，好在很快在后续版本中改成了<code>..&lt;</code>，否则实在是个灾难！看着一门语言一点点进步，最后发展成一门伟大的语言是一件挺棒的事情，Swift会发展成一门伟大的语言吗？我想会！<br>P.S：我个人觉得<code>...</code>不是一个很好的设计，为什么要这么一个操作符呢？希望以后能找到答案吧！</p>
+<h2 id="Switch"><strong>Switch</strong></h2>
+<p>Switch语句和if语句都属于<code>条件语句</code>，switch会尝试把某个值与若干个模式（pattern）进行匹配。根据第一个匹配成功的模式，switch语句会执行对应的代码。当有可能的情况较多时，通常用switch语句替换if语句，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">switch</span> someValueToConsider {</div><div class="line"><span class="keyword">case</span> value1:</div><div class="line">    <span class="comment">// respond to value1</span></div><div class="line"><span class="keyword">case</span> value2, value3:</div><div class="line">    <span class="comment">// respond to value2 or value3</span></div><div class="line"><span class="keyword">default</span>:</div><div class="line">    <span class="comment">// otherwise, do something else</span></div><div class="line">}</div></pre></figure>
+
+<p>switch语句都由多个case构成。为了匹配某些更特定的值，Swift提供了几种更复杂的匹配模式，这些模式将在本节的稍后部分提到。</p>
+<p>Swift规定switch语句必须是「完备的」。这就是说，每一个可能的值都必须至少有一个<code>case</code>块与之对应。在某些不可能涵盖所有值的情况下，你可以使用默认<code>default</code>块满足该要求，这个默认块必须在switch语句的最后面。</p>
+<h3 id="不存在隐式fallthrough"><strong>不存在隐式fallthrough</strong></h3>
+<p>在C和OC中，写switch语句时，一定要确保在每个<code>case</code>语句的末尾添加一句<code>break;</code>，这样才能确保switch代码块终止，否则会执行下一个case/default块，这种行为在Swift中被称为「fallthrough」。</p>
+<p>与C语言和OC中的switch语句不同，在Swift中，当匹配的<code>case</code>块中的代码执行完毕后，程序会自动终止switch语句，而不会继续执行下一个<code>case</code>块。这也就是说，不需要在<code>case</code>块中显式地使用break语句，这使得switch语句更安全、更易用，也避免了因忘记写<code>break</code>语句而产生的错误。</p>
+<p>除此之外，Swift还规定每一个case语句中都必须包含至少一条语句，像下面这样书写代码是无效的，因为第一个case块是空的：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">let</span> anotherCharacter: <span class="type">Character</span> = <span class="string">"a"</span></div><div class="line"><span class="keyword">switch</span> anotherCharacter {</div><div class="line"><span class="keyword">case</span> <span class="string">"a"</span>:</div><div class="line"><span class="keyword">case</span> <span class="string">"A"</span>:</div><div class="line">    <span class="built_in">println</span>(<span class="string">"The letter A"</span>)</div><div class="line"><span class="keyword">default</span>:</div><div class="line">    <span class="built_in">println</span>(<span class="string">"Not the letter A"</span>)</div><div class="line">}</div><div class="line"><span class="comment">// this will report a compile-time error</span></div></pre></figure>
+
+<p>一个case也可以包含多个匹配模式，不同的pattern用逗号<code>,</code>分开。</p>
+<h3 id="范围匹配"><strong>范围匹配</strong></h3>
+<p><code>case</code>块的pattern可以是一个范围，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">let</span> <span class="built_in">count</span> = <span class="number">3_000_000_000_000</span></div><div class="line"><span class="keyword">let</span> countedThings = <span class="string">"stars in the Milky Way"</span></div><div class="line"><span class="keyword">var</span> naturalCount: <span class="type">String</span></div><div class="line"><span class="keyword">switch</span> <span class="built_in">count</span> {</div><div class="line"><span class="keyword">case</span> <span class="number">0</span>:</div><div class="line">    naturalCount = <span class="string">"no"</span></div><div class="line"><span class="keyword">case</span> <span class="number">1</span>...<span class="number">3</span>:</div><div class="line">    naturalCount = <span class="string">"a few"</span></div><div class="line"><span class="keyword">case</span> <span class="number">4</span>...<span class="number">9</span>:</div><div class="line">    naturalCount = <span class="string">"several"</span></div><div class="line"><span class="keyword">case</span> <span class="number">10</span>...<span class="number">99</span>:</div><div class="line">    naturalCount = <span class="string">"tens of"</span></div><div class="line"><span class="keyword">case</span> <span class="number">100</span>...<span class="number">999</span>:</div><div class="line">    naturalCount = <span class="string">"hundreds of"</span></div><div class="line"><span class="keyword">case</span> <span class="number">1000</span>...<span class="number">999_999</span>:</div><div class="line">    naturalCount = <span class="string">"thousands of"</span></div><div class="line"><span class="keyword">default</span>:</div><div class="line">    naturalCount = <span class="string">"millions and millions of"</span></div><div class="line">}</div><div class="line"><span class="built_in">println</span>(<span class="string">"There are <span class="subst">\(naturalCount)</span> <span class="subst">\(countedThings)</span>."</span>)</div><div class="line"><span class="comment">// prints "There are millions and millions of stars in the Milky Way."</span></div></pre></figure>
+
+<h3 id="元组"><strong>元组</strong></h3>
+<p>你可以使用元组在同一个<code>switch</code>语句中测试多个值。元组中的元素可以是值，也可以是范围。另外，使用下划线<code>_</code>来匹配所有可能的值，如下例子展示了如何使用<code>(Int, Int)</code>类型的元组来分类下图中的点<code>(x, y)</code>：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">let</span> somePoint = (<span class="number">1</span>, <span class="number">1</span>)</div><div class="line"><span class="keyword">switch</span> somePoint {</div><div class="line"><span class="keyword">case</span> (<span class="number">0</span>, <span class="number">0</span>):</div><div class="line">    <span class="built_in">println</span>(<span class="string">"(0,0) is at the origin"</span>)</div><div class="line"><span class="keyword">case</span> (<span class="number">_</span>, <span class="number">0</span>):</div><div class="line">    <span class="built_in">println</span>(<span class="string">"(<span class="subst">\(somePoint.<span class="number">0</span>)</span>, 0) is on the x-axis"</span>)</div><div class="line"><span class="keyword">case</span> (<span class="number">0</span>, <span class="number">_</span>):</div><div class="line">    <span class="built_in">println</span>(<span class="string">"(0, <span class="subst">\(somePoint.<span class="number">1</span>)</span>) is on the y-axis"</span>)</div><div class="line"><span class="keyword">case</span> (-<span class="number">2</span>...<span class="number">2</span>, -<span class="number">2</span>...<span class="number">2</span>):</div><div class="line">    <span class="built_in">println</span>(<span class="string">"(<span class="subst">\(somePoint.<span class="number">0</span>)</span>, <span class="subst">\(somePoint.<span class="number">1</span>)</span>) is inside the box"</span>)</div><div class="line"><span class="keyword">default</span>:</div><div class="line">    <span class="built_in">println</span>(<span class="string">"(<span class="subst">\(somePoint.<span class="number">0</span>)</span>, <span class="subst">\(somePoint.<span class="number">1</span>)</span>) is outside of the box"</span>)</div><div class="line">}</div><div class="line"><span class="comment">// prints "(1, 1) is inside the box"</span></div></pre></figure>
+
+<p><img src="/img/201505/QQ20150516-1.png" width="282" height="282/"></p>
+<p>在上面的例子中,switch 语句会判断某个点是否是原点(0, 0)，是否在红色的x轴上，是否在黄色y轴上，是否在一个以原点为中心的4x4的矩形里，或者在这个矩形外面。</p>
+<p>不像C语言，Swift允许多个case匹配同一个值。实际上，在这个例子中，点(0, 0)可以匹配所有四个case。但是，<strong>如果存在多个匹配，那么只会执行第一个被匹配到的case块</strong>。考虑点(0, 0)会首先匹配<code>case (0, 0)</code>，因此剩下的能够匹配(0, 0)的case块都会被忽视掉。</p>
+<h3 id="Value_Bindings"><strong>Value Bindings</strong></h3>
+<p>在多个值匹配（使用tuple）时，我们常常会需要用到被检测值的局部值，switch语句还允许在case中进行value binding，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">let</span> anotherPoint = (<span class="number">2</span>, <span class="number">0</span>)</div><div class="line"><span class="keyword">switch</span> anotherPoint {</div><div class="line"><span class="keyword">case</span> (<span class="keyword">let</span> x, <span class="number">0</span>):</div><div class="line">    <span class="built_in">println</span>(<span class="string">"on the x-axis with an x value of <span class="subst">\(x)</span>"</span>)</div><div class="line"><span class="keyword">case</span> (<span class="number">0</span>, <span class="keyword">let</span> y):</div><div class="line">    <span class="built_in">println</span>(<span class="string">"on the y-axis with an y value of <span class="subst">\(y)</span>"</span>)</div><div class="line"><span class="keyword">case</span> (x, y):</div><div class="line">    <span class="built_in">println</span>(<span class="string">"somewhere else at (<span class="subst">\(x)</span>, <span class="subst">\(y)</span>)"</span>)</div><div class="line">}</div><div class="line"><span class="comment">// prints "on the x-axis with an x value of 2"</span></div></pre></figure>
+
+<p>这个例子中，switch语句会判断某个点是否在x轴和y轴上，或者在别的地方。</p>
+<p><img src="/img/201505/QQ20150516-2.png" width="282" height="282/"></p>
+<h3 id="Where语句"><strong>Where语句</strong></h3>
+<p>Swift中还有一个关键字<code>where</code>，常用来处理更复杂的模式匹配；在case中使用<code>where</code>关键字引导的where语句可以用来判断额外的条件：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">let</span> yetAnotherPoint = (<span class="number">1</span>, -<span class="number">1</span>)</div><div class="line"><span class="keyword">switch</span> yetAnotherPoint {</div><div class="line"><span class="keyword">case</span> <span class="keyword">let</span> (x, y) <span class="keyword">where</span> x == y:</div><div class="line">    <span class="built_in">println</span>(<span class="string">"<span class="subst">\(x)</span>, <span class="subst">\(y)</span> is on the line x == y"</span>)</div><div class="line"><span class="keyword">case</span> <span class="keyword">let</span> (x, y) <span class="keyword">where</span> x == -y:</div><div class="line">    <span class="built_in">println</span>(<span class="string">"<span class="subst">\(x)</span>, <span class="subst">\(y)</span> is on the line x == -y"</span>)</div><div class="line"><span class="keyword">case</span> <span class="keyword">let</span> (x, y):</div><div class="line">    <span class="built_in">println</span>(<span class="string">"<span class="subst">\(x)</span>, <span class="subst">\(y)</span> is just some arbitrary point"</span>)</div><div class="line">}</div></pre></figure>
+
+<p>这个例子中，switch语句会判断某个点是否在绿线（y=x）上，是否在紫线（y=-x）上，或者不在对角线上。</p>
+<p><img src="/img/201505/QQ20150516-3.png" width="282" height="282/"></p>
+<h2 id="控制转移语句"><strong>控制转移语句</strong></h2>
+<p>控制转移代码能改变你代码的执行顺序，通过它你可以控制代码的跳转，在Swift中，有四种控制转移语句：</p>
+<ul>
+<li>continue</li>
+<li>break</li>
+<li>fallthrough</li>
+<li>return</li>
+</ul>
+<p>除此之外，Swift还引入「labeled statements」，用来帮助更灵活的控制转移。</p>
+<p>continue、break、return这几个控制语句与我们在C、OC中所了解的控制语句相比没啥不同，这里就不赘述了；所以本节内容包括：</p>
+<ul>
+<li>switch与break；</li>
+<li>switch与fallthrough；</li>
+<li>labeled statements；</li>
+</ul>
+<h3 id="switch与break"><strong>switch与break</strong></h3>
+<p>上文已经提到，在C和OC中，常常需要在<code>case</code>块后面添加<code>break;</code>代码，因为如果不这样，switch语句就紧接着执行后续的case语句（注意，后续的case pattern可不会被检查啊，而是直接执行后续case的body代码）；但在Swift中，不需要这样，因为在Swift的switch语句中，当匹配的case块中的代码执行完毕后，程序会自动终止switch语句，而不会继续执行下一个case块。</p>
+<p>所以按理说是不需要在switch语句中显式使用break指令的。但事实并非这样，因为Swift还有一个要求，规定每一个case语句中都必须包含至少一条语句。然而，在某些情况下的某些case分支里，可能真的啥都不想干，其他语言使用<code>;</code>了事，但Swift语句中不需要使用<code>;</code>，此时一般使用break语句代替，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">let</span> numberSymbol: <span class="type">Character</span> = <span class="string">"三"</span>  <span class="comment">// Simplified Chinese for the number 3</span></div><div class="line"><span class="keyword">var</span> possibleIntegerValue: <span class="type">Int</span>?</div><div class="line"><span class="keyword">switch</span> numberSymbol {</div><div class="line"><span class="keyword">case</span> <span class="string">"1"</span>, <span class="string">"١"</span>, <span class="string">"一"</span>, <span class="string">"๑"</span>:</div><div class="line">    possibleIntegerValue = <span class="number">1</span></div><div class="line"><span class="keyword">case</span> <span class="string">"2"</span>, <span class="string">"٢"</span>, <span class="string">"二"</span>, <span class="string">"๒"</span>:</div><div class="line">    possibleIntegerValue = <span class="number">2</span></div><div class="line"><span class="keyword">case</span> <span class="string">"3"</span>, <span class="string">"٣"</span>, <span class="string">"三"</span>, <span class="string">"๓"</span>:</div><div class="line">    possibleIntegerValue = <span class="number">3</span></div><div class="line"><span class="keyword">case</span> <span class="string">"4"</span>, <span class="string">"٤"</span>, <span class="string">"四"</span>, <span class="string">"๔"</span>:</div><div class="line">    possibleIntegerValue = <span class="number">4</span></div><div class="line"><span class="keyword">default</span>:</div><div class="line">    <span class="keyword">break</span></div><div class="line">}</div></pre></figure>
+
+<h3 id="fallthrough"><strong>fallthrough</strong></h3>
+<p>本节简单谈谈fallthrough，这可是新玩意儿。</p>
+<p>上文已经多次提及，Swift语言中的switch不会从上一个case分支落入到下一个case分支中。相反，只要第一个匹配到的case分支完成了它需要执行的语句，整个switch代码块完成了它的执行。相比之下，C语言要求你显示的插入break语句到每个switch分支的末尾来阻止自动落入到下 一个case分支中。Swift语言的这种避免默认落入到下一个分支中的特性意味着它switch功能要比C语言的更加清晰和可预测，可以避免无意识地执行多个case分支从而引发的错误。</p>
+<p>但有时候确实需要人为的fallthrough，此时<code>fallthrough</code>关键字就派上用场了，如下：</p>
+<figure class="highlight Swift"><pre><div class="line"><span class="keyword">let</span> integerToDescribe = <span class="number">5</span></div><div class="line"><span class="keyword">var</span> description = <span class="string">"The number <span class="subst">\(integerToDescribe)</span> is"</span></div><div class="line"><span class="keyword">switch</span> integerToDescribe {</div><div class="line"><span class="keyword">case</span> <span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">7</span>, <span class="number">11</span>, <span class="number">13</span>, <span class="number">17</span>, <span class="number">19</span>:</div><div class="line">    description += <span class="string">"a prime number, and also"</span></div><div class="line">    <span class="keyword">fallthrough</span></div><div class="line"><span class="keyword">default</span>:</div><div class="line">    description += <span class="string">" an integer"</span></div><div class="line">}</div><div class="line"><span class="built_in">println</span>(description)</div><div class="line"><span class="comment">// prints "The number 5 is a prime number, and also an integer."</span></div></pre></figure>
+
+<p>值得一提的是，fallthrough关键字不会检查它下一个将会落入执行的case中的匹配条件。fallthrough简单地使代码执行继续连接到下一个case中的执行代码，这和C语言标准中的switch语句特性是一样的。</p>
+<h3 id="Labeled_Statements"><strong>Labeled Statements</strong></h3>
+<p>在Swift语言中，你可以在循环体（for循环或while循环）和switch代码块中嵌套循环体和switch代码块来创造复杂的控制流结构。然而，循环体和switch代码块两者都可以使用break 语句来提前结束整个代码块。因此，显示地指明break语句想要终止的是哪个循环体或者switch代码块会很有用。类似地，如果你有许多嵌套的循环体，显示指明continue语句想要影响哪一个循环体也会非常有用。</p>
+<p>为了实现这个目的，你可以使用标签来标记一个循环体或者switch代码块，当使用break或者continue时，带上这个标签，可以控制该标签代表对象的中断或者执行。</p>
+<p>产生一个带标签的语句是通过在该语句的关键词的同一行前面放置一个标签，并且该标签后面还需带着一个冒号。下面是一个while循环体的语法，同样的规则适用于所有的循环体和switch代码块：</p>
+<figure class="highlight Swift"><pre><div class="line">labelName: <span class="keyword">while</span> condition {</div><div class="line">    <span class="comment">// statements</span></div><div class="line">}</div></pre></figure>
+
+<p>label的使用非常简单，如下有一段代码演示了label的应用：</p>
+<figure class="highlight Swift"><pre><div class="line">gameLoop: <span class="keyword">while</span> square != finalSquare {</div><div class="line">    <span class="keyword">if</span> ++diceRoll == <span class="number">7</span> { diceRoll = <span class="number">1</span> }</div><div class="line">    <span class="keyword">switch</span> square + diceRoll {</div><div class="line">    <span class="keyword">case</span> finalSquare:</div><div class="line">        <span class="comment">// diceRoll will move us to the final square, so the game is over</span></div><div class="line">        <span class="keyword">break</span> gameLoop</div><div class="line">    <span class="keyword">case</span> <span class="keyword">let</span> newSquare <span class="keyword">where</span> newSquare &gt; finalSquare:</div><div class="line">        <span class="comment">// diceRoll will move us beyond the final square, so roll again</span></div><div class="line">        <span class="keyword">continue</span> gameLoop</div><div class="line">    <span class="keyword">default</span>:</div><div class="line">        <span class="comment">// this is a valid move, so find out its effect</span></div><div class="line">        square += diceRoll</div><div class="line">        square += board[square]</div><div class="line">    }</div><div class="line">}</div><div class="line"><span class="built_in">println</span>(<span class="string">"Game over!"</span>)</div></pre></figure>
+
+<p>显然，<code>labeled statements</code>可以实现类似于C语言中<code>goto</code>语句的功能。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Swift/">Swift</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/05/05/Swift-Control-Flow/" data-title="Swift控制语句 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/05/05/Swift-Functions/" title="Swift函数">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  Swift函数</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/05/05/Swift-Collections/"  title="Swift集合类型">
+ <strong>NEXT:</strong><br/> 
+ <span>Swift集合类型
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/05/05/Swift-Control-Flow/" data-title="Swift控制语句" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#For-In"><span class="toc-number">1.</span> <span class="toc-text">For-In</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Switch"><span class="toc-number">2.</span> <span class="toc-text">Switch</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#不存在隐式fallthrough"><span class="toc-number">2.1.</span> <span class="toc-text">不存在隐式fallthrough</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#范围匹配"><span class="toc-number">2.2.</span> <span class="toc-text">范围匹配</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#元组"><span class="toc-number">2.3.</span> <span class="toc-text">元组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Value_Bindings"><span class="toc-number">2.4.</span> <span class="toc-text">Value Bindings</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Where语句"><span class="toc-number">2.5.</span> <span class="toc-text">Where语句</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#控制转移语句"><span class="toc-number">3.</span> <span class="toc-text">控制转移语句</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#switch与break"><span class="toc-number">3.1.</span> <span class="toc-text">switch与break</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#fallthrough"><span class="toc-number">3.2.</span> <span class="toc-text">fallthrough</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Labeled_Statements"><span class="toc-number">3.3.</span> <span class="toc-text">Labeled Statements</span></a></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

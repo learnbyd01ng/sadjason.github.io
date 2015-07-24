@@ -1,0 +1,505 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Python编程风格 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="写在前面
+笔者学习Python差不多有两个星期了，但对其命名style总感觉很陌生，这里收集一下资料略作总结；主要参考PEP 8（也可参考啄木鸟的译文）和《Python高级编程》第四章。
+PEP 8命名风格
+Python中使用的命名方式比较混杂，有如下这么一些风格：
+
+lowercase（全小写）；">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2014/08/24/python-code-style/" title="Python编程风格" itemprop="url">Python编程风格</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2014-08-24T08:19:07.000Z" itemprop="datePublished">2014-08-24</time>
+    更新日期:<time datetime="2015-07-04T09:26:52.000Z" itemprop="dateModified">2015-07-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#PEP_8命名风格"><span class="toc-number">1.</span> <span class="toc-text">PEP 8命名风格</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Python资源命名说明"><span class="toc-number">2.</span> <span class="toc-text">Python资源命名说明</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#包和模块命名"><span class="toc-number">2.1.</span> <span class="toc-text">包和模块命名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#类名"><span class="toc-number">2.2.</span> <span class="toc-text">类名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#异常名"><span class="toc-number">2.3.</span> <span class="toc-text">异常名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#全局变量名"><span class="toc-number">2.4.</span> <span class="toc-text">全局变量名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#全局函数名"><span class="toc-number">2.5.</span> <span class="toc-text">全局函数名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#函数名"><span class="toc-number">2.6.</span> <span class="toc-text">函数名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#函数或者方法参数名"><span class="toc-number">2.7.</span> <span class="toc-text">函数或者方法参数名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方法和实例变量名"><span class="toc-number">2.8.</span> <span class="toc-text">方法和实例变量名</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他命名指南"><span class="toc-number">3.</span> <span class="toc-text">其他命名指南</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#常量名"><span class="toc-number">3.1.</span> <span class="toc-text">常量名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用‘has’或‘is’前缀命名布尔元素"><span class="toc-number">3.2.</span> <span class="toc-text">使用‘has’或‘is’前缀命名布尔元素</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#用复数形式命名序列元素"><span class="toc-number">3.3.</span> <span class="toc-text">用复数形式命名序列元素</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#用显示的名称命名字典"><span class="toc-number">3.4.</span> <span class="toc-text">用显示的名称命名字典</span></a></li></ol></li></ol>
+		</div>
+		
+		<p><strong>写在前面</strong></p>
+<p>笔者学习Python差不多有两个星期了，但对其命名style总感觉很陌生，这里收集一下资料略作总结；主要参考<a href="http://legacy.python.org/dev/peps/pep-0008/" target="_blank" rel="external">PEP 8</a>（也可参考啄木鸟的<a href="http://wiki.woodpecker.org.cn/moin/PythonCodingRule" target="_blank" rel="external">译文</a>）和《Python高级编程》第四章。</p>
+<h2 id="PEP_8命名风格">PEP 8命名风格</h2>
+<p>Python中使用的命名方式比较混杂，有如下这么一些风格：</p>
+<ul>
+<li>lowercase（全小写）；</li>
+<li>lower<em>case_with_underscores（全小写，然后用哪个</em>分隔单词）；</li>
+<li>UPPERCASE（全大写）</li>
+<li>UPPER<em>CASE_WITH_UNDERSCORES（全大写，然后用哪个</em>分隔单词）；</li>
+<li>CapitalizedWords（每个单词首字母大写，不含_分隔符）；<br>P.S：注意，在这种风格中，如果包含缩写，那么应该把缩写的所有字符全部大写，即HTTPServerError比HttpServerError更好；</li>
+<li>mixedCase（大小写混合，即首字母小写，之后的每个单词首字母大写，不含_分隔符）；</li>
+</ul>
+<p>还有一种风格，使用特别的短前缀来将相关的名字分成组。这在Python中不常用， 但是出于完整性要提一下。例如，os.stat()函数返回一个tuple，其元素传统上有像st_mode，st_size，st_mtime等等这样的名字。（这样做是为了强调与POSIX系统调用结构体的相关性，这有助于程序员熟悉那些相关性）</p>
+<p>除此之外，前导下划线和后置下划线的特殊形式也在Python中广泛使用：</p>
+<ol>
+<li><p>单前导下划线，如<code>_single_leading_underscore</code>，充当“内部使用”标识，譬如，在module级别资源中，“form xxoo import *”就不会引用以单下划线为前缀命名的资源（变量或者函数或者类）；<br>P.S：值得注意的是，若以“import xxoo”这种方式导入模块，仍然可以用xxoo._someVar这种方式访问资源；不信可以试一试；</p>
+</li>
+<li><p>单后置下划线，如<code>single_trailing_underscore_</code>，习惯用语避免与Python关键字冲突，譬如<code>Tkinter.Toplevel(master, class_=&#39;ClassName&#39;)</code>；</p>
+</li>
+<li><p>双前置下划线，如<code>__double_leading_underscore</code>，这种命名形式在Python的类成员中使用表示<code>名字改编</code>（Name Mangling），即如果有一个Test类里有一成员<strong>x，那么dir(Test)时会看到_Test</strong>x而非__x。这是为了避免该成员的名称与子类中的名称冲突。但要注意这要求该名称末尾没有下划线；</p>
+</li>
+<li><p>双下划线开头双下划线结尾，如<code>__double_leading_and_trailing_underscore__</code>，这种命名方式常用于一些Python的“魔术”对象，如类成员的<strong>init</strong>、<strong>del</strong>、<strong>add</strong>、<strong>getitem</strong>等，以及全局的<strong>file</strong>、<strong>name</strong>等。 Python官方推荐永远不要将这样的命名方式应用于自己的变量或函数，而是按照文档说明来使用。</p>
+</li>
+</ol>
+<h2 id="Python资源命名说明">Python资源命名说明</h2>
+<h3 id="包和模块命名">包和模块命名</h3>
+<p>模块名应该是简短的、全部小写的名字。可以在模块名中使用下划线以提高可读性 。Python 包名也应该是简短的、全部小写的名字，尽管不推荐使用下划线。</p>
+<h3 id="类名">类名</h3>
+<p>几乎没有例外，类名使用首字母大写单词串（CapWords）的约定。 内部使用的类使用一个额外的前导下划线；</p>
+<h3 id="异常名">异常名</h3>
+<p>因为异常应该是类，故类命名约定也适用于异常。然而，你应该对异常名添加后缀“Error”（如果该异常的确是一个错误)；</p>
+<h3 id="全局变量名">全局变量名</h3>
+<p>这里所说的全局变量名指的是“只在module内部使用而不希望被外界导入的全局变量”，它们的命名最好以单下划线为前缀；</p>
+<h3 id="全局函数名">全局函数名</h3>
+<p>同上；</p>
+<h3 id="函数名">函数名</h3>
+<p>函数名应该为小写，必要时可用下划线分隔单词以增加可读性，如“def say_hello:”；</p>
+<h3 id="函数或者方法参数名">函数或者方法参数名</h3>
+<p>总是使用self作为实例方法的第一个参数；<br>总是使用cls作为类方法的第一个参数；<br>如果参数名和Python关键词冲突，那么就加一个后缀，譬如“class_”，而不要用“clas”；</p>
+<h3 id="方法和实例变量名">方法和实例变量名</h3>
+<p>采用函数命名规则：小写单词，必要时可用下划线分隔单词以增加可读性；<br>除此之外，对non-public方法或者实例变量采用单前导下划线作为前缀；</p>
+<p>这还不够，对于某些资源，譬如在子类中也可能会出现的资源，使用双前置下划线（即__）作为前缀，因为正如前文所述，Python会对这种命名以双前置下划线为前缀的资源（方法或者变量）进行<code>名字改编</code>；</p>
+<p>再啰嗦一遍，如果确定你的类会被子类化，并且你有不希望子类使用的属性，应该考虑双前置下划线（即__）作为前缀命名；因为这将触发Python的<code>名字改编</code>算法；</p>
+<h2 id="其他命名指南">其他命名指南</h2>
+<h3 id="常量名">常量名</h3>
+<p>模块中，对于值不会发生改变的全局变量，使用UPPER_CASE_WITH_UNDERSCORES风格（即全大写和下划线）命名；<br>P.S：Python中没有真正的常量，C++中庸const的定义的那种常量。这里所说的常量其实是可以修改的，只是不需要修改；</p>
+<h3 id="使用‘has’或‘is’前缀命名布尔元素">使用‘has’或‘is’前缀命名布尔元素</h3>
+<p>当一个变量使用来保存布尔值时，“is”和“has”前缀提供一个自然的方式，使其在命名空间中很容易被理解，譬如“is_connected = False”等；</p>
+<h3 id="用复数形式命名序列元素">用复数形式命名序列元素</h3>
+<p>当一个元素用来保存一个序列时，使用复数形式命名是个好主意。</p>
+<h3 id="用显示的名称命名字典">用显示的名称命名字典</h3>
+<p>当一个变量用来保存一个映射时，应该尽可能使用显示的名称，例如，有一个用来保存个人地址的dict，那么可以将其命名为person_address，譬如：<code>person_address = {&#39;Jason&#39;:&#39;China&#39;, &#39;Jack&#39;:&#39;America&#39;}</code>；</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Python/">Python</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2014/08/24/python-code-style/" data-title="Python编程风格 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2014/08/24/Python-Attributes/" title="Python属性">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  Python属性</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2014/08/03/AFNetworking-20-Tutorial/"  title="AFNetworking 2.0教程">
+ <strong>NEXT:</strong><br/> 
+ <span>AFNetworking 2.0教程
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2014/08/24/python-code-style/" data-title="Python编程风格" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#PEP_8命名风格"><span class="toc-number">1.</span> <span class="toc-text">PEP 8命名风格</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Python资源命名说明"><span class="toc-number">2.</span> <span class="toc-text">Python资源命名说明</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#包和模块命名"><span class="toc-number">2.1.</span> <span class="toc-text">包和模块命名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#类名"><span class="toc-number">2.2.</span> <span class="toc-text">类名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#异常名"><span class="toc-number">2.3.</span> <span class="toc-text">异常名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#全局变量名"><span class="toc-number">2.4.</span> <span class="toc-text">全局变量名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#全局函数名"><span class="toc-number">2.5.</span> <span class="toc-text">全局函数名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#函数名"><span class="toc-number">2.6.</span> <span class="toc-text">函数名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#函数或者方法参数名"><span class="toc-number">2.7.</span> <span class="toc-text">函数或者方法参数名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方法和实例变量名"><span class="toc-number">2.8.</span> <span class="toc-text">方法和实例变量名</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他命名指南"><span class="toc-number">3.</span> <span class="toc-text">其他命名指南</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#常量名"><span class="toc-number">3.1.</span> <span class="toc-text">常量名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用‘has’或‘is’前缀命名布尔元素"><span class="toc-number">3.2.</span> <span class="toc-text">使用‘has’或‘is’前缀命名布尔元素</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#用复数形式命名序列元素"><span class="toc-number">3.3.</span> <span class="toc-text">用复数形式命名序列元素</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#用显示的名称命名字典"><span class="toc-number">3.4.</span> <span class="toc-text">用显示的名称命名字典</span></a></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

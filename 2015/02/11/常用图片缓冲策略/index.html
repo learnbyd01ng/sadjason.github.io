@@ -1,0 +1,514 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>iOS常见图片缓冲策略 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="写在前面
+“下载图片”几乎是每一个移动App都要处理的问题，对于iOS开发平台而言，下载图片并不是一个多么复杂的事情，给定一个URL，然后使用URL相关库（譬如AFNetworking）去把图片取出来即可，但站在用户的角度，相对于文本信息，下载图片往往会带来更大的成本（下载时间长，流量大等），所以仍">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/02/11/常用图片缓冲策略/" title="iOS常见图片缓冲策略" itemprop="url">iOS常见图片缓冲策略</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-02-11T07:40:32.000Z" itemprop="datePublished">2015-02-11</time>
+    更新日期:<time datetime="2015-07-04T09:31:08.000Z" itemprop="dateModified">2015-07-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#我的图片缓存策略"><span class="toc-number">2.</span> <span class="toc-text">我的图片缓存策略</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SDWebImage的图片缓存策略"><span class="toc-number">3.</span> <span class="toc-text">SDWebImage的图片缓存策略</span></a></li></ol>
+		</div>
+		
+		<h2 id="写在前面">写在前面</h2>
+<p>“下载图片”几乎是每一个移动App都要处理的问题，对于iOS开发平台而言，下载图片并不是一个多么复杂的事情，给定一个URL，然后使用URL相关库（譬如AFNetworking）去把图片取出来即可，但站在用户的角度，相对于文本信息，下载图片往往会带来更大的成本（下载时间长，流量大等），所以仍然有不少问题需要开发者考虑，譬如本地缓存、URL缓存、服务端压缩与客户端解压等，有些时候还有性能的考量。</p>
+<p>笔者目前接触的App开发不是特别多，对性能要求不是特别高，所以着重需要考虑图片流量问题，简而言之，所需要做的事情是尽可能少地通过网络从服务端下载图片，所以本文主要谈谈图片缓存机制。</p>
+<p>笔者长时间使用的图片缓存框架是UIImageView(AFNetworking)，但并没有直接使用，而是根据自己的需要加以修改，使之更加完善；另外一种倍受好评且使用广泛的的图片缓存框架是SDWebImage，本文也对此缓存机制加以整理，以备后用。</p>
+<h2 id="我的图片缓存策略">我的图片缓存策略</h2>
+<p>具体来说，图片缓存一般包括两部分：URL缓存和存储缓存，或曰“内存缓存”和“本地缓存”。前者是将图片存储到内存中，后者是将图片存储到本地磁盘中。因此，当UIImageView控件需要加载一张图片，图片来源可以由三个地方：内存、本地磁盘、网络服务器；消耗成本排序也是：内存 &lt; 本地磁盘 &lt; 网络服务器。</p>
+<p>UIImageView(AFNetworking)完成得并不全面，它只做了“URL缓存”，并没有做“存储缓存”，此外，它对“URL缓存”处理比较粗糙。举个栗子，现在App需要下载URL为<code>http://example.com/test.png</code>的图片并“装”到UIImageView控件中，UIImageView(AFNetworking)的处理策略是：</p>
+<ol>
+<li>通过网络下载图片；</li>
+<li>将下载图片存到内存中，存储形式为一个键值对，key为URL，value为下载图片；</li>
+<li>当再次需要加载URL为<code>http://example.com/test.png</code>的图片时，就到内存中把这个图片给找出来，直接“装”到UImageview控件中，而无需通过网络重新下载。</li>
+</ol>
+<p>但是在很多场合，在不同的时间同一个URL所对应的图片是不一样的，譬如用户头像，假设其user id为123456，则其头像URL通常为<code>http://example.com/123456/123456.png</code>，用户一般可以自定义头像，所以这个地址的图片常会发生变化…笔者所经历的项目的做法是：当客户端向服务端所要图片信息时，服务器返回的图片信息至少包括两个部分：图片URL和图片的hash值（在服务器里，每个图片都有自己的hash值）。如此这般，客户端在检测图片是否在内存中时不仅仅需要检查URL，还得检查hash值。</p>
+<p>总之，针对笔者的项目，UIImageView(AFNetworking)存在两个不足：</p>
+<ol>
+<li>“URL缓存”过于粗糙；</li>
+<li>没有“存储缓存”；</li>
+</ol>
+<p>笔者针对这两个不足对UIImageView(AFNetworking)进行了加工，最后的缓存策略是：</p>
+<ol>
+<li>根据图片URL和哈希值查找cache是否有这张图片。如果没有，则进入第2步；如果有，则进一步判断图片的hash值和cache中的哈希值是否一样，如果不一样，则进入第2步；</li>
+<li>根据图片哈希值查找物理存储（本地磁盘）是否有这张图片，有则返回图片，没有则进入第3步；</li>
+<li>从网络上下载该图片，下载完后保存到内存和本地磁盘中，前者使用NSCache进行存储，存储信息包括：图片URL、图片哈希值、图片；存储到本地磁盘的图片命名为“图片的哈希值.png”。</li>
+</ol>
+<h2 id="SDWebImage的图片缓存策略">SDWebImage的图片缓存策略</h2>
+<p>SDWebImage是一个很厉害的图片缓存的框架。AFNetworking集成的UIImageView+AFNetworking.h对图片的缓存实际应用的是NSURLCache自带的cache机制。而NSURLCache每次都要把缓存的raw data再转化为UIImage，就带来了数据处理和内存方面的更多操作。具体的比较在<a href="https://github.com/rs/SDWebImage/wiki/How-is-SDWebImage-better-than-X%3F" target="_blank" rel="external">这里</a>。</p>
+<p>SDWebImage提供了如下三个category来进行缓存：</p>
+<ul>
+<li>MKAnnotationView(WebCache)</li>
+<li>UIButton(WebCache)</li>
+<li>UIImageView(WebCache)</li>
+</ul>
+<p>以最为常用的UIImageView(WebCache)为例：</p>
+<ol>
+<li>setImageWithURL:placeholderImage:options:先显示placeholderImage，同时由SDWebImageManager根据URL来在本地查找图片；</li>
+<li>SDWebImageManager:downloadWithURL:delegate:options:userInfo:SDWebImageManager是将UIImageView+WebCache同SDImageCache链接起来的类，SDImageCache:queryDiskCacheForKey:delegate:userInfo:用来从缓存根据CacheKey查找图片是否已经在缓存中；</li>
+<li>如果内存中已经有图片缓存，SDWebImageManager会回调SDImageCacheDelegate:imageCache:didFindImage:forKey:userInfo:；</li>
+<li>而UIImageView+WebCache 则回调SDWebImageManagerDelegate:webImageManager:didFinishWithImage:来显示图片；</li>
+<li>如果内存中没有图片缓存，那么生成NSInvocationOperation添加到队列，从硬盘查找图片是否已被下载缓存；</li>
+<li>根据URLKey在硬盘缓存目录下尝试读取图片文件。这一步是在NSOperation进行的操作，所以回主线程进行结果回调notifyDelegate:；</li>
+<li>如果上一操作从硬盘读取到了图片，将图片添加到内存缓存中（如果空闲内存过小，会先清空内存缓存）。SDImageCacheDelegate回调 imageCache:didFindImage:forKey:userInfo:进而回调展示图片；</li>
+<li>如果从硬盘缓存目录读取不到图片，说明所有缓存都不存在该图片，需要下载图片，回调 imageCache:didNotFindImageForKey:userInfo:；</li>
+<li>共享或重新生成一个下载器SDWebImageDownloader开始下载图片；</li>
+<li>图片下载由NSURLConnection来做，实现相关delegate来判断图片下载中、下载完成和下载失败；</li>
+<li>connection:didReceiveData:中利用ImageIO做了按图片下载进度加载效果；</li>
+<li>connectionDidFinishLoading:数据下载完成后交给SDWebImageDecoder做图片解码处理；</li>
+<li>图片解码处理在一个NSOperationQueue完成，不会拖慢主线程UI，如果有需要对下载的图片进行二次处理，最好也在这里完成，效率会好很多；</li>
+<li>在主线程notifyDelegateOnMainThreadWithInfo:宣告解码完成，imageDecoder:didFinishDecodingImage:userInfo:回调给SDWebImageDownloader；</li>
+<li>imageDownloader:didFinishWithImage:回调给SDWebImageManager告知图片下载完成；</li>
+<li>通知所有的downloadDelegates下载完成，回调给需要的地方展示图片；</li>
+<li>将图片保存到SDImageCache中，内存缓存和硬盘缓存同时保存；</li>
+<li>写文件到硬盘在单独NSInvocationOperation中完成，避免拖慢主线程；</li>
+<li>如果是在iOS上运行，SDImageCache在初始化的时候会注册notification到UIApplicationDidReceiveMemoryWarningNotification以及UIApplicationWillTerminateNotification，在内存警告的时候清理内存图片缓存，应用结束的时候清理过期图片；</li>
+<li>SDWebImagePrefetcher可以预先下载图片，方便后续使用；</li>
+</ol>
+<p>毫无疑问，SDWebImage比UIImageView(AFNetworking)要强大得多，但也因此变得更加复杂了，使用起来麻烦也多了很多；就我认为，对于比较简单的场合，考虑到使用的方便性，UIImageView(AFNetworking)会是一个更好的选择。</p>
+<p>参考：</p>
+<ol>
+<li>《<a href="http://blog.csdn.net/zhun36/article/details/8900327" target="_blank" rel="external">SDWebImage缓存图片的机制</a>》</li>
+</ol>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/常用/">常用</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/iOS/">iOS</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/02/11/常用图片缓冲策略/" data-title="iOS常见图片缓冲策略 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/02/11/iOS-common-code-snippets/" title="iOS常用代码片段">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  iOS常用代码片段</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/02/11/custom_tab_bar/"  title="自定义custom tab bar">
+ <strong>NEXT:</strong><br/> 
+ <span>自定义custom tab bar
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/02/11/常用图片缓冲策略/" data-title="iOS常见图片缓冲策略" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#我的图片缓存策略"><span class="toc-number">2.</span> <span class="toc-text">我的图片缓存策略</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SDWebImage的图片缓存策略"><span class="toc-number">3.</span> <span class="toc-text">SDWebImage的图片缓存策略</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

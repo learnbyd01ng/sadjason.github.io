@@ -1,0 +1,494 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>NSArray、NSDictionary以及NSSet使用报告 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="写在前面
+写过Objective-C的人都知道，Foundation Framework中有三个常用的collection型类（类簇），分别是NSArray、NSDictionary、NSSet及它们的变体（在大多数时候，本文所涉及这三个名词时都是指相应的类簇）。
+就我个人而言，NSArray、NS">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/04/25/learn-to-use-NSArray-NSSet-NSDictionary/" title="NSArray、NSDictionary以及NSSet使用报告" itemprop="url">NSArray、NSDictionary以及NSSet使用报告</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-04-25T00:47:28.000Z" itemprop="datePublished">2015-04-25</time>
+    更新日期:<time datetime="2015-07-04T09:07:42.000Z" itemprop="dateModified">2015-07-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NSArray、NSDictionary以及NSSet介绍"><span class="toc-number">2.</span> <span class="toc-text">NSArray、NSDictionary以及NSSet介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#不要在继承NSArray、NSDictionary和NSSet"><span class="toc-number">3.</span> <span class="toc-text">不要在继承NSArray、NSDictionary和NSSet</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用NSArray"><span class="toc-number">4.</span> <span class="toc-text">使用NSArray</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#NSArray没有啥变种"><span class="toc-number">4.1.</span> <span class="toc-text">NSArray没有啥变种</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSSet转NSArray"><span class="toc-number">4.2.</span> <span class="toc-text">NSSet转NSArray</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSArray和NSSet的转化"><span class="toc-number">4.3.</span> <span class="toc-text">NSArray和NSSet的转化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用NSSet"><span class="toc-number">5.</span> <span class="toc-text">使用NSSet</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#NSArray转NSSet"><span class="toc-number">5.1.</span> <span class="toc-text">NSArray转NSSet</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSSet常用方法"><span class="toc-number">5.2.</span> <span class="toc-text">NSSet常用方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSSet变种"><span class="toc-number">5.3.</span> <span class="toc-text">NSSet变种</span></a></li></ol></li></ol>
+		</div>
+		
+		<h2 id="写在前面">写在前面</h2>
+<p>写过Objective-C的人都知道，Foundation Framework中有三个常用的collection型类（类簇），分别是<code>NSArray</code>、<code>NSDictionary</code>、<code>NSSet</code>及它们的变体（在大多数时候，本文所涉及这三个名词时都是指相应的类簇）。</p>
+<p>就我个人而言，<code>NSArray</code>、<code>NSDictionary</code>、<code>NSSet</code>的使用频率也依次降低。尤其是NSSet，个人经验貌似只有在网络任务处理中设置acceptable content type时才会用到。在大多数时候，为了追求开发速度，在可能需要使用NSSet的地方都用NSArray代替了（因为对NSArray更亲切一些）；但近期在某个功能中，觉得使用NSSet的必要性比使用NSArray要大得多，这才开始真正使用NSSet。好吧，也趁机结合自己已有的使用经验，对这3个类簇进行一下总结吧！</p>
+<h2 id="NSArray、NSDictionary以及NSSet介绍">NSArray、NSDictionary以及NSSet介绍</h2>
+<p>在功能上，三者都用来collect cocoa对象（NSObject对象）。也就是说，三者collect的对象都是NSObject对象，所以，基本数据类型（int、char等）都不能在它们中直接存储。</p>
+<p>P.S：可能更常见的问题是，一不小心被collected的对象不存在（其指针为nil），这时程序必然崩溃，所以在collect对象的时候一定要检验该对象是否存在。然而，有时候可能确实有在某个地方存储空对象的需求，譬如对于某个array类型的collection，想在其index=2的地方存储一个“空的东东”，该怎么办呢？直接存储nil显然是不行的（会崩溃嘛），解决这个问题的方法很容易想到：譬如可以创建一个NSObject对象，把这个对象认为是“空的东东”就可以了，但更好的做法是使用NSFoundation中已提供的资源：NSNull，使用如下：</p>
+<figure class="highlight Objective-C"><pre><div class="line">NSMutableArray *mArray = [NSMutableArray <span class="keyword">array</span>];</div><div class="line">[mArray addObject:[NSNull <span class="keyword">null</span>]];</div></pre></figure>
+
+<p>OK，来看一下NSArray、NSDictionary以及NSSet之间的区别。</p>
+<p>NSArray：用于对象有序集合（相当于是数组），存储的元素在一个整块的内存中并按序排列；<br>NSDictionary：用于键值映射；<br>NSSet：用于对象无序集合，无序的集合，散列（哈希）存储；</p>
+<p>P.S：关于NSDictionary的存储，没有找到比较权威的说明；按照我的理解（以前看过C++的《STL源码分析》残留下来的记忆），NSDictionary的组织结构也是哈希存储。所以关于它们仨的关系，我是这样理解的：就底层实现而言，NSSet和NSDictionary关系更近（都是哈希存储嘛）；就功能封装而言，NSSet和NSArray关系更近（都是非键值映射嘛，并且Apple提供了丰富的基础方法用于在二者之间相互转换）；</p>
+<p>它们的区别决定了它们在不同的场合有不同的应用场景。</p>
+<p>NSDictionary自然不用说了，需要用到键值对的场合，自然少不了它；这里主要谈谈NSArray和NSSet的使用区别。</p>
+<p>对于NSArray，本质上是一个数组，所以其“根据index查找元素”是相当快的（常数时间，完全可忽略不计），但它查找某个指定的元素效率不是很高，这很容易理解，假设某个元素aObject所对应的index=10000，那么要想找到aObject，就必然遍历了aObject之前的10000个元素；</p>
+<p>对于NSSet，因为它的组织结构是hash，所以它能够在常数时间里找到对应的元素，具体来说，下列代码中“片段1”比“片段2”平均效率低；</p>
+<figure class="highlight Objective-C"><pre><div class="line"><span class="comment">// 片段1</span></div><div class="line"><span class="built_in">NSObject</span> *aObject1 = [[<span class="built_in">NSObject</span> alloc] init];</div><div class="line"><span class="built_in">NSArray</span> *aArray = [<span class="built_in">NSArray</span> arrayWithObject:aObject1];</div><div class="line"><span class="built_in">BOOL</span> b1 = [aArray containsObject:aObject1];</div><div class="line">	</div><div class="line"><span class="comment">// 片段2</span></div><div class="line"><span class="built_in">NSObject</span> *aObject1 = [[<span class="built_in">NSObject</span> alloc] init];</div><div class="line"><span class="built_in">NSSet</span> *aSet = [<span class="built_in">NSSet</span> setWithObject:aObject1];</div><div class="line"><span class="built_in">BOOL</span> b2 = [aSet containsObject:aObject1];</div></pre></figure>
+
+<p>P.S：之所以说“平均”是因为实际应用中，查找某个元素的时间和hash算法复杂度以及collection的长度有关；collection长度越大，NSSet“查找指定元素”的时间优势越明显。</p>
+<p>再来分析一下遍历NSArray和NSSet的遍历，根据以前的算法基础，认为二者的时间复杂度都是O(n)，但是考虑到NSSet的算法复杂度，NSArray的O(n)的系数要比NSArray的O(n)的系数小得多，所以我认为同样规模下，NSArray的遍历比NSSet的遍历更快。</p>
+<p>NSSet相对于NSArray还有哪些特点呢？<br>我认为最大的的特点：NSSet元素的单一性。简而言之，同一个对象在NSSet中只存在一份，而同一个对象在NSArray中可以存在多份。</p>
+<figure class="highlight Objective-C"><pre><div class="line">NSObject *aObject = [[NSObject alloc] init];</div><div class="line">NSMutableArray *aArray = [NSMutableArray array];</div><div class="line">// <span class="built_in">add</span> object twice</div><div class="line">[aArray addObjec<span class="variable">t:aObject</span>];</div><div class="line">[aArray addObjec<span class="variable">t:aObject</span>];</div><div class="line">	</div><div class="line">NSMutableSet *aSet = [NSMutableSet <span class="keyword">set</span>];</div><div class="line">// <span class="built_in">add</span> object twice</div><div class="line">[aSet addObjec<span class="variable">t:aObject</span>];</div><div class="line">[aSet addObjec<span class="variable">t:aObject</span>];</div><div class="line">	</div><div class="line">NSLog(@<span class="string">"the size of array : %d"</span>, aArray.<span class="built_in">count</span>);</div><div class="line">NSLog(@<span class="string">"the size of set : %d"</span>, aSet.<span class="built_in">count</span>);</div></pre></figure>
+
+<p>执行结果：</p>
+<figure class="highlight Objective-C"><pre><div class="line"><span class="operator">the</span> size <span class="operator">of</span> array : <span class="number">2</span></div><div class="line"><span class="operator">the</span> size <span class="operator">of</span> <span class="built_in">set</span> : <span class="number">1</span></div></pre></figure>
+
+<p>NSSet的“元素单一性”这个特点在很多时候使得NSSet的使用非常有必要。</p>
+<h2 id="不要在继承NSArray、NSDictionary和NSSet">不要在继承NSArray、NSDictionary和NSSet</h2>
+<p>我曾经尝试创建了一个类，让它继承NSMutableDictionary，但在使用时程序崩溃了，并且总是这样的错误<code>method only defined for abstract class.  Define...</code>。</p>
+<p>刚开始以为是NSMutableDictionary不能被继承。</p>
+<p>查了一些资料，后来知道的原因出在：它们都是「类簇」。什么「类簇」呢？百度百科中有还算可以的<a href="http://baike.baidu.com/link?url=PYiix7fVpL0s9vHtSXapkkoywQzTVuPCorrlutU_L3ow5CmjbErqa4XRPcSsik-H8Nsqs7YsY7qDIYHlfzJCx_" target="_blank" rel="external">解释</a>：</p>
+<blockquote>
+<p>类簇是Foundation框架中广泛使用的设计模式。类簇将一些私有的、具体的子类组合在一个公共的、抽象的超类下面，以这种方法来组织类可以简化一个面向对象框架的公开架构，而又不减少功能的丰富性。</p>
+</blockquote>
+<p>理解「类簇」这个概念不难。除了NSArray、NSDictionary和NSSet之外，NSString对象也是「类簇」，底层组织里，它实现了NSLiteralString、NSCFString、NSSimpleCString等几个子类，简而言之，创建NSString对象时，你得到的可能是NSLiteralString、NSCFString、NSSimpleCString等对象。不同的NSString对象调用同一个接口A，接口A的实现可能是不同的。</p>
+<p>可以把NSString本身理解为一个其他语言中的超类（抽象类），它定义了一些方法，但交由更底层的类（譬如NSLiteralString、NSCFString等）去实现，所以继承NSString也是可以的，但前提是自己去实现它其中定义的方法。</p>
+<p>所以，认为“不能基于NSArray、NSDictionary和NSSet定义子类”的说法不准确。可以被继承，但不建议去继承（实现难度高，且不便于维护）。</p>
+<h2 id="使用NSArray">使用NSArray</h2>
+<h3 id="NSArray没有啥变种">NSArray没有啥变种</h3>
+<h3 id="NSSet转NSArray">NSSet转NSArray</h3>
+<h3 id="NSArray和NSSet的转化">NSArray和NSSet的转化</h3>
+<h2 id="使用NSSet">使用NSSet</h2>
+<h3 id="NSArray转NSSet">NSArray转NSSet</h3>
+<h3 id="NSSet常用方法">NSSet常用方法</h3>
+<h3 id="NSSet变种">NSSet变种</h3>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/iOS/">iOS</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/04/25/learn-to-use-NSArray-NSSet-NSDictionary/" data-title="NSArray、NSDictionary以及NSSet使用报告 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/04/25/some-beautiful-3rd-views-in-iOS/" title="漂亮酷炫的第三方Views">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  漂亮酷炫的第三方Views</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/04/23/photos-picker-based-on-Assets-Library-Framework/"  title="基于Assets Library Framework的图片选择器的实现">
+ <strong>NEXT:</strong><br/> 
+ <span>基于Assets Library Framework的图片选择器的实现
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/04/25/learn-to-use-NSArray-NSSet-NSDictionary/" data-title="NSArray、NSDictionary以及NSSet使用报告" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NSArray、NSDictionary以及NSSet介绍"><span class="toc-number">2.</span> <span class="toc-text">NSArray、NSDictionary以及NSSet介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#不要在继承NSArray、NSDictionary和NSSet"><span class="toc-number">3.</span> <span class="toc-text">不要在继承NSArray、NSDictionary和NSSet</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用NSArray"><span class="toc-number">4.</span> <span class="toc-text">使用NSArray</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#NSArray没有啥变种"><span class="toc-number">4.1.</span> <span class="toc-text">NSArray没有啥变种</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSSet转NSArray"><span class="toc-number">4.2.</span> <span class="toc-text">NSSet转NSArray</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSArray和NSSet的转化"><span class="toc-number">4.3.</span> <span class="toc-text">NSArray和NSSet的转化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用NSSet"><span class="toc-number">5.</span> <span class="toc-text">使用NSSet</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#NSArray转NSSet"><span class="toc-number">5.1.</span> <span class="toc-text">NSArray转NSSet</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSSet常用方法"><span class="toc-number">5.2.</span> <span class="toc-text">NSSet常用方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSSet变种"><span class="toc-number">5.3.</span> <span class="toc-text">NSSet变种</span></a></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

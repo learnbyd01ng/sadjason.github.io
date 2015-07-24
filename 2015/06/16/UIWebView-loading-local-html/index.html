@@ -1,0 +1,520 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>UIWebView加载本地HTML文件 | 张不坏的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="张不坏">
+    
+    <meta name="description" content="写在前面
+写本文的原因是今天被要求「调研在iOS中加载本地HTML的相关技术」，好记性不如烂笔头，将一些东西给记录下来吧。
+应用场景是这样的：手头的iOS App有一部分UI需要使用HTML完成，好处是这部分UI可以更灵活，即可以在任何不需要升级App的情况下更新这部分UI（包括样式、操作等等）。当">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Tinny.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/Tinny.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="张不坏的博客" title="张不坏的博客"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="张不坏的博客">张不坏的博客</a></h1>
+				<h2 class="blog-motto">Valar Morghulis</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/06/16/UIWebView-loading-local-html/" title="UIWebView加载本地HTML文件" itemprop="url">UIWebView加载本地HTML文件</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sadjason.github.io" title="张不坏">张不坏</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-06-16T08:38:39.000Z" itemprop="datePublished">2015-06-16</time>
+    更新日期:<time datetime="2015-07-04T08:55:24.000Z" itemprop="dateModified">2015-07-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UIWebView介绍"><span class="toc-number">2.</span> <span class="toc-text">UIWebView介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#加载本地HTML文件"><span class="toc-number">3.</span> <span class="toc-text">加载本地HTML文件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#准备HTML文件及其资源文件"><span class="toc-number">3.1.</span> <span class="toc-text">准备HTML文件及其资源文件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Xcode工程添加文件的两种方式"><span class="toc-number">3.1.1.</span> <span class="toc-text">Xcode工程添加文件的两种方式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Bundle介绍"><span class="toc-number">3.1.2.</span> <span class="toc-text">Bundle介绍</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#加载本地HTML文件-1"><span class="toc-number">3.2.</span> <span class="toc-text">加载本地HTML文件</span></a></li></ol></li></ol>
+		</div>
+		
+		<h2 id="写在前面"><strong>写在前面</strong></h2>
+<p>写本文的原因是今天被要求「调研在iOS中加载本地HTML的相关技术」，好记性不如烂笔头，将一些东西给记录下来吧。</p>
+<p>应用场景是这样的：手头的iOS App有一部分UI需要使用HTML完成，好处是这部分UI可以更灵活，即可以在任何不需要升级App的情况下更新这部分UI（包括样式、操作等等）。当下非常火的技术 — Facebook的React Native — 正是用来解决这种问题的，毕竟在传统的开发模式下，更新UI必须要升级App，而升级App是一个非常耗时的过程。使用Web App部分代替Native App已经成为当下移动客户端开发的一种思潮了。为了简便起见，也为了不给项目的接盘者制造更高的门槛，暂时决定不使用React Native（原因是多方面的）等著名框架去这种事情，从0开始探究。话说胡来，也许走了这么一遭之后，以后学习React Native会有更多的体会呢！</p>
+<p>总之，目前的构想是这样的：</p>
+<ol>
+<li>App部分UI是由HTML+JS+CSS完成的，HTML+JS+CSS代码会随着App一起发布；</li>
+<li>当后端决定更新App的部分UI（HTML）时，客户端从服务器下载最新的HTML+JS+CSS包，解压后代替本地的、旧的HTML+JS+CSS资源，将最新的呈现给用户，至此完成UI的更新；</li>
+</ol>
+<p>因此有这么些问题需要考虑：</p>
+<ol>
+<li>加载本地HTML+JS+CSS资源（在iOS中，通常使用UIWebView）；</li>
+<li>解压从服务端下载的压缩文件（HTML+JS+    CSS包）；</li>
+<li>JS代码和OC代码的互相调用；</li>
+</ol>
+<p>本文主要探究第一个问题！</p>
+<hr>
+<h2 id="UIWebView介绍"><strong>UIWebView介绍</strong></h2>
+<p>UIWebView是iOS中一个非常常用的控件，是内置的浏览器控件，可能也是最强大复杂的控件。可以用它来浏览网页、打开文档（譬如PDF文档）等等。</p>
+<p>UIWebView既可以用来显示本地文档，也可以用来显示网络文档。无论是显示本地文件还是网络文件，此过程都可以统称为「加载」。与「加载」相关的方法不多，只有三个：</p>
+<figure class="highlight Objective-C"><pre><div class="line"><span class="comment">// Loading Local Content or Loading Content From the Network</span></div><div class="line">- (<span class="keyword">void</span>)loadRequest:(<span class="built_in">NSURLRequest</span> *)request;</div><div class="line">	</div><div class="line"><span class="comment">// 嵌入HTML结构的字符串</span></div><div class="line">- (<span class="keyword">void</span>)loadHTMLString:(<span class="built_in">NSString</span> *)string</div><div class="line">               baseURL:(<span class="built_in">NSURL</span> *)baseURL;</div><div class="line">	</div><div class="line"><span class="comment">// Loading Local Content</span></div><div class="line">- (<span class="keyword">void</span>)loadData:(NSData *)data</div><div class="line">        MIMEType:(<span class="built_in">NSString</span> *)MIMEType</div><div class="line">textEncodingName:(<span class="built_in">NSString</span> *)textEncodingName</div><div class="line">         baseURL:(<span class="built_in">NSURL</span> *)baseURL;</div></pre></figure>
+
+<p>与UIWebView相关的知识点并不多（从某种角度来看，也可以认为是Apple封装得比较好吧），除了上述的三个方法之外，还有必要了解的是UIWebViewDelegate定义的一些delegate方法：</p>
+<figure class="highlight Objective-C"><pre><div class="line"><span class="comment">// 开始加载前调用</span></div><div class="line">- (<span class="built_in">BOOL</span>)webView:(<span class="built_in">UIWebView</span> *)webView shouldStartLoadWithRequest:(<span class="built_in">NSURLRequest</span> *)request</div><div class="line"> navigationType:(UIWebViewNavigationType)navigationType;</div><div class="line"><span class="comment">// 开始加载时调用</span></div><div class="line">- (<span class="keyword">void</span>)webViewDidStartLoad:(<span class="built_in">UIWebView</span> *)webView;</div><div class="line"><span class="comment">// 加载成功时调用</span></div><div class="line">- (<span class="keyword">void</span>)webViewDidFinishLoad:(<span class="built_in">UIWebView</span> *)webView;</div><div class="line"><span class="comment">// 加载失败时调用</span></div><div class="line">- (<span class="keyword">void</span>)webView:(<span class="built_in">UIWebView</span> *)webView didFailLoadWithError:(<span class="built_in">NSError</span> *)error;</div></pre></figure>
+
+<p>除此之外，UIWebView似乎有啥其他需要了解的内容，若有需要，以后再补充吧！</p>
+<hr>
+<h2 id="加载本地HTML文件"><strong>加载本地HTML文件</strong></h2>
+<p>加载本地HTML文件不是多么难的事情，但再简单的事情也有一个1-2-3-4，不是嘛？何况笔者比较笨，参考<a href="http://blog.csdn.net/kaitiren/article/details/17115085" target="_blank" rel="external">UIWebView加载本地HTML5文件</a>，也分几个步骤：</p>
+<ol>
+<li>准备HTML文件及其资源文件（主要是CSS文件和JS文件以及image文件）；</li>
+<li>加载本地HTML文件；</li>
+</ol>
+<p>第一种：<br>loadRequest:<br>第二种：<br>loadHTMLString:baseURL:</p>
+<h3 id="准备HTML文件及其资源文件"><strong>准备HTML文件及其资源文件</strong></h3>
+<p>HTML及其资源文件比较容易获取，随便找个比较漂亮的web页面，将它保存起来即可！</p>
+<p>显然HTML文件及其资源文件是需要添加到工程的，问题是如何添加呢？如何组织管理这些文件呢？沙盒？Bundle？</p>
+<h4 id="Xcode工程添加文件的两种方式"><strong>Xcode工程添加文件的两种方式</strong></h4>
+<p>向项目中添加已有的文件（或资源文件，或第三方库）不是什么稀罕的事情，只是平时都没怎么注意。实际上，将「文件」或者「目录」添加到项目时，Xcode给了我们两个选项：Create groups以及Create folder references，如下图：<br><img src="/img/201506/20150616-01.png" width="730" height="126"></p>
+<p>简单来说，若选择Create groups的方式添加文件夹，则文件夹的颜色是黄色的；若选择Create folder references的，则发现添加的文件夹在工程目录中的的颜色是蓝色的：<br><img src="/img/201506/20150616-02.png" width="400" height="120"></p>
+<p>当然不只是颜色上的区别！主要是Xcode对加入的文件的路径处理不一样。</p>
+<p>如果文件/文件夹以Create groups的方式添加到工程中，则不管加入项目的文件的目录结构如何，在APP中都可以通过mainBundlePath/filename这样结构来访问文件；反之，若文件/文件夹以Create folder references的方式添加到工程中，则会保留相对路径，访问文件的结构就变成了mainBundlePath/path/filename。</p>
+<p>理解Create groups以及Create folder references并不难，自己动手试试就能感受二者的不同了。</p>
+<h4 id="Bundle介绍"><strong>Bundle介绍</strong></h4>
+<p>上文谈到了向工程添加文件的两种方式，由此延伸，不得不提<code>bundle</code>，一直以来对bundle的理解非常模糊，知道它的本质是一个目录，也知道在OS X中就有此概念，但一直没get到<code>bundle</code>的存在意义，总感觉它没必要存在，事实上也没主动使用它。</p>
+<p>借撰写本文这个机会，驱动一下自己，查查资料，争取对bundle理解更深入一点点吧！</p>
+<p>参考《<a href="http://avatar-matrix.lofter.com/post/e4689_236e82" target="_blank" rel="external">Bundle in iOS</a>》和《<a href="http://www.cnblogs.com/BigPolarBear/archive/2012/03/28/2421802.html" target="_blank" rel="external">iOS开发里的Bundle是个啥玩意</a>》。</p>
+<p>简单地讲，bundle就是一个内部结构按照标准规则组织的特殊目录，常用来存放一些资源文件，譬如图片，plist文件等，它不会成为编译的一部分，所以它不存放能够被编译的文件，譬如<code>.m</code>、<code>.h</code>文件等。</p>
+<p>Bundle的主要用途是软件的国际化，想象一个应用场景：软件有美国、中国版本，软件的logo等图片不同，这时候，我们把相应的图片资源放到一个文件夹下，然后修改文件夹的名字，以<code>.bundle</code>作为后缀，然后添加到xcode中。</p>
+<p>有过iOS开发经历的人都应该知道，每个project都有个mainBundle，那如何去获取自己定义的bundle内容呢？我们把自定义的bundle当成项目的一种资源，由mainBundle去获取<code>~</code>，然后我们用相同的方式获取自定义的bundle下的资源。即：<br>1、通过mainBundle去加载自定义的bundle；<br>2、通过获取到的自定义bundle去获取资源；</p>
+<p>根据上述场景来写的demo项目结构如下：<br><img src="/img/201506/20150616-03.png" width="340" height="280"></p>
+<p>此时，我容易联想到了在Windows世界经常使用的「汉化包」。根据我的理解，我们通过某种手段得到的「汉化包」和本文所谈及的bundle是类似的概念，它们的本质是一个目录，只是这个目录有些特别，特别之处在于它只存放一些资源文件，以及目录名后缀为<code>.bundle</code>，这让它看起来像个文件，但实际上又不是文件，开发者又特别想让普通用户以为它是一个文件…</p>
+<p>总之，bundle就是这么个东东。</p>
+<p>到了这里，应该弄清楚了该把HTML文件及其资源放在哪里了。</p>
+<p>沙盒？显然不可能，沙盒可是App到设备之后才有的概念；所以我们只能让HTML资源成为工程的一部分呢，编译打包时作为安装包的一部分。</p>
+<p>放在普通目录下还是组织成bundle，个人以为没必要组织成bundle，因为后者主要用来处理国际化问题，国际化问题面对的一般是图片资源、字符串资源等等，所以不需要组成成bundle，而是直接添加到工程的mainBundle中。</p>
+<p>上文已经提到了Xcode工程添加文件有两种方式：Create groups和Create folder references，个人以为应该选择后者！</p>
+<p>值得注意是，当被加入到项目中的文件包含js文件时，有可能因为操作不慎等原因，js文件成为了编译文件，若是这样，应该将它从<code>Compile Sources</code>给踢掉，让它成为<code>Copy Bundle Resources</code>的一部分，具体做法是在TARGETS-&gt;Build Phases中的<code>Compile Sources</code>中找到该js文件，并将其移到<code>Copy Bundle Resources</code>中，如下图所示：</p>
+<p><img src="/img/201506/20150616-05.png" width="699" height="364"></p>
+<h3 id="加载本地HTML文件-1"><strong>加载本地HTML文件</strong></h3>
+<p>本文示例中，HTML文件及其资源文件被组织在一个叫<code>html</code>的目录中，目录结构如下图，index.html是要被加载的目标文件，index.html中访问css、js以及图片资源的方式都是使用相对路径，实现代码也给展示在下图中。</p>
+<p><img src="/img/201506/20150616-04.png" width="926" height="400"></p>
+<p>上图右侧代码区域加载策略是，先获取本地HTML文本，转为字符串，然后使用<code>loadHTMLString:baseURL:</code>方法加载；当然也可以使用<code>loadRequest:</code>方法，哪个更好？我暂时也不知道！</p>
+<p><strong>关于baseURL</strong></p>
+<p>上文<code>loadHTMLString:baseURL:</code>方法的第二个参数是baseURL，baseURL是HTML字符串中引用到资源的查找路径，当HTML中没有引用外部资源时，可以指定为<code>nil</code>；若引用了外部资源，一般情况下使用mainBundle的路径即可。在实际操作中，常常会出现「文本显示正常，图片无法显示」等情况，若HTML文本中引用外部资源都是使用相对路径，则出现这种问题的原因一般都是baseURL参数错误（有时甚至是<code>nil</code>）。</p>
+<p>最后，本文的Demo详见<a href="https://github.com/sadjason/iOSDemos/" target="_blank" rel="external">这里</a>。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/UIWebView/">UIWebView</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/iOS/">iOS</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sadjason.github.io/2015/06/16/UIWebView-loading-local-html/" data-title="UIWebView加载本地HTML文件 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/06/16/using-WebViewJavascriptBridge/" title="WebViewJavascriptBridge使用笔记">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  WebViewJavascriptBridge使用笔记</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/06/12/binary-tree-part2/"  title="二叉树与算法 第二弹">
+ <strong>NEXT:</strong><br/> 
+ <span>二叉树与算法 第二弹
+</span>
+</a>
+</div>
+
+</nav>
+
+		<!-- 多说评论框 start -->
+	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
+	<div class="ds-thread" data-thread-key="2015/06/16/UIWebView-loading-local-html/" data-title="UIWebView加载本地HTML文件" data-url=""></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+		var duoshuoQuery = {short_name:"张不坏"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UIWebView介绍"><span class="toc-number">2.</span> <span class="toc-text">UIWebView介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#加载本地HTML文件"><span class="toc-number">3.</span> <span class="toc-text">加载本地HTML文件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#准备HTML文件及其资源文件"><span class="toc-number">3.1.</span> <span class="toc-text">准备HTML文件及其资源文件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Xcode工程添加文件的两种方式"><span class="toc-number">3.1.1.</span> <span class="toc-text">Xcode工程添加文件的两种方式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Bundle介绍"><span class="toc-number">3.1.2.</span> <span class="toc-text">Bundle介绍</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#加载本地HTML文件-1"><span class="toc-number">3.2.</span> <span class="toc-text">加载本地HTML文件</span></a></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Algorithm/" title="Algorithm">Algorithm<sup>31</sup></a></li>
+		
+			<li><a href="/categories/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Objective-C/" title="Objective-C">Objective-C<sup>10</sup></a></li>
+		
+			<li><a href="/categories/Others/" title="Others">Others<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>5</sup></a></li>
+		
+			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
+		
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Array/" title="Array">Array<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Assets/" title="Assets">Assets<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Auto-Layout/" title="Auto Layout">Auto Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Backtracking/" title="Backtracking">Backtracking<sup>3</sup></a></li>
+		
+			<li><a href="/tags/Binary-Tree/" title="Binary Tree">Binary Tree<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Block/" title="Block">Block<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Debug/" title="Debug">Debug<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Dynamic-Programming/" title="Dynamic Programming">Dynamic Programming<sup>8</sup></a></li>
+		
+			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HTTP/" title="HTTP">HTTP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KMP/" title="KMP">KMP<sup>1</sup></a></li>
+		
+			<li><a href="/tags/KVO/" title="KVO">KVO<sup>1</sup></a></li>
+		
+			<li><a href="/tags/LeetCode/" title="LeetCode">LeetCode<sup>26</sup></a></li>
+		
+			<li><a href="/tags/Linked-List/" title="Linked List">Linked List<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mantle/" title="Mantle">Mantle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Masonry/" title="Masonry">Masonry<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSError/" title="NSError">NSError<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NSOperation/" title="NSOperation">NSOperation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Nodejs/" title="Node.js">Node.js<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Reachability/" title="Reachability">Reachability<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RunLoop/" title="RunLoop">RunLoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Runtime/" title="Runtime">Runtime<sup>5</sup></a></li>
+		
+			<li><a href="/tags/SVPullToRefresh/" title="SVPullToRefresh">SVPullToRefresh<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sort/" title="Sort">Sort<sup>9</sup></a></li>
+		
+			<li><a href="/tags/String/" title="String">String<sup>9</sup></a></li>
+		
+			<li><a href="/tags/Testing/" title="Testing">Testing<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tree/" title="Tree">Tree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Two-Pointers/" title="Two Pointers">Two Pointers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/UIWebView/" title="UIWebView">UIWebView<sup>1</sup></a></li>
+		
+			<li><a href="/tags/WebViewJavascriptBridge/" title="WebViewJavascriptBridge">WebViewJavascriptBridge<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Xcode/" title="Xcode">Xcode<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ZBar/" title="ZBar">ZBar<sup>1</sup></a></li>
+		
+			<li><a href="/tags/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		
+			<li><a href="/tags/iPhone/" title="iPhone">iPhone<sup>1</sup></a></li>
+		
+			<li><a href="/tags/property/" title="property">property<sup>1</sup></a></li>
+		
+			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
+		
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+		
+			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>
