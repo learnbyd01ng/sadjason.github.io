@@ -10,14 +10,11 @@
     <meta name="author" content="张不坏">
     
     <meta name="description" content="写在前面
-目前，再做leetcode过程中，碰到了两道可以用归并排序解决的题目，其中有一道题（另外一道题后文也会提到）：
+目前，LeetCode刷题过程中，碰到了两道可以用归并排序解决的题目，其中有一道题（另外一道题后文也会提到）是Sort List：
 
-Sort List
+Sort a linked list in O(nlogn) time using constant space complexity.
 
-Sort a linked list in O(n log n) time using constant space complexity.
-
-
-题意给的">
+题意给的信息还是">
     
     
     
@@ -79,7 +76,7 @@ Sort a linked list in O(n log n) time using constant space complexity.
     </p>
   <p class="article-time">
     <time datetime="2015-03-29T09:15:03.000Z" itemprop="datePublished">2015-03-29</time>
-    更新日期:<time datetime="2015-07-22T15:56:15.000Z" itemprop="dateModified">2015-07-22</time>
+    更新日期:<time datetime="2015-08-02T05:38:08.000Z" itemprop="dateModified">2015-08-02</time>
     
   </p>
 </header>
@@ -88,20 +85,17 @@ Sort a linked list in O(n log n) time using constant space complexity.
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#归并排序介绍"><span class="toc-number">1.1.</span> <span class="toc-text">归并排序介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#归并排序处理链表"><span class="toc-number">1.2.</span> <span class="toc-text">归并排序处理链表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#归并排序解决“Largest_Number”问题"><span class="toc-number">1.3.</span> <span class="toc-text">归并排序解决“Largest Number”问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#There_are_more"><span class="toc-number">1.4.</span> <span class="toc-text">There are more</span></a></li></ol></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#归并排序介绍"><span class="toc-number">2.</span> <span class="toc-text">归并排序介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#归并排序处理链表"><span class="toc-number">3.</span> <span class="toc-text">归并排序处理链表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#归并排序解决Largest_Number问题"><span class="toc-number">4.</span> <span class="toc-text">归并排序解决Largest Number问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#There_are_more"><span class="toc-number">5.</span> <span class="toc-text">There are more</span></a></li></ol>
 		</div>
 		
-		<h1 id="写在前面">写在前面</h1>
-<p>目前，再做leetcode过程中，碰到了两道可以用归并排序解决的题目，其中有一道题（另外一道题后文也会提到）：</p>
+		<h2 id="写在前面"><strong>写在前面</strong></h2>
+<p>目前，LeetCode刷题过程中，碰到了两道可以用归并排序解决的题目，其中有一道题（另外一道题后文也会提到）是<a href="https://leetcode.com/problems/sort-list/" target="_blank" rel="external">Sort List</a>：</p>
 <blockquote>
-<p>Sort List</p>
-<blockquote>
-<p>Sort a linked list in O(n log n) time using constant space complexity.</p>
+<p>Sort a linked list in O(<em>n</em>log<em>n</em>) time using constant space complexity.</p>
 </blockquote>
-</blockquote>
-<p>题意给的信息还是蛮充分的，时间复杂度为O(nlogn)的排序有快速排序、堆排序以及归并排序（或许还有更多，以后再补充吧）序，对于对这几种排序比较熟练的人而言，很容易就明白前两者显然不太适合用于对链表进行排序，所以定位到归并排序。笔者对归并排序似乎有些忘了，借这个机会复习复习吧。</p>
-<p>题意非常简单：采用插入排序的防护四对一个链表进行排序。插入排序算是除了冒泡排序之外最简单的排序方式了，为了解决这个问题，顺便复习一下插入排序相关的知识，遂成此文。</p>
-<h2 id="归并排序介绍">归并排序介绍</h2>
+<p>题意给的信息还是蛮充分的。时间复杂度为O(nlogn)的排序有快速排序、堆排序以及归并排序（或许还有更多，以后再补充吧）序，对于对这几种排序比较熟练的人而言，很容易就明白前两者显然不太适合用于对链表进行排序，所以定位到归并排序。笔者对归并排序似乎有些忘了，借这个机会复习复习吧。</p>
+<p>题意非常简单：采用插入排序的方式对一个链表进行排序。插入排序算是除了冒泡排序之外最简单的排序方式了，为了解决这个问题，顺便复习一下插入排序相关的知识，遂成此文。</p>
+<h2 id="归并排序介绍"><strong>归并排序介绍</strong></h2>
 <p>说起归并，先得讲分治。许多有用的算法在结构上都是递归的：为了解决一个给定的问题，算法一次或多次递归地调用其自身以解决紧密相关的子问题。这些算法典型地遵循分治法的思想：将原问题分解为几个规模较小但类似于原问题的子问题，递归地求解这些子问题，然后再合并这些子问题的解来建立原问题的解。</p>
 <p>就大框架而言，归并排序非常简单，逻辑清晰，Python代码如下：</p>
 <figure class="highlight Python"><pre><div class="line"><span class="comment"># 假设begin &lt; end</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">merge_sort</span><span class="params">(A, begin, end)</span>:</span></div><div class="line">    <span class="comment"># 不能写成：</span></div><div class="line">    <span class="comment">#   if begin &lt; end:</span></div><div class="line">    <span class="comment"># 因为[x, x+1)总会得到[x, x)和[x, x+1)两个分解值，显然这个值会造成死循环</span></div><div class="line">    <span class="comment"># 况且，如果end-begin = 1，即只有一个元素，merge_sort也么有啥意义</span></div><div class="line">    <span class="keyword">if</span> begin &lt; (end - <span class="number">1</span>):</div><div class="line">    	<span class="comment"># begin &lt; end - 1能够确保begin &lt; mid &lt; end</span></div><div class="line">        mid = (begin + end) / <span class="number">2</span></div><div class="line">        merge_sort(A, begin, mid)</div><div class="line">        merge_sort(A, mid, end)</div><div class="line">        merge(A, begin, mid, end)</div></pre></figure>
@@ -112,9 +106,9 @@ Sort a linked list in O(n log n) time using constant space complexity.
 
 <p>归并排序的在于理解merge过程，merge的过程说白了就是将两个已经排好序的“堆”进行合并，合并过程也很容易想象：两摞牌，上面小，下面大，从这两摞牌种取牌，每次拣较小者…</p>
 <p>相对于插入排序，归并排序更稳定一些，时间复杂度一般为nlog(n)。其实，考虑到归并排序和快速排序的平均时间复杂度都是nlog(n)，并且它们都体现了分治思想，所以常常会将它们进行对比，总得来说，快速排序是比归并排序更好的排序算法，关于它们之间的对比，以后在分析快速排序的时候再谈吧。</p>
-<p>至少：归并排序不具备空间源址性。</p>
-<h2 id="归并排序处理链表">归并排序处理链表</h2>
-<p>如果谈及归并排序相对于快速排序的优势的话，那么“快速排序处理链表”算一个，在我的认知里，快速排序处理链表是不太可能的。</p>
+<p>至少，归并排序不是原址排序。</p>
+<h2 id="归并排序处理链表"><strong>归并排序处理链表</strong></h2>
+<p>如果谈及归并排序相对于快速排序的优势的话，那么「快速排序处理链表」算一个，在我的认知里，快速排序处理链表是不太可能的。</p>
 <p>回到leetcode题目：Sort a linked list in O(n log n) time using constant space。笔者是用归并排序解决这个问题的。</p>
 <p>merge_sort的实现和上述差不多：</p>
 <figure class="highlight Python"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">merge_sort</span><span class="params">(head)</span>:</span></div><div class="line">    <span class="comment"># head最少有两个node才有merge_sort的意义</span></div><div class="line">    <span class="keyword">if</span> head <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span> <span class="keyword">and</span> head.next <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">        mid = Solution.findMid(head)    <span class="comment"># head至少有两个node</span></div><div class="line">        head1 = Solution.merge_sort(head)</div><div class="line">        head2 = Solution.merge_sort(mid)</div><div class="line">        newHead = Solution.merge(head1, head2)</div><div class="line">        <span class="keyword">return</span> newHead</div><div class="line">    <span class="keyword">else</span>:</div><div class="line">        <span class="keyword">return</span> head</div></pre></figure>
@@ -125,22 +119,19 @@ Sort a linked list in O(n log n) time using constant space complexity.
 <p>最后就是归并处理了：</p>
 <figure class="highlight Python"><pre><div class="line"><span class="comment"># 要求head1和head2都不是空节点</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">merge</span><span class="params">(head1, head2)</span>:</span></div><div class="line">    newHead = <span class="keyword">None</span></div><div class="line">    temp1 = head1</div><div class="line">    temp2 = head2</div><div class="line">	</div><div class="line">    <span class="comment"># 初始化newHead</span></div><div class="line">    <span class="keyword">if</span> temp1.val &gt; temp2.val:</div><div class="line">        newHead = temp2</div><div class="line">        temp2 = temp2.next</div><div class="line">    <span class="keyword">else</span>:</div><div class="line">        newHead = temp1</div><div class="line">        temp1 = temp1.next</div><div class="line">	</div><div class="line">    <span class="comment"># 初始化tailNode</span></div><div class="line">    tailNode = newHead</div><div class="line">	</div><div class="line">    <span class="keyword">while</span> temp1 <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span> <span class="keyword">and</span> temp2 <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">        <span class="keyword">if</span> temp1.val &gt; temp2.val:</div><div class="line">            tailNode.next = temp2</div><div class="line">            temp2 = temp2.next</div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            tailNode.next = temp1</div><div class="line">            temp1 = temp1.next</div><div class="line">        tailNode = tailNode.next</div><div class="line">	</div><div class="line">    <span class="keyword">if</span> temp1 <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">        tailNode.next = temp1</div><div class="line">    <span class="keyword">if</span> temp2 <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">        tailNode.next = temp2</div><div class="line">	</div><div class="line">    <span class="keyword">return</span> newHead</div></pre></figure>
 
-<p>可以看到“链表的归并处理”比“数组的归并处理”要简单一些。</p>
-<p>P.S：写到这里，我感觉，上述代码中findMid处理是在太丑陋了，不晓得有冇得更好的解决方案；此外，我对“快速排序不适合链表”这个说法产生了怀疑，有时间用快速排序做一下这道题吧。</p>
-<h2 id="归并排序解决“Largest_Number”问题">归并排序解决“Largest Number”问题</h2>
-<p>除了“写在前面”中提到的题目之外，leetcode另外一道可以用归并排序解决的题目如下：</p>
+<p>可以看到链表的merge处理比数组的merge处理要简单一些。</p>
+<p>P.S：写到这里，我感觉，上述代码中findMid处理是在太丑陋了，不晓得有冇得更好的解决方案；此外，我对上文「快速排序不适合链表」这个说法产生了怀疑，有时间用快速排序做一下这道题吧。</p>
+<h2 id="归并排序解决Largest_Number问题">归并排序解决Largest Number问题</h2>
+<p>除了上文中提到的题目之外，LeetCode还有另外一道可以用归并排序解决的题目<a href="https://leetcode.com/problems/largest-number/" target="_blank" rel="external">Largest Number</a>，描述如下：</p>
 <blockquote>
-<p>Largest Number </p>
-<blockquote>
-<p>Given a list of non negative integers, arrange them such that they form the largest number.<br>For example, given [3, 30, 34, 5, 9], the largest formed number is 9534330.<br>Note: The result may be very large, so you need to return a string instead of an integer.</p>
+<p>Given a list of non negative integers, arrange them such that they form the largest number.<br>For example, given <code>[3, 30, 34, 5, 9]</code>, the largest formed number is <code>9534330</code>.<br>Note: The result may be very large, so you need to return a string instead of an integer.</p>
 </blockquote>
-</blockquote>
-<p>在碰到这道题的时候，我的下意识是使用“贪心算法”或者“动态规划”来解决这道题，可是弄了好久，发现都搞不定，反而发现问题越想越复杂。最后受人点拨发现问题很简答，我们只需要搞清楚一个问题“对于两个整数x1和x2，在最终的结果中，x1放在前面还是x2放在前面？”，只要认识到了这一点，就很快意识到这个问题归根到底是“排序问题”。</p>
+<p>在碰到这道题的时候，我的下意识是使用<strong>贪心算法</strong>或者<strong>动态规划</strong>来解决这道题，可是弄了好久，发现都搞不定，反而发现问题越想越复杂。最后受人点拨发现问题很简答，我们只需要搞清楚一个问题：对于两个整数x和y，在最终的结果中，x放在前面还是y放在前面？，只要认识到了这一点，就很快意识到这个问题归根到底是<strong>排序问题</strong>。</p>
 <p>最终代码如下：</p>
 <figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param num, a list of integers</span></div><div class="line">    <span class="comment"># @return a string</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">largestNumber</span><span class="params">(self, num)</span>:</span></div><div class="line">        len_num = len(num)</div><div class="line">        <span class="keyword">if</span> len_num == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> str(<span class="number">0</span>)</div><div class="line">        <span class="keyword">if</span> len_num == <span class="number">1</span>:</div><div class="line">            <span class="keyword">return</span> str(num[<span class="number">0</span>])</div><div class="line">	</div><div class="line">        Solution.merge_sort(num, <span class="number">0</span>, len_num)</div><div class="line">        result = <span class="string">''</span></div><div class="line">        <span class="keyword">for</span> item <span class="keyword">in</span> num:</div><div class="line">            result += str(item)</div><div class="line">	</div><div class="line">        <span class="keyword">if</span> result[<span class="number">0</span>] == <span class="string">'0'</span>:</div><div class="line">            result = <span class="string">'0'</span></div><div class="line">	</div><div class="line">        <span class="keyword">return</span> result</div><div class="line">	</div><div class="line">	</div><div class="line">    <span class="decorator">@staticmethod</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">merge_sort</span><span class="params">(A, begin, end)</span>:</span></div><div class="line">        <span class="keyword">if</span> begin &lt; (end - <span class="number">1</span>):</div><div class="line">            mid = (begin + end) / <span class="number">2</span>;</div><div class="line">            Solution.merge_sort(A, begin, mid)</div><div class="line">            Solution.merge_sort(A, mid, end)</div><div class="line">            Solution.merge(A, begin, mid, end)</div><div class="line">	</div><div class="line">    <span class="decorator">@staticmethod</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">merge</span><span class="params">(A, begin, mid, end)</span>:</span></div><div class="line">        A_aux = A[begin:end]</div><div class="line">	</div><div class="line">        index1 = begin</div><div class="line">        index2 = mid</div><div class="line">        index3 = begin</div><div class="line">	</div><div class="line">        <span class="keyword">while</span> index1 &lt; mid <span class="keyword">and</span> index2 &lt; end:</div><div class="line">            item1 = A_aux[index1-begin]</div><div class="line">            item2 = A_aux[index2-begin]</div><div class="line">	</div><div class="line">            <span class="keyword">if</span> Solution.isOK(item1, item2):</div><div class="line">                A[index3] = item1</div><div class="line">                index1 += <span class="number">1</span></div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                A[index3] = item2</div><div class="line">                index2 += <span class="number">1</span></div><div class="line">            index3 += <span class="number">1</span></div><div class="line">	</div><div class="line">        <span class="keyword">if</span> index1 == mid:</div><div class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> range(index2, end):</div><div class="line">                A[index3] = A_aux[i-begin]</div><div class="line">                i += <span class="number">1</span></div><div class="line">                index3 += <span class="number">1</span></div><div class="line">	</div><div class="line">        <span class="keyword">if</span> index2 == end:</div><div class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> range(index1, mid):</div><div class="line">                A[index3] = A_aux[i-begin]</div><div class="line">                i += <span class="number">1</span></div><div class="line">                index3 += <span class="number">1</span></div><div class="line">	</div><div class="line">    <span class="comment"># 如果num1_num2比num2_num1小，则返回False，否则返回True</span></div><div class="line">    <span class="comment"># eg：isOK(3, 21)返回True，因为321比321大</span></div><div class="line">    <span class="decorator">@staticmethod</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">isOK</span><span class="params">(num1, num2)</span>:</span></div><div class="line">        <span class="comment"># 分别计算num1和num2的位数</span></div><div class="line">	</div><div class="line">        <span class="keyword">if</span> num1 == <span class="number">0</span> <span class="keyword">and</span> num2 == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> <span class="keyword">True</span></div><div class="line">        <span class="keyword">elif</span> num1 == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line">        <span class="keyword">elif</span> num2 == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> <span class="keyword">True</span></div><div class="line">	</div><div class="line">        bit1 = <span class="number">0</span></div><div class="line">        bit2 = <span class="number">0</span></div><div class="line">	</div><div class="line">        temp1 = num1</div><div class="line">        multiplier1 = <span class="number">1</span></div><div class="line">        <span class="keyword">while</span> temp1 &gt; <span class="number">0</span>:</div><div class="line">            bit1 += <span class="number">1</span></div><div class="line">            temp1 = temp1 / <span class="number">10</span></div><div class="line">            multiplier1 *= <span class="number">10</span></div><div class="line">	</div><div class="line">        temp2 = num2</div><div class="line">        multiplier2 = <span class="number">1</span></div><div class="line">        <span class="keyword">while</span> temp2 &gt; <span class="number">0</span>:</div><div class="line">            bit2 += <span class="number">1</span></div><div class="line">            temp2 = temp2 / <span class="number">10</span></div><div class="line">            multiplier2 *= <span class="number">10</span></div><div class="line">	</div><div class="line">        <span class="keyword">if</span> (multiplier2 * num1  + num2) &lt; (multiplier1 * num2 + num1):</div><div class="line">            <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line">	</div><div class="line">        <span class="keyword">return</span> <span class="keyword">True</span></div></pre></figure>
 
 <h2 id="There_are_more">There are more</h2>
-<p>在笔试或技术面试时，针对这种归并处理，一般还有更多的要求，譬如“对递归进行去皮，变成迭代排序”“多线程处理归并”，以后有机会专门对这部分内容进行补充吧。</p>
+<p>在笔试或技术面试时，针对这种归并处理，一般还有更多的要求，譬如「对递归进行去皮，变成迭代排序」「多线程处理归并」，以后有机会专门对这部分内容进行补充吧。</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -209,7 +200,7 @@ Sort a linked list in O(n log n) time using constant space complexity.
       
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#归并排序介绍"><span class="toc-number">1.1.</span> <span class="toc-text">归并排序介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#归并排序处理链表"><span class="toc-number">1.2.</span> <span class="toc-text">归并排序处理链表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#归并排序解决“Largest_Number”问题"><span class="toc-number">1.3.</span> <span class="toc-text">归并排序解决“Largest Number”问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#There_are_more"><span class="toc-number">1.4.</span> <span class="toc-text">There are more</span></a></li></ol></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#归并排序介绍"><span class="toc-number">2.</span> <span class="toc-text">归并排序介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#归并排序处理链表"><span class="toc-number">3.</span> <span class="toc-text">归并排序处理链表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#归并排序解决Largest_Number问题"><span class="toc-number">4.</span> <span class="toc-text">归并排序解决Largest Number问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#There_are_more"><span class="toc-number">5.</span> <span class="toc-text">There are more</span></a></li></ol>
   </div>
 
 <div id="asidepart">
@@ -245,7 +236,7 @@ Sort a linked list in O(n log n) time using constant space complexity.
 		
 			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
 		
-			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>62</sup></a></li>
 		
 		</ul>
 </div>
@@ -254,7 +245,7 @@ Sort a linked list in O(n log n) time using constant space complexity.
   
   <div class="archiveslist">
     <p class="asidetitle"><a href="/archives">归档</a></p>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">32</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
   </div>
 
 
@@ -283,7 +274,7 @@ Sort a linked list in O(n log n) time using constant space complexity.
 		
 			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
 		
-			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>8</sup></a></li>
 		
 			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
 		
@@ -341,7 +332,7 @@ Sort a linked list in O(n log n) time using constant space complexity.
 		
 			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
 		
-			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>2</sup></a></li>
 		
 			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
 		

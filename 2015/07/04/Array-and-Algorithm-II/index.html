@@ -10,7 +10,7 @@
     <meta name="author" content="张不坏">
     
     <meta name="description" content="写在前面
-《一些基础Array算法题》中已经对LeetCode中的一些与Array相关的基础性算法做了一些总结，这些算法题相对而言比较简单；除了哪些稍微基础一点的算法题目之外，笔者觉得也有必要对已做过其他Array算法题也做一些汇总。
+《Array和算法 第一弹》中已经对LeetCode中的一些与Array相关的基础性算法做了一些总结，这些算法题相对而言比较简单；除了哪些稍微基础一点的算法题目之外，笔者觉得也有必要对已做过其他Array算法题也做一些汇总。
 Combination Sum系列
 关于组合（combinati">
     
@@ -74,7 +74,7 @@ Combination Sum系列
     </p>
   <p class="article-time">
     <time datetime="2015-07-04T08:12:58.000Z" itemprop="datePublished">2015-07-04</time>
-    更新日期:<time datetime="2015-07-06T01:58:16.000Z" itemprop="dateModified">2015-07-06</time>
+    更新日期:<time datetime="2015-08-01T10:08:24.000Z" itemprop="dateModified">2015-08-01</time>
     
   </p>
 </header>
@@ -87,10 +87,10 @@ Combination Sum系列
 		</div>
 		
 		<p><strong>写在前面</strong></p>
-<p>《<a href="/2015/06/28/Array-and-Algorithm/">一些基础Array算法题</a>》中已经对LeetCode中的一些与Array相关的基础性算法做了一些总结，这些算法题相对而言比较简单；除了哪些稍微基础一点的算法题目之外，笔者觉得也有必要对已做过其他Array算法题也做一些汇总。</p>
+<p>《<a href="/2015/06/28/Array-and-Algorithm/">Array和算法 第一弹</a>》中已经对LeetCode中的一些与Array相关的基础性算法做了一些总结，这些算法题相对而言比较简单；除了哪些稍微基础一点的算法题目之外，笔者觉得也有必要对已做过其他Array算法题也做一些汇总。</p>
 <h2 id="Combination_Sum系列"><strong>Combination Sum系列</strong></h2>
-<p>关于组合（combination）问题，已经在博客<a href="/2015/06/21/permutation-and-combination/#非全组合">排列与组合算法</a>。</p>
-<p>但之前<a href="/2015/06/21/permutation-and-combination/#非全组合">博客</a>中的「组合问题」相对而言更简单一些。LeetCode中还有几道变种问题：</p>
+<p>关于组合（combination）问题，已经在博客《<a href="/2015/06/21/permutation-and-combination/#非全组合">排列与组合算法</a>》中介绍过。</p>
+<p>但之前<a href="/2015/06/21/permutation-and-combination/#非全组合">博客</a>中的「组合问题」相对比较简单。LeetCode中还有几道变种问题：</p>
 <ul>
 <li><a href="https://leetcode.com/problems/combination-sum/" target="_blank" rel="external">Combination Sum</a></li>
 <li><a href="https://leetcode.com/problems/combination-sum-ii/" target="_blank" rel="external">Combination Sum II</a></li>
@@ -106,7 +106,7 @@ Combination Sum系列
 <li>Elements in a combination (a<sub>1</sub>, a<sub>2</sub>, … , a<sub>k</sub>) must be in non-descending order. (ie, a<sub>1</sub> ≤ a<sub>2</sub> ≤ … ≤ a<sub>k</sub>).</li>
 <li>The solution set must not contain duplicate combinations.</li>
 </ul>
-<p>For example, given candidate set <code>2,3,6,7</code> and target <code>7</code>,<br>A solution set is: <code>[7]``[2, 2, 3]</code></p>
+<p>For example, given candidate set <code>2,3,6,7</code> and target <code>7</code>,<br>A solution set is: <code>[7]</code>，<code>[2, 2, 3]</code></p>
 </blockquote>
 <p>注意，每个元素使用次数不限。采用回溯法，如下是「递归」版本的Solution Python代码：</p>
 <figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer[]} candidates</span></div><div class="line">    <span class="comment"># @param {integer} target</span></div><div class="line">    <span class="comment"># @return {integer[][]}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">combinationSum</span><span class="params">(self, candidates, target)</span>:</span></div><div class="line">        candidates.sort()   <span class="comment"># 排序</span></div><div class="line">        ret, stack = [], []</div><div class="line">        self.aux(candidates, <span class="number">0</span>, ret, stack, target)</div><div class="line">        <span class="keyword">return</span> ret</div><div class="line">	</div><div class="line">    <span class="comment"># auxiliary method</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">aux</span><span class="params">(self, candidates, begin, ret, stack, target)</span>:</span></div><div class="line">        <span class="keyword">if</span> target == <span class="number">0</span>:</div><div class="line">            ret.append(stack[::])</div><div class="line">            <span class="keyword">return</span></div><div class="line">	</div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(begin, len(candidates)):</div><div class="line">            <span class="keyword">if</span> candidates[i] &lt;= target:</div><div class="line">                stack.append(candidates[i])</div><div class="line">                self.aux(candidates, i, ret, stack, target-candidates[i])</div><div class="line">                stack.pop()</div></pre></figure>
@@ -157,10 +157,11 @@ Combination Sum系列
 <blockquote>
 <p>Follow up for “Unique Paths”:<br>&nbsp;<br>Now consider if some obstacles are added to the grids. How many unique paths would there be?<br>An obstacle and empty space is marked as <code>1</code> and <code>0</code> respectively in the grid.<br>&nbsp;<br>For example,<br>There is one obstacle in the middle of a 3x3 grid as illustrated below.<br>[<br>&nbsp;&nbsp;&nbsp;&nbsp;[0,0,0],<br>&nbsp;&nbsp;&nbsp;&nbsp;[0,1,0],<br>&nbsp;&nbsp;&nbsp;&nbsp;[0,0,0]<br>]<br>The total number of unique paths is 2.</p>
 </blockquote>
-<p>虽然设置了一些「障碍」，仍然是简单的DP问题，多出了一些细节问题罢了。代码如下：</p>
+<p>虽然设置了一些<strong>障碍</strong>，仍然是简单的DP问题，多出了一些细节问题罢了。代码如下：</p>
 <figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer[][]} obstacleGrid</span></div><div class="line">    <span class="comment"># @return {integer}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">uniquePathsWithObstacles</span><span class="params">(self, obstacleGrid)</span>:</span></div><div class="line">        m = len(obstacleGrid)</div><div class="line">        <span class="keyword">if</span> m == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> <span class="number">0</span></div><div class="line">        n = len(obstacleGrid[<span class="number">0</span>])</div><div class="line">        <span class="keyword">if</span> n == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> <span class="number">0</span></div><div class="line">        <span class="keyword">if</span> obstacleGrid[<span class="number">0</span>][<span class="number">0</span>] == <span class="number">1</span>:</div><div class="line">            <span class="keyword">return</span> <span class="number">0</span></div><div class="line"></div><div class="line">        paths = [[<span class="number">0</span>] * n <span class="keyword">for</span> x <span class="keyword">in</span> xrange(m)]</div><div class="line">        </div><div class="line">        <span class="comment"># 初始值</span></div><div class="line">        paths[<span class="number">0</span>][<span class="number">0</span>] = <span class="number">1</span></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">1</span>, m):</div><div class="line">            <span class="keyword">if</span> obstacleGrid[i][<span class="number">0</span>] == <span class="number">1</span>:</div><div class="line">                <span class="keyword">break</span></div><div class="line">            paths[i][<span class="number">0</span>] = <span class="number">1</span></div><div class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> xrange(<span class="number">1</span>, n):</div><div class="line">            <span class="keyword">if</span> obstacleGrid[<span class="number">0</span>][j] == <span class="number">1</span>:</div><div class="line">                <span class="keyword">break</span></div><div class="line">            paths[<span class="number">0</span>][j] = <span class="number">1</span></div><div class="line">	</div><div class="line">        <span class="comment"># 状态转换方程</span></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">1</span>, m):</div><div class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> xrange(<span class="number">1</span>, n):</div><div class="line">                <span class="keyword">if</span> obstacleGrid[i][j] == <span class="number">1</span>:</div><div class="line">                    paths[i][j] = <span class="number">0</span></div><div class="line">                <span class="keyword">else</span>:</div><div class="line">                    paths[i][j] = paths[i-<span class="number">1</span>][j] + paths[i][j-<span class="number">1</span>]</div><div class="line">	</div><div class="line">        <span class="keyword">return</span> paths[m-<span class="number">1</span>][n-<span class="number">1</span>]</div></pre></figure>
 
 <h2 id="Array_and_Sum系列"><strong>Array and Sum系列</strong></h2>
+<p><strong>Array and Sum</strong>系列问题和上文的<strong>Combination Sum</strong>系列问题有些类似，都是处理数组子集的sum问题，不同的是<strong>Array and Sum系列问题</strong>的约束更多，这意味着可以用更好的策略解决问题。</p>
 <h3 id="Two_Sum"><strong>Two Sum</strong></h3>
 <p>LeetCode有题：<a href="https://leetcode.com/problems/two-sum/" target="_blank" rel="external">Two Sum</a>，描述如下：</p>
 <blockquote>
@@ -169,15 +170,15 @@ Combination Sum系列
 <p>虽然题目所给的tags包括关键字「Hash Table」，意味着你可以使用散列表解决问题。但我在处理算法问题时向来不喜欢使用高级数据结构，因此笔者把它当成一道综合题（有多个过程组成）解决：</p>
 <ol>
 <li>对数组进行排序，并记录排序前各个元素的位置；</li>
-<li>「Two Pointers」处理；</li>
+<li><strong>Two Pointers</strong>处理；</li>
 </ol>
-<p>所谓的「Two Pointers」处理指的是：初始化左指针left指向数组起始，初始化右指针right指向数组结尾，对于已排序数组：</p>
+<p>具体的「Two Pointers」处理指的是：初始化左指针left指向数组起始，初始化右指针right指向数组结尾，对于已排序数组：</p>
 <ol>
-<li>若nums[left]与nums[right]的和sums小于target，说明应该增加sums，因此left右移指向一个较大的值；</li>
-<li>若nums[left]与nums[right]的和sums大于target，说明应该减小sums，因此right左移指向一个较大的值；</li>
-<li>若nums[left]与nums[right]的和sums等于target，game over！</li>
+<li>若nums[left]和nums[right]的和sums小于target，说明应该增加sums，因此left右移指向一个较大的值；</li>
+<li>若nums[left]和nums[right]的和sums大于target，说明应该减小sums，因此right左移指向一个较小的值；</li>
+<li>若nums[left]和nums[right]的和sums等于target，game over！</li>
 </ol>
-<p>步骤1时间复杂度为<code>O(nlgn)</code>，「Two Pointers处理」时间复杂度为<code>O(n)</code>，总体复杂度为<code>O(nlgn)</code>。Solution代码比较长，详见我的<a href="https://github.com/sadjason/LeetCode/blob/master/two-sum.py" target="_blank" rel="external">github</a>。</p>
+<p>排序处理的时间复杂度为<code>O(nlgn)</code>，Two Pointers处理时间复杂度为<code>O(n)</code>，总体复杂度为<code>O(nlgn)</code>。Solution代码比较长，详见我的<a href="https://github.com/sadjason/LeetCode/blob/master/two-sum.py" target="_blank" rel="external">github</a>。</p>
 <h3 id="3Sum"><strong>3Sum</strong></h3>
 <p>LeetCode有题：<a href="https://leetcode.com/problems/3sum/" target="_blank" rel="external">3Sum</a>，描述如下：</p>
 <blockquote>
@@ -205,7 +206,7 @@ Combination Sum系列
 <li>Elements in a quadruplet (a,b,c,d) must be in non-descending order. (ie, <em>a ≤ b ≤ c ≤ d</em>)</li>
 <li>The solution set must not contain duplicate quadruplets.</li>
 </ul>
-<p>For example, given array S = {1 0 -1 0 -2 2}, and target = 0.<br>A solution set is:<br><code>(-1,  0, 0, 1)</code><br><code>(-2, -1, 1, 2)</code><br><code>(-2,  0, 0, 2)</code></p>
+<p>For example, given array S = <code>{1 0 -1 0 -2 2}</code>, and target = 0.<br>A solution set is:<br><code>(-1,  0, 0, 1)</code><br><code>(-2, -1, 1, 2)</code><br><code>(-2,  0, 0, 2)</code></p>
 </blockquote>
 <p>和3Sum问题一样，先排序，然后左右夹逼，复杂度O(n<sup>3</sup>)，代码详见<a href="https://github.com/sadjason/LeetCode/blob/master/4sum.py" target="_blank" rel="external">github</a>。不被<code>Accepted</code>，应该是时间复杂度太高了吧，要想降低时间复杂度最直接的办法就是「空间换时间」了。</p>
   
@@ -312,7 +313,7 @@ Combination Sum系列
 		
 			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
 		
-			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>62</sup></a></li>
 		
 		</ul>
 </div>
@@ -321,7 +322,7 @@ Combination Sum系列
   
   <div class="archiveslist">
     <p class="asidetitle"><a href="/archives">归档</a></p>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">32</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
   </div>
 
 
@@ -350,7 +351,7 @@ Combination Sum系列
 		
 			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
 		
-			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>8</sup></a></li>
 		
 			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
 		
@@ -408,7 +409,7 @@ Combination Sum系列
 		
 			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
 		
-			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>2</sup></a></li>
 		
 			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
 		

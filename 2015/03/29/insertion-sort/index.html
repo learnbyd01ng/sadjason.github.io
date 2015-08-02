@@ -10,14 +10,11 @@
     <meta name="author" content="张不坏">
     
     <meta name="description" content="写在前面
-leetcode中有一道题：
-
-Insertion Sort List
+LeetCode中有一道题Insertion Sort List：
 
 Sort a linked list using insertion sort.
 
-
-题意非常简单：采用插入排序的防护四对一个链表进行排序。插入排序算是除了冒泡排序之外最简单的排序方式了，为了解决这个问题，顺便复习一">
+题意非常简单：采用插入排序策略对一个链表进行排序。插入排序算是除了冒泡排序之外最简单的排序方式了，为了解决这个问题，顺便复习一下插入排序">
     
     
     
@@ -79,7 +76,7 @@ Sort a linked list using insertion sort.
     </p>
   <p class="article-time">
     <time datetime="2015-03-29T07:49:12.000Z" itemprop="datePublished">2015-03-29</time>
-    更新日期:<time datetime="2015-07-22T15:58:45.000Z" itemprop="dateModified">2015-07-22</time>
+    更新日期:<time datetime="2015-08-02T05:24:13.000Z" itemprop="dateModified">2015-08-02</time>
     
   </p>
 </header>
@@ -91,26 +88,22 @@ Sort a linked list using insertion sort.
 		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#插入排序简单介绍"><span class="toc-number">2.</span> <span class="toc-text">插入排序简单介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#插入排序处理链表"><span class="toc-number">3.</span> <span class="toc-text">插入排序处理链表</span></a></li></ol>
 		</div>
 		
-		<h2 id="写在前面">写在前面</h2>
-<p>leetcode中有一道题：</p>
-<blockquote>
-<p>Insertion Sort List</p>
+		<h2 id="写在前面"><strong>写在前面</strong></h2>
+<p>LeetCode中有一道题<a href="https://leetcode.com/problems/insertion-sort-list/" target="_blank" rel="external">Insertion Sort List</a>：</p>
 <blockquote>
 <p>Sort a linked list using insertion sort.</p>
 </blockquote>
-</blockquote>
-<p>题意非常简单：采用插入排序的防护四对一个链表进行排序。插入排序算是除了冒泡排序之外最简单的排序方式了，为了解决这个问题，顺便复习一下插入排序相关的知识，遂成此文。</p>
-<h2 id="插入排序简单介绍">插入排序简单介绍</h2>
-<p>引用《算法导论的描述》：</p>
+<p>题意非常简单：采用<strong>插入排序</strong>策略对一个链表进行排序。插入排序算是除了冒泡排序之外最简单的排序方式了，为了解决这个问题，顺便复习一下插入排序相关的知识，遂成此文。</p>
+<h2 id="插入排序简单介绍"><strong>插入排序简单介绍</strong></h2>
+<p>引用《算法导论》的描述：</p>
 <blockquote>
-<p>插入排序的工作方式像许多排序一手扑克牌。开始时，我们的左手为空并且桌子上的牌面向下。然后，我们每次从桌上拿走一张牌并将它插入左手中正确的位置。为了找到一张牌的正确位置，我们从右到左将它与在手中的每张牌进行比较，如下图所示。拿在左上的牌总是排好序的，原来这些牌是桌子上牌堆中顶部的牌。</p>
+<p>插入排序的工作方式像许多排序一手扑克牌。开始时，我们的左手为空并且桌子上的牌面向下。然后，我们每次从桌上拿走一张牌并将它插入左手中正确的位置。为了找到一张牌的正确位置，我们从右到左将它与在手中的每张牌进行比较，如下图所示。拿在左上的牌总是排好序的，原来这些牌是桌子上牌堆中顶部的牌。<br><img style="margin:0" src="/img/201503/QQ20150329-1.png" width="103" height="96"></p>
 </blockquote>
-<p><img src="/img/201503/QQ20150329-1.png" width="216" height="191"></p>
 <p>插入排序的Python实现如下：</p>
-<figure class="highlight Python"><pre><div class="line"><span class="comment"># 插入排序</span></div><div class="line"><span class="comment"># 假设len(A) &gt; 0</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">insertionSort</span><span class="params">(A)</span>:</span></div><div class="line">    <span class="keyword">for</span> cnt <span class="keyword">in</span> range(<span class="number">1</span>, len(A)):</div><div class="line">        temp = A[cnt]   <span class="comment"># cnt表示已“插入”的元素数量</span></div><div class="line">        index = cnt     <span class="comment"># index表示要插入的第cnt+1个元素的位置</span></div><div class="line">        <span class="keyword">while</span> index &gt;= <span class="number">1</span>:</div><div class="line">            <span class="keyword">if</span> A[index-<span class="number">1</span>] &gt; temp:</div><div class="line">                A[index] = A[index-<span class="number">1</span>]</div><div class="line">                index -= <span class="number">1</span></div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                <span class="keyword">break</span></div><div class="line">        A[index] = temp</div></pre></figure>
+<figure class="highlight Python"><figcaption><span>Python</span></figcaption><pre><div class="line"><span class="comment"># 插入排序</span></div><div class="line"><span class="comment"># 假设len(A) &gt; 0</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">insertionSort</span><span class="params">(A)</span>:</span></div><div class="line">    <span class="keyword">for</span> cnt <span class="keyword">in</span> range(<span class="number">1</span>, len(A)):</div><div class="line">        temp = A[cnt]   <span class="comment"># cnt表示已“插入”的元素数量</span></div><div class="line">        index = cnt     <span class="comment"># index表示要插入的第cnt+1个元素的位置</span></div><div class="line">        <span class="keyword">while</span> index &gt;= <span class="number">1</span>:</div><div class="line">            <span class="keyword">if</span> A[index-<span class="number">1</span>] &gt; temp:</div><div class="line">                A[index] = A[index-<span class="number">1</span>]</div><div class="line">                index -= <span class="number">1</span></div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                <span class="keyword">break</span></div><div class="line">        A[index] = temp</div></pre></figure>
 
-<p>简单分析一下，<strong>插入排序是一个非常不稳定的排序算法</strong>，换句话说，其时间复杂度是不太靠谱的，最好情况下，当然是所有元素已经排好了，时间复杂度为O(n)；最坏情况下，原始元素已逆向排好序，这种情况下，插入排序的时间复杂度和冒泡排序是一样一样的，即O(n<sup>2</sup>)。插入排序不是一个好的排序算法的更重要原因是“其平均情况往往和最坏情况大致一样差”。</p>
-<p>此外，插入排序是原址排序，这算其一大优点吧，另外一个优点就是“实现极其简单”。</p>
+<p>简单分析一下，<strong>插入排序是一个非常不稳定的排序算法</strong>，换句话说，其时间复杂度是不太靠谱的，最好情况下，当然是所有元素已经排好了，时间复杂度为<code>O(n)</code>；最坏情况下，原始元素已逆向排好序，这种情况下，插入排序的时间复杂度和冒泡排序是一样一样的，即O(n<sup>2</sup>)。插入排序不是一个好的排序算法的更重要原因是：其平均情况往往和最坏情况大致一样差。</p>
+<p>此外，插入排序是<strong>原址排序</strong>，这算其一大优点吧，另外一个优点：实现极其简单。</p>
 <h2 id="插入排序处理链表">插入排序处理链表</h2>
 <p>回到我们的题目：Sort a linked list using insertion sort。<br>上述的插入排序的Python实现代码所针对的对象是数组，但现在我们要处理的是链表。</p>
 <p>最开始，完全参照“基于数组的插入排序”进行代码编写：</p>
@@ -226,7 +219,7 @@ Sort a linked list using insertion sort.
 		
 			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
 		
-			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>62</sup></a></li>
 		
 		</ul>
 </div>
@@ -235,7 +228,7 @@ Sort a linked list using insertion sort.
   
   <div class="archiveslist">
     <p class="asidetitle"><a href="/archives">归档</a></p>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">32</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
   </div>
 
 
@@ -264,7 +257,7 @@ Sort a linked list using insertion sort.
 		
 			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
 		
-			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>8</sup></a></li>
 		
 			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
 		
@@ -322,7 +315,7 @@ Sort a linked list using insertion sort.
 		
 			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
 		
-			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>2</sup></a></li>
 		
 			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
 		

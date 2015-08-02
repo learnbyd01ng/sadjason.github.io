@@ -77,7 +77,7 @@ Bes">
     </p>
   <p class="article-time">
     <time datetime="2015-06-27T10:15:22.000Z" itemprop="datePublished">2015-06-27</time>
-    更新日期:<time datetime="2015-07-04T08:52:32.000Z" itemprop="dateModified">2015-07-04</time>
+    更新日期:<time datetime="2015-08-01T10:39:24.000Z" itemprop="dateModified">2015-08-01</time>
     
   </p>
 </header>
@@ -104,7 +104,7 @@ Bes">
 <blockquote>
 <p>Say you have an array for which the <em>i</em><sup>th</sup> element is the price of a given stock on day <em>i</em>.<br>&nbsp;<br>If you were only permitted to complete at most one transaction (ie, buy one and sell one share of the stock), design an algorithm to find the maximum profit.</p>
 </blockquote>
-<p>印象中《算法导论》中在介绍「最大子数组」时引入了这道题，一来说明这道题非常经典，二来说明本题的本质是「最大子数组问题」，笔者曾在博客《<a href="/2015/06/28/Array-and-Algorithm/#最大子数组">一些基础Array算法题</a>》中阐述过「最大子数组问题」，这种问题比较好的做法（也许是最好的做法）是采用「动态规划」策略；简单来说，本题属于一维DP问题，因此本题的Solution代码如下：</p>
+<p>印象中《算法导论》中在介绍「最大子数组」时引入了这道题，一来说明这道题非常经典，二来说明本题的本质是「最大子数组问题」，笔者曾在博客《<a href="/2015/06/28/Array-and-Algorithm/#最大子数组">Array和算法 第一弹</a>》中阐述过<strong>最大子数组问题</strong>，这种问题比较好的做法（也许是最好的做法）是采用<strong>动态规划</strong>策略；简单来说，本题属于一维DP问题，Solution代码如下：</p>
 <figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer[]} prices</span></div><div class="line">    <span class="comment"># @return {integer}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">maxProfit</span><span class="params">(self, prices)</span>:</span></div><div class="line">        n = len(prices)</div><div class="line">        sell = [<span class="number">0</span>] * n      <span class="comment"># sell[i]表示第i天卖掉股票的最大收益（显然股票需要在第i天前买入）</span></div><div class="line">        ret = <span class="number">0</span></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">1</span>, n):</div><div class="line">            p = prices[i] - prices[i-<span class="number">1</span>]</div><div class="line">            sell[i] = max(sell[i-<span class="number">1</span>]+p, p)</div><div class="line">            ret = max(sell[i], ret)</div><div class="line">        <span class="keyword">return</span> ret</div></pre></figure>
 
 <p>显然，代码中消耗<code>O(n)</code>空间的sell数组是可以省掉的，因此可以简化一下：</p>
@@ -115,7 +115,7 @@ Bes">
 <blockquote>
 <p>Say you have an array for which the <em>i</em><sup>th</sup> element is the price of a given stock on day <em>i</em>.<br>&nbsp;<br>Design an algorithm to find the maximum profit. You may complete as many transactions as you like (ie, buy one and sell one share of the stock multiple times). However, you may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).</p>
 </blockquote>
-<p>本题与上一道题相比少了一个约束：只能进行一次交易（买一次卖一次），对于没有约束的本题而言，如何解题呢？更好办，贪心算法！</p>
+<p>本题与上一道题相比少了一个约束：只能进行一次交易（买一次卖一次）。对于没有约束的本题而言，如何解题呢？更好办，贪心算法！</p>
 <figure class="highlight Python"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></div><div class="line">    <span class="comment"># @param {integer[]} prices</span></div><div class="line">    <span class="comment"># @return {integer}</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">maxProfit</span><span class="params">(self, prices)</span>:</span></div><div class="line">        ret = <span class="number">0</span></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">1</span>, len(prices)):</div><div class="line">            c = prices[i] - prices[i-<span class="number">1</span>]</div><div class="line">            <span class="keyword">if</span> c &gt; <span class="number">0</span>:</div><div class="line">                ret += c</div><div class="line">        <span class="keyword">return</span> ret</div></pre></figure>
 
 <h2 id="Best_Time_to_Buy_and_Sell_Stock_III"><strong>Best Time to Buy and Sell Stock III</strong></h2>
@@ -125,7 +125,7 @@ Bes">
 </blockquote>
 <p>好吧，本题修改了约束，稍微变态一点：你可以进行两次交易。本题的难度相对于第一题俨然上升了一个台阶，笔者自己没能想出比较好的对策，参考网络资源，这才整理出了如下思路：</p>
 <ol>
-<li>分别以「动态规划」策略计算第i天买入股票和卖出股票的最大收益buy和sell，即buy[i]表示第i天买入股票（第i天后卖出）的最大收益，<code>sell[i]</code>表示第i天卖出（第i天前买入）的最大收益；</li>
+<li>分别以<strong>动态规划</strong>策略计算第i天买入股票和卖出股票的最大收益buy和sell，即buy[i]表示第i天买入股票（第i天后卖出）的最大收益，<code>sell[i]</code>表示第i天卖出（第i天前买入）的最大收益；</li>
 <li>基于sell和buy分别计算<strong>第i天前</strong>（包括第i天）卖出股票和<strong>第i天后</strong>（包括第i天）买入的最大收益profits1和profits2，即<code>profits1[i]</code>表示<strong>第i天前</strong>卖出股票的最大收益，<code>profits2[i]</code>表示<strong>第i天后</strong>买入股票的最大收益。</li>
 <li>我们需要的结果ret=max(profits1[i]+profits2[i], 0&lt;=i&lt;n)；</li>
 </ol>
@@ -244,7 +244,7 @@ Bes">
 		
 			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
 		
-			<li><a href="/categories/iOS/" title="iOS">iOS<sup>63</sup></a></li>
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>62</sup></a></li>
 		
 		</ul>
 </div>
@@ -253,7 +253,7 @@ Bes">
   
   <div class="archiveslist">
     <p class="asidetitle"><a href="/archives">归档</a></p>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">33</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">32</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
   </div>
 
 
@@ -282,7 +282,7 @@ Bes">
 		
 			<li><a href="/tags/Edit-Distance/" title="Edit Distance">Edit Distance<sup>1</sup></a></li>
 		
-			<li><a href="/tags/GCD/" title="GCD">GCD<sup>9</sup></a></li>
+			<li><a href="/tags/GCD/" title="GCD">GCD<sup>8</sup></a></li>
 		
 			<li><a href="/tags/Greedy/" title="Greedy">Greedy<sup>1</sup></a></li>
 		
@@ -340,7 +340,7 @@ Bes">
 		
 			<li><a href="/tags/socket-io/" title="socket-io">socket-io<sup>1</sup></a></li>
 		
-			<li><a href="/tags/多线程/" title="多线程">多线程<sup>3</sup></a></li>
+			<li><a href="/tags/多线程/" title="多线程">多线程<sup>2</sup></a></li>
 		
 			<li><a href="/tags/常用/" title="常用">常用<sup>9</sup></a></li>
 		
