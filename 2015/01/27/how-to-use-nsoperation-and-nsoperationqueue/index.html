@@ -75,7 +75,7 @@ The NSOperation class itself is an abstract base class that must be subclassed i
     </p>
   <p class="article-time">
     <time datetime="2015-01-27T02:24:41.000Z" itemprop="datePublished">2015-01-27</time>
-    更新日期:<time datetime="2015-07-22T14:10:45.000Z" itemprop="dateModified">2015-07-22</time>
+    更新日期:<time datetime="2015-08-05T14:25:24.000Z" itemprop="dateModified">2015-08-05</time>
     
   </p>
 </header>
@@ -87,16 +87,17 @@ The NSOperation class itself is an abstract base class that must be subclassed i
 		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#NSOperation"><span class="toc-number">1.</span> <span class="toc-text">NSOperation</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NSOperationQueue"><span class="toc-number">2.</span> <span class="toc-text">NSOperationQueue</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NSOperation_v-s_GCD"><span class="toc-number">3.</span> <span class="toc-text">NSOperation v.s GCD</span></a></li></ol>
 		</div>
 		
-		<h2 id="NSOperation">NSOperation</h2>
+		<h2 id="NSOperation"><strong>NSOperation</strong></h2>
 <p>NSOperation其实是对task的一种Objective-C封装。</p>
 <p><strong>NSOperation是个抽象类</strong></p>
 <blockquote>
 <p>The NSOperation class itself is an abstract base class that must be subclassed in order to do any useful work.</p>
 </blockquote>
-<p>P.S：OC中的abstract class和其余语言中的abstract class不太一样，其他语言（主要是静态语言）中的抽象类是不允许进行实例化的，如果对抽象类实例化了，则在编译阶段就可以检查出来；对于OC，对抽象类的说明仅仅停留在文档说明，也即如果作者想让某个类称为抽象类，则需要在开发文档中进行说明（没有所谓的abstract关键字来修饰），告诉用户不要直接对此类进行实例化，而是去继承它然后自己实现相关方法的定义，但是如果用户实例化该类，则也不会有啥问题（至少在编译阶段是没啥问题的）。<br>如果抽象类的定义只是依靠文档说明，则未免有些太弱了，通常的做法是：You can force a user to at least override certain methods by raising an exception in those methods implementation in your abstract class:</p>
+<p>P.S：OC中的abstract class和其余语言中的abstract class不太一样，其他语言（主要是静态语言）中的抽象类是不允许进行实例化的，如果对抽象类实例化了，则在编译阶段就可以检查出来；对于OC，对抽象类的说明仅仅停留在文档说明，也即如果作者想让某个类称为抽象类，则需要在开发文档中进行说明（没有所谓的abstract关键字来修饰），告诉用户不要直接对此类进行实例化，而是去继承它然后自己实现相关方法的定义，但是如果用户实例化该类，则也不会有啥问题（至少在编译阶段是没啥问题的）。</p>
+<p>如果抽象类的定义只是依靠文档说明，则未免有些太弱了，通常的做法是：You can force a user to at least override certain methods by raising an exception in those methods implementation in your abstract class:</p>
 <figure class="highlight Objective-C"><pre><div class="line">[NSException raise:NSInternalInconsistencyException </div><div class="line">            <span class="keyword">format</span>:<span class="variable">@"</span>You must override <span class="variable">%@</span> <span class="keyword">in</span> a subclass<span class="string">", NSStringFromSelector(_cmd)];</span></div></pre></figure>
 
-<p>这和Python很多场合对抽象类的处理有些类似，更多参考<a href="http://stackoverflow.com/questions/1034373/creating-an-abstract-class-in-objective-c" target="_blank" rel="external">Creating an abstract class in Objective C</a>。</p>
+<p>当然，也可以使用assert或NSAssert处理。<br>这和Python很多场合对抽象类的处理有些类似，更多讯息参考来自stackoverflow的<a href="http://stackoverflow.com/questions/1034373/creating-an-abstract-class-in-objective-c" target="_blank" rel="external">Creating an abstract class in Objective C</a>。</p>
 <p>Foundation Framework提供了两个比较好用的NSOperation子类，NSInvocationOperation和NSBlockOperation。</p>
 <p>就我目前的使用经验来看，还没有遇到直接使用NSOperation的机会，更多的时候使用AFNetworking框架提供的<code>AFHTTPRequestOperation</code>。</p>
 <p><strong>执行operation</strong></p>
@@ -106,15 +107,18 @@ The NSOperation class itself is an abstract base class that must be subclassed i
 <li>将NSOperation对象添加到NSOperationQueue中；</li>
 </ol>
 <p>P.S：关于NSOperation的内容还有很多，譬如优先级、completion block之类的，更多信息参考Apple官方文档《Concurrency Programming Guide》，写得很详细。</p>
-<h2 id="NSOperationQueue">NSOperationQueue</h2>
+<h2 id="NSOperationQueue"><strong>NSOperationQueue</strong></h2>
 <p>在阅读《Concurrency Programming Guide》的过程中，不免和GCD进行对比，非常疑惑的问题是，NSOperation的执行大概是什么样子的？并行？FIFO？在main thread还是other threads？下面就围绕这些问题进行阐述。</p>
 <p><strong>创建NSOperationQueue对象</strong></p>
 <p>创建NSOperationQueue有两种方式：</p>
 <figure class="highlight Objective-C"><pre><div class="line"><span class="comment">// 1. NSOperationQueue</span></div><div class="line"><span class="constant">NSOperationQueue *operationQueue1</span> = [[NSOperationQueue alloc] init];</div><div class="line">	</div><div class="line"><span class="comment">// 2. NSOperationQueue</span></div><div class="line"><span class="constant">NSOperationQueue *operationQueue2</span> = [NSOperationQueue mainQueue];</div></pre></figure>
 
 <p>先说mainQueue，it returns the operation queue associated with the main thread，简而言之，mainQueue上的operation（或曰task）都是在main thread上完成的，进一步来说，mainQueue中的operation都有控制UI的能力；对于第一种方式<code>[NSOperationQueue alloc]</code>，则不然，其关联的thread与main thread或许无关。</p>
-<p>所以也可以看出来，执行operation所在的thread不由NSOperation对象自己控制，而由其所在的NSOperationQueue决定。</p>
-<p>P.S：目前还没有到有用到<code>[NSOperationQueue mainQueue]</code>的应用，很想知道在哪些场合会用到…。</p>
+<p>所以也可以看出来，<strong>operation的执行thread由其所在的NSOperationQueue决定</strong>。</p>
+<p>P.S：值得一提的是，同一个NSOperationQueue的不同operation的执行线程并非同一个，因为NSOperationQueue可能同时涉及多个线程。</p>
+<p>P.S：这和GCD不同，GCD中，dispatch_queue中的block的执行线程不单由queue决定，还与block的派发方式有关。</p>
+<p>P.S：目前还没有到有用到<code>[NSOperationQueue mainQueue]</code>的应用，很想知道在哪些场合会用到…</p>
+<p>P.S：NSOperationQueue对象不存在所谓的<code>start</code>之类的启动方法，根据我的理解，自它被创建了就开始工作了。</p>
 <p><strong>NSOperationQueue的工作方式</strong></p>
 <p>根据《Concurrency Programming Guide》上介绍，获悉：</p>
 <ol>
@@ -134,7 +138,7 @@ The NSOperation class itself is an abstract base class that must be subclassed i
 <p>将NSOperation和其completion block割裂来看的做法显然是愚蠢的，也就是说，执行NSOperation的completion block的线程和执行NSOperation的线程是一样的，也都是由其所在的NSOperationQueue决定的。</p>
 <p>带着这个问题，我查看了AFNetworking的处理代码，它的做法是这样的，执行网络任务的NSOperation所在的NSOperation所关联的thread都不是main thread，为了在下载图片（也可能是其他数据）后更新UI，其调用completion block的方式并不是直接调用，而是使用<code>dispatch_group_async</code>函数将用户指定的completion block添加到main thread。<br>简单来说，在用户的completion block基础上加了一层，确保用户的completion block在main thread上执行，认识到这一点很重要！</p>
 <p>P.S：AFNetworking的网络任务的CompletionBlock都是在main thread中完成的，这从AFHTTPRequestOperation的<code>setCompletionBlockWithSuccess:fuilure:</code>方法定义可以看出来。</p>
-<h2 id="NSOperation_v-s_GCD">NSOperation v.s GCD</h2>
+<h2 id="NSOperation_v-s_GCD"><strong>NSOperation v.s GCD</strong></h2>
 <p>关于NSOperation（以及NSOperationQueue）和GCD的关系，引用《Effective-C 2.0》的描述：</p>
 <blockquote>
 <p>The similarity to GCD’s dispatch queues is not a coincidence. Operation queues came before GCD, but there is no doublt that GCD is based on the principles made popular by operation queues. In fact, from iOS 4 and Mac OS X 10.6 onward, operation queues use GCD under hood.</p>
