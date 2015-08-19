@@ -73,7 +73,7 @@ Type casting is a way to check the type of an instance, and/or to treat that ins
     </p>
   <p class="article-time">
     <time datetime="2015-05-13T14:55:49.000Z" itemprop="datePublished">2015-05-13</time>
-    更新日期:<time datetime="2015-07-04T09:00:34.000Z" itemprop="dateModified">2015-07-04</time>
+    更新日期:<time datetime="2015-08-06T06:22:27.000Z" itemprop="dateModified">2015-08-06</time>
     
   </p>
 </header>
@@ -89,8 +89,8 @@ Type casting is a way to check the type of an instance, and/or to treat that ins
 <blockquote>
 <p><strong>Type casting</strong> is a way to check the type of an instance, and/or to treat that instance as if it is a different superclass or subclass from somewhere else in its own class hierarchy.</p>
 </blockquote>
-<p>在Swift中，有两个关键字与「类型转换」相关：<code>is</code>和<code>as</code>。前者反映了Swift的内省机制，用于检查某个实例的类型；后者用于类型转换，即将某个类型实例转换为其父类的实例或者子类的实例。</p>
-<p>Swift中的「类型转换」是一个非常容易理解的概念，本文将以代码为辅助对之进行简单阐述。</p>
+<p>在Swift中，有两个关键字与<strong>类型转换</strong>相关：<code>is</code>和<code>as</code>。前者体现的是Swift的内省机制（introspection），用于检查某个实例的类型（类似于OC中的<code>isKindOfClass:</code>和<code>isMemberOfClass:</code>）；后者用于<strong>类型转换</strong>，即将某个类型实例转换为其父类的实例或者子类的实例。</p>
+<p>Swift中的<strong>类型转换</strong>是一个非常容易理解的概念，本文将以代码为辅助对之进行简单阐述。</p>
 <p>首先定义几个类为后文服务：</p>
 <figure class="highlight Swift"><pre><div class="line"><span class="comment">// 「媒体」类</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">MediaItem</span> </span>{</div><div class="line">    <span class="keyword">var</span> name: <span class="type">String</span></div><div class="line">    <span class="keyword">init</span>(name: <span class="type">String</span>) {</div><div class="line">        <span class="keyword">self</span>.name = name</div><div class="line">    }</div><div class="line">}</div><div class="line">	</div><div class="line"><span class="comment">// 「电影」类</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Movie</span>: <span class="title">MediaItem</span> </span>{</div><div class="line">    <span class="keyword">var</span> director: <span class="type">String</span></div><div class="line">    <span class="keyword">init</span>(name: <span class="type">String</span>, director: <span class="type">String</span>) {</div><div class="line">        <span class="keyword">self</span>.director = director</div><div class="line">        <span class="keyword">super</span>.<span class="keyword">init</span>(name: name)</div><div class="line">    }</div><div class="line">}</div><div class="line">	</div><div class="line"><span class="comment">// 「音乐」类</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Song</span>: <span class="title">MediaItem</span> </span>{</div><div class="line">    <span class="keyword">var</span> artist: <span class="type">String</span></div><div class="line">    <span class="keyword">init</span>(name: <span class="type">String</span>, artist: <span class="type">String</span>) {</div><div class="line">        <span class="keyword">self</span>.artist = artist</div><div class="line">        <span class="keyword">super</span>.<span class="keyword">init</span>(name: name)</div><div class="line">    }</div><div class="line">}</div></pre></figure>
 
@@ -99,23 +99,23 @@ Type casting is a way to check the type of an instance, and/or to treat that ins
 
 <p>很容易理解，该library的类型是<code>[MediaItem]</code>。站在物理的角度，library中存储的元素要么是<code>Movie</code>类型实例，要么是<code>Song</code>类型实例。但站在逻辑的角度，你若遍历library，则取出的实例会是<code>MediaItem</code>类型的，而不是<code>Movie</code>或者<code>Song</code>。所以，若想让library中的元素基于它们本来的类型处理事情，那么需要检查它们的类型或者向下转换它们的类型到其他类型。</p>
 <h2 id="Checking_Type"><strong>Checking Type</strong></h2>
-<p>用类型检查操作符<code>is</code>来检查一个实例是否属于特定子类型。若实例属于那个子类型，类型检查操作符返回true，否则返回false。</p>
+<p>用类型检查操作符<code>is</code>来检查一个实例是否属于特定类型。若实例属于那个类型，类型检查操作符返回true，否则返回false。</p>
 <p>如下定义了两个变量，movieCount和songCount，分别用来计算library中Movie和Song类型实例的数量，如下：</p>
 <figure class="highlight Swift"><pre><div class="line"><span class="keyword">var</span> movieCount = <span class="number">0</span></div><div class="line"><span class="keyword">var</span> songCount = <span class="number">0</span></div><div class="line">	</div><div class="line"><span class="keyword">for</span> item <span class="keyword">in</span> library {</div><div class="line">    <span class="keyword">if</span> item <span class="keyword">is</span> <span class="type">Movie</span> {</div><div class="line">        movieCount++</div><div class="line">    } <span class="keyword">else</span> <span class="keyword">if</span> item <span class="keyword">is</span> <span class="type">Song</span> {</div><div class="line">        songCount++</div><div class="line">    }</div><div class="line">}</div><div class="line">	</div><div class="line"><span class="built_in">println</span>(<span class="string">"Media library contains <span class="subst">\(movieCount)</span> movies and <span class="subst">\(songCount)</span> songs"</span>)</div><div class="line"><span class="comment">// prints "Media library contains 2 movies and 3 songs"</span></div></pre></figure>
 
 <h2 id="Downcasting"><strong>Downcasting</strong></h2>
-<p>Downcasting常常翻译为「向下转型」。某个常量或变量在逻辑层面可能属于某种类型，但在物理层面可能属于其某个子类类型。上述library中的元素就是这种情况（逻辑层面包含的元素都属于MediaItem类型，但是实际上有的属于Movie类型，有的属于Song类型）。对于这种情况，你可以使用转换操作富<code>as</code>向下转型（譬如MediaItem转Song或Movie）。</p>
+<p>「Downcasting」常常被翻译为「向下转型」。某个常量或变量在逻辑层面可能属于某种类型，但在物理层面可能属于其某个子类类型。上述library中的元素就是这种情况（逻辑层面包含的元素都属于MediaItem类型，但是实际上有的属于Movie类型，有的属于Song类型）。对于这种情况，你可以使用转换操作符<code>as</code>向下转型（譬如MediaItem转Song或Movie）。</p>
 <p>在OC中，类型转换非常简单，譬如：</p>
 <figure class="highlight Objective-C"><pre><div class="line">UIViewController <span class="keyword">*</span>VC = [[UIViewController alloc] init];</div><div class="line">UITableViewController <span class="keyword">*</span>tableVC = (UITableViewController <span class="keyword">*</span>)VC;</div><div class="line">tableVC.tableView.background = [UIColor whiteColor];</div></pre></figure>
 
 <p>这段代码当然会通过编译，但是会产生runtime错误，至于原因就不啰嗦了。</p>
-<p>对于Swift也一样，downcasting也可能会失败。不同的是，在OC中，类型转换成功或失败是无法获知的；Swift是强类型语言，类型转换成功与否是可以检查到的，简单来说，Swift的downcasting会返回一个optional，若失败了，则该optional的值为nil；</p>
+<p>对于Swift也一样，downcasting也可能会失败。不同的是，在OC中，类型转换成功或失败是无法获知的（因为人家是动态语言嘛，类型检测在runtime才会进行）；<strong>Swift是强类型语言</strong>，类型转换成功与否是可以检查到的，简单来说，Swift的downcasting会返回一个optional，若失败了，则该optional的值为<code>nil</code>；</p>
 <p>类型转换操作符有两种不同形式：</p>
 <ul>
 <li><code>as?</code>，返回一个optional，若转换成功，则包含你期待的类型实例，若失败，则是nil；</li>
 <li><code>as!</code>，相当于转换后强制解包，若转换失败，则会造成runtime错误；</li>
 </ul>
-<p>显然，当你不确定是否能转换是否成功时，使用<code>as?</code>；否则，使用<code>as!</code>。</p>
+<p>显然，当你不确定是否能转换是否成功时，使用<code>as?</code>；否则，使用<code>as!</code>。<br>P.S：能不能直接使用<code>as</code>？No！</p>
 <p>下面的示例遍历了上文的library常量，并打印出其中所有元素的描述信息（名字，音乐作者或者电影导演），如下：</p>
 <figure class="highlight Swift"><pre><div class="line"><span class="keyword">for</span> item <span class="keyword">in</span> library {</div><div class="line">    <span class="keyword">if</span> <span class="keyword">let</span> movie = item <span class="keyword">as</span>? <span class="type">Movie</span> {</div><div class="line">        <span class="built_in">println</span>(<span class="string">"Movie: '<span class="subst">\(movie.name)</span>', dir. <span class="subst">\(movie.director)</span>"</span>)</div><div class="line">    } <span class="keyword">else</span> <span class="keyword">if</span> <span class="keyword">let</span> song = item <span class="keyword">as</span>? <span class="type">Song</span> {</div><div class="line">        <span class="built_in">println</span>(<span class="string">"Song: '<span class="subst">\(song.name)</span>', by <span class="subst">\(song.artist)</span>"</span>)</div><div class="line">    }</div><div class="line">}</div><div class="line">	</div><div class="line"><span class="comment">/* 输出：</span></div><div class="line">Movie: 'Casablanca', dir. Michael Curtiz</div><div class="line">Song: 'Blue Suede Shoes', by Elvis Presley</div><div class="line">Movie: 'Citizen Kane', dir. Orson Welles</div><div class="line">Song: 'The One And Only', by Chesney Hawkes</div><div class="line">Song: 'Never Gonna Give You Up', by Rick Astley</div><div class="line">*/</div></pre></figure>
 
@@ -240,7 +240,7 @@ Type casting is a way to check the type of an instance, and/or to treat that ins
 		
 			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
 		
-			<li><a href="/categories/iOS/" title="iOS">iOS<sup>62</sup></a></li>
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>61</sup></a></li>
 		
 		</ul>
 </div>
@@ -249,7 +249,7 @@ Type casting is a way to check the type of an instance, and/or to treat that ins
   
   <div class="archiveslist">
     <p class="asidetitle"><a href="/archives">归档</a></p>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">32</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
   </div>
 
 

@@ -72,7 +72,7 @@
     </p>
   <p class="article-time">
     <time datetime="2015-05-12T07:18:11.000Z" itemprop="datePublished">2015-05-12</time>
-    更新日期:<time datetime="2015-07-04T09:00:21.000Z" itemprop="dateModified">2015-07-04</time>
+    更新日期:<time datetime="2015-08-06T02:17:42.000Z" itemprop="dateModified">2015-08-06</time>
     
   </p>
 </header>
@@ -218,13 +218,11 @@
 <li>从顶部构造器链一直往下，每个构造器链中类的指定构造器都有机会进一步定制实例；构造器此时可以访问self、修改它的属性并调用实例方法等等；</li>
 <li>最终，任意构造器链中的便利构造器可以有机会定制实例和使用self。</li>
 </ul>
-<p>下图展示了在假定的子类和父类之间构造的「阶段一」：</p>
-<p><img src="/img/201505/3B436EC7.png" width="470" height="220/"></p>
-<p>以下展示了相同构造过程的「阶段二」：</p>
-<p><img src="/img/201505/19D4FD6C.png" width="470" height="224/"></p>
+<p>下图展示了在假定的子类和父类之间构造的「阶段一」：<br><img src="/img/201505/3B436EC7.png" width="470" height="220/"></p>
+<p>以下展示了相同构造过程的「阶段二」：<br><img src="/img/201505/19D4FD6C.png" width="470" height="224/"></p>
 <h3 id="构造器的继承和重载"><strong>构造器的继承和重载</strong></h3>
 <p>跟OC中的子类不同，Swift中的子类不会默认继承父类的构造器。Swift的这种机制可以防止一个父类的简单构造器被一个更专业的子类继承，并被错误的用来创建子类的实例。</p>
-<p>P.S：initializer在OC中会被继承，这是个非常蛋疼的问题（可谓OC的一大槽点）；举个例子，某个自定义View叫ZWLabel，它继承自UIView，后者提供了<code>init``initWithFrame:</code>等initializers，这些initializers都会被ZWLabel继承；除此之外，ZWLabel也自定义了一个initializer <code>initWithString:</code>，并且只希望调用者调用这个<code>initWithString:</code>来初始化；然而，无论ZWLabel的作者愿不愿意，ZWLabel的用户都可以使用<code>init</code>和<code>initWithFrame:</code>；这是一个非常麻烦的事情。</p>
+<p>P.S：initializer在OC中会被继承，这是个非常蛋疼的问题（可谓OC的一大槽点）；举个例子，某个自定义View叫ZWLabel，它继承自UIView，后者提供了<code>init</code>、<code>initWithFrame:</code>等initializers，这些initializers都会被ZWLabel继承；除此之外，ZWLabel也自定义了一个initializer <code>initWithString:</code>，并且只希望调用者调用这个<code>initWithString:</code>来初始化；然而，无论ZWLabel的作者愿不愿意，ZWLabel的用户都可以使用<code>init</code>和<code>initWithFrame:</code>；这是一个非常麻烦的事情。</p>
 <p>P.S：在学习Swift过程中，对比OC，就会发现OC真的很落后（但像我这种小啰啰是很难体会到的，除非和其他语言进行对比）。</p>
 <p>假如你希望自定义的子类中能实现一个或多个跟父类相同的构造器 — 也许是为了完成一些定制的构造过程 — 你可以在你定制的子类中􏰁供和重载与父类相同的构造器。</p>
 <p>如果你重载的构造器是一个指定构造器，你可以在子类里重载它的实现，并在自定义版本的构造器中调用父类版本的构造器。</p>
@@ -235,15 +233,17 @@
 </blockquote>
 <p>通过示例验证，我这句话的理解如下，如果子类需要定义一个与父类某个initializer同类型的initializer时（譬如父类中已有一个构造器<code>init(paraName: TypeName){}</code>，子类也想定义这么个构造器）：</p>
 <ul>
-<li>当该构造器在父类中是一个「指定构造器」时，子类override该构造器时，既可以将该构造器修饰为「designated」，也可以修饰为「convenience」，但无论如何，都需要在前面加上override关键字；</li>
-<li>当该构造器在父类中是一个「便利构造器」时，子类override该构造器时，既可以将该构造器修饰为「designated」，也可以修饰为「convenience」，并且不需要加上override关键字修饰，否则会报错：Initializer does not override a designated initializer from its superclass.</li>
+<li>当该构造器在父类中是一个<strong>指定构造器</strong>时，子类override该构造器时，既可以将该构造器修饰为designated，也可以修饰为convenience，但无论如何，都需要在前面加上override关键字；</li>
+<li>当该构造器在父类中是一个<strong>便利构造器</strong>时，子类override该构造器时，既可以将该构造器修饰为designated，也可以修饰为convenience，并且不需要加上override关键字修饰，否则会报错：Initializer does not override a designated initializer from its superclass.</li>
 </ul>
-<p>简单来说，只有对于类的「指定构造器」而言，才有谈及override的意义，子类可以override父类的「指定构造器」为「指定构造器」或者「便利构造器」；对于「便利构造器」，不存在所谓的override。</p>
+<p>简单来说，只有对于类的<strong>指定构造器</strong>而言，才有谈及override的意义，子类可以override父类的<strong>指定构造器</strong>为<strong>指定构造器</strong>或者<strong>便利构造器</strong>；对于<strong>便利构造器</strong>，不存在所谓的override。</p>
 <h3 id="自动构造器的继承"><strong>自动构造器的继承</strong></h3>
 <p>如上文所述，子类不会默认继承父类的构造器。但是如果特定条件可以满足，父类构造器是可以被自动继承的。在实际应用中，这意味着对于许多常见场景你不必重载父类的构造器，并且在尽可能安全的情况下以最小的代价来继承父类的构造器。</p>
-<p>自动构造器的继承规则如下。</p>
-<p><strong>「规则一」：</strong><br>如果子类没有定义任何指定构造器，它将自动继承所有父类的指定构造器。</p>
-<p><strong>「规则二」：</strong><br>如果子类提供了所有父类指定构造器的实现 — 不管是通过「规则一」继承过来的，还是通过自定义实现的 — 它将自动继承所有父类的便利构造器。</p>
+<p>自动构造器的继承规则如下：</p>
+<ul>
+<li><strong>规则一：</strong>如果子类没有定义任何指定构造器，它将自动继承所有父类的指定构造器。</li>
+<li><strong>规则二：</strong>如果子类提供了所有父类指定构造器的实现 — 不管是通过「规则一」继承过来的，还是通过自定义实现的 — 它将自动继承所有父类的便利构造器。</li>
+</ul>
 <p>即使你在子类中添加了更多的便利构造器，这两条规则仍然适用。</p>
 <h2 id="Failable_Initializers"><strong>Failable Initializers</strong></h2>
 <h3 id="Failable_Initializers介绍"><strong>Failable Initializers介绍</strong></h3>
@@ -397,7 +397,7 @@
 		
 			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
 		
-			<li><a href="/categories/iOS/" title="iOS">iOS<sup>62</sup></a></li>
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>61</sup></a></li>
 		
 		</ul>
 </div>
@@ -406,7 +406,7 @@
   
   <div class="archiveslist">
     <p class="asidetitle"><a href="/archives">归档</a></p>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">32</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
   </div>
 
 

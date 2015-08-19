@@ -10,8 +10,7 @@
     <meta name="author" content="张不坏">
     
     <meta name="description" content="在iOS实际开发中，常常需要控制UIButton、UIImageView，如下是一个登录界面的一部分：
-
-在点击登录button时，app会与服务器进行交互，网络比较差的情况会花费一些时间，在此过程中，得确保button处于不可被点击状态，最好还得让用户知道正在登录中，就我目前所接触的项目，一般有两">
+在点击登录button时，app会与服务器进行交互，网络比较差的情况会花费一些时间，在此过程中，得确保button处于不可被点击状态，最好还得让用户知道正在登录中，就我目前所接触的项目，一般有两种">
     
     
     
@@ -73,7 +72,7 @@
     </p>
   <p class="article-time">
     <time datetime="2015-02-11T04:48:05.000Z" itemprop="datePublished">2015-02-11</time>
-    更新日期:<time datetime="2015-07-04T09:15:21.000Z" itemprop="dateModified">2015-07-04</time>
+    更新日期:<time datetime="2015-08-15T14:00:37.000Z" itemprop="dateModified">2015-08-15</time>
     
   </p>
 </header>
@@ -85,11 +84,9 @@
 		
 		</div>
 		
-		<p>在iOS实际开发中，常常需要控制UIButton、UIImageView，如下是一个登录界面的一部分：</p>
-<p><img src="/img/201502/before_login.png" alt="before login"></p>
-<p>在点击<code>登录</code>button时，app会与服务器进行交互，网络比较差的情况会花费一些时间，在此过程中，得确保button处于不可被点击状态，最好还得让用户知道正在登录中，就我目前所接触的项目，一般有两种常见处理方式：一种是弹出一个弹出框，告诉用户正在登录中，该弹出窗将登录界面给屏蔽起来了，button当然不可点击，待到登录成功时，再将该弹出窗给撤掉；另外一种常见处理方式是在button本身上做文章，即在登录时将button的enable状态设为false，并在其上予以文字提示…我个人更喜欢第二种方式，因为我总觉得弹出窗是很丑陋的。</p>
-<p>在第二种处理方式中通常还会在UIButton上添加一个UIActivityIndicatorView，这样会让信息传达得更生动，如下：</p>
-<p><img src="/img/201502/is_loging.png" alt="login now"></p>
+		<p>在iOS实际开发中，常常需要控制UIButton、UIImageView，如下是一个登录界面的一部分：<br><img src="/img/201502/before_login.png" alt="before login"></p>
+<p>在点击<code>登录</code>button时，app会与服务器进行交互，网络比较差的情况会花费一些时间，在此过程中，得确保button处于不可被点击状态，最好还得让用户知道正在登录中，就我目前所接触的项目，一般有两种常见处理方式：一种是弹出一个弹出框，告诉用户正在登录中，该弹出窗将登录界面给屏蔽起来了，button当然不可点击，待到登录成功时，再将该弹出窗给dismiss掉；另外一种常见处理方式是在button本身上做文章，即在登录时将button的enable状态设为false，并在其上予以文字提示…我个人更喜欢第二种方式，因为我总觉得弹出窗是很丑陋的。</p>
+<p>在第二种处理方式中通常还会在UIButton上添加一个UIActivityIndicatorView，这样会让信息传达得更生动，如下：<br><img src="/img/201502/is_loging.png" alt="login now"></p>
 <p>在UIButton上添加UIActivityIndicatorView的方式有很多种，最方便使用的方式我想莫过于使用Objective-C的category机制，即为UIButton添加一个bool属性working，当该属性值为true时，UIButton上的UIActivityIndicatorView得以呈现出来，当该属性值为false时，就将UIActivityIndicatorView给隐藏起来。</p>
 <p>然而，问题是：使用category是不能直接为对象添加属性的；这就涉及iOS开发的另外一个技术：关联引用，关联引用在category中使用非常非常多，网上关于这方面的资源也极为丰富，这里就不啰嗦了。</p>
 <p><code>UIButton+Activity</code>的实现非常容易，直接上代码吧：</p>
@@ -204,7 +201,7 @@
 		
 			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
 		
-			<li><a href="/categories/iOS/" title="iOS">iOS<sup>62</sup></a></li>
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>61</sup></a></li>
 		
 		</ul>
 </div>
@@ -213,7 +210,7 @@
   
   <div class="archiveslist">
     <p class="asidetitle"><a href="/archives">归档</a></p>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">32</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
   </div>
 
 

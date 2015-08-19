@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>AFNetworking使用笔记1 | 张不坏的博客</title>
+    <title>AFNetworking使用笔记 第一弹 | 张不坏的博客</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="张不坏">
@@ -65,7 +65,7 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/04/05/AFNetworking使用笔记1/" title="AFNetworking使用笔记1" itemprop="url">AFNetworking使用笔记1</a>
+      <a href="/2015/04/05/using-AFNetworking-part1/" title="AFNetworking使用笔记 第一弹" itemprop="url">AFNetworking使用笔记 第一弹</a>
   </h1>
   <p class="article-author">By
     
@@ -73,7 +73,7 @@
     </p>
   <p class="article-time">
     <time datetime="2015-04-04T18:04:16.000Z" itemprop="datePublished">2015-04-05</time>
-    更新日期:<time datetime="2015-07-04T09:11:00.000Z" itemprop="dateModified">2015-07-04</time>
+    更新日期:<time datetime="2015-08-15T15:02:10.000Z" itemprop="dateModified">2015-08-15</time>
     
   </p>
 </header>
@@ -87,7 +87,7 @@
 		
 		<h2 id="写在前面">写在前面</h2>
 <p>断断续续接触iOS开发也七八个月的时间了，过程中参与两个项目，项目中使用的HTTP库都是AFNetworking；现在再对之前的项目进行整理，发现对AFNetworking的很多方面都是停留在初级使用阶段，很多细节上的东西不甚了解；于是，笔者决定借此机会对相关内容进行梳理。</p>
-<p>针对网络服务，iOS中有大框架：NSURLConnection和NSURLSession，其中后者是iOS7以及Mac OS X 10.9 Mavericks之后提出的，算是NSURLConnection的继任者；AFNetworking 2.0+版本针对这两大框架都提供了较好的支持，考虑到笔者的项目都是支持iOS7以上版本，所以针对AFNetworking的使用笔记只是针对「AFNetworking中涉及NSURLSession的部分」。</p>
+<p>针对网络服务，iOS中有2大框架：NSURLConnection和NSURLSession，其中后者是iOS7以及Mac OS X 10.9 Mavericks之后提出的，算是NSURLConnection的继任者；AFNetworking 2.0+版本针对这两大框架都提供了较好的支持，考虑到笔者的项目都是支持iOS7以上版本，所以针对AFNetworking的使用笔记只是针对「AFNetworking中涉及NSURLSession的部分」。</p>
 <h2 id="NSURLSession介绍">NSURLSession介绍</h2>
 <p>值得一提的是，NSURLSession一般不是指一个类，而是指一组相互依赖的类，包括：同名类NSURLSession、NSURLRequest、NSURLCache、NSURLSessionConfiguration，还包括3个NSURLSessionTask的子类：NSURLSessionDataTaskNSURLSessionUploadTask，和NSURLSessionDownloadTask等。</p>
 <p>NSURLSession的另一重要组成部分是会话任务，它负责处理数据的加载，以及客户端与服务器之间的文件和数据的上传下载服务。NSURLSessionTask与NSURLConnection是及其相似的，因为它负责加载数据，而主要的区别在于，任务共享它们父类NSURLSession的共同委托（common delegate）。</p>
@@ -124,7 +124,7 @@
 <blockquote>
 <p>当一个NSURLSessionDataTask完成时，它具有关联的数据；而一个NSURLSessionDownloadTask完成时，它具有一个已下载文件的临时文件路径；<br>NSURLSessionUploadTask 继承了 NSURLSessionDataTask，因为服务器响应一个上传请求时，往往伴随着相关联的数据；</p>
 </blockquote>
-<p>所以，在AFHTTPSessionManager中，创建各种HTTP任务流程（参考<a href="https://github.com/AFNetworking/AFNetworking/）如下：" target="_blank" rel="external">https://github.com/AFNetworking/AFNetworking/）如下：</a></p>
+<p>所以，在AFHTTPSessionManager中，创建各种HTTP任务流程（参考<a href="https://github.com/AFNetworking/AFNetworking/" target="_blank" rel="external">github:AFNetworking</a>）如下：</p>
 <figure class="highlight Objective-C"><pre><div class="line"><span class="comment">// download task</span></div><div class="line">NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];</div><div class="line">AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];</div><div class="line">	</div><div class="line"><span class="built_in">NSURL</span> *URL = [<span class="built_in">NSURL</span> URLWithString:<span class="string">@"http://example.com/download.zip"</span>];</div><div class="line"><span class="built_in">NSURLRequest</span> *request = [<span class="built_in">NSURLRequest</span> requestWithURL:URL];</div><div class="line"><span class="comment">// 这里没有指定request的方法名，我猜是使用默认方法POST</span></div><div class="line">	</div><div class="line">NSURLSessionDownloadTask *downloadTask =</div><div class="line">[manager downloadTaskWithRequest:request</div><div class="line">                        progress:<span class="literal">nil</span></div><div class="line">                     destination:^<span class="built_in">NSURL</span> *(<span class="built_in">NSURL</span> *targetPath, NSURLResponse *response) {</div><div class="line">                         <span class="built_in">NSURL</span> *aDirectoryURL =</div><div class="line">                         [[<span class="built_in">NSFileManager</span> defaultManager] URLForDirectory:NSDocumentDirectory</div><div class="line">                                                                inDomain:NSUserDomainMask</div><div class="line">                                                       appropriateForURL:<span class="literal">nil</span></div><div class="line">                                                                  create:<span class="literal">NO</span></div><div class="line">                                                                   error:<span class="literal">nil</span>];</div><div class="line">                         <span class="keyword">return</span> [aDirectoryURL URLByAppendingPathComponent:response<span class="variable">.suggestedFilename</span>];</div><div class="line">                     }</div><div class="line">               completionHandler:^(NSURLResponse *response, <span class="built_in">NSURL</span> *filePath, <span class="built_in">NSError</span> *error) {</div><div class="line">                   <span class="built_in">NSLog</span>(<span class="string">@"File downloaded to: %@"</span>, filePath);</div><div class="line">               }];</div><div class="line">[downloadTask resume];</div></pre></figure>
 
 <p>这段代码中的NSURLRequest对象的创建全部采用默认值，猜测其默认method是POST，在实际应用中，会对NSURLRequest做更多的配置；再就是download task的创建显然不止一种，根据我的理解，基于NSURLSessionDataTask，GET请求消息、POST请求消息都可以完成download task，只是自己要写更多的代码，譬如将download结果从response中取出来。</p>
@@ -132,7 +132,7 @@
 
 <p>同上一段代码一样，这段代码中的NSURLRequest对象的创建全部采用默认值，猜测其默认method是POST，在实际应用中，会对NSURLRequest做更多的配置；此外，实际应用中，处理data task时，不会直接像这样写代码，更多的时候会直接使用AFHTTPSessionManager中定义的POST、GET等方法，虽然这些方法的实现和这段代码类似…</p>
 <p><code>data task</code>和<code>download task</code>相对来说比较简单一些，但<code>upload task</code>就复杂多了。根据复杂程度来看，upload task可以分为“单文件上传”和“多文件上传”。对于前者，相较而言比较简单，直接把“要上传的文件”作为POST请求消息的「消息体」即可。对于“多文件上传”，就复杂得多了。</p>
-<p>P.S：“多文件上传”困惑了我很久，但是只要熟读了HTTP相关文档，了解了<code>multipart/form-data</code>相关概念之后，实现“多文件上传”代码也是挺容易的，关于<code>multipart/form-data</code>，<a href="/2015/04/04/HTTP协议学习笔记">HTTP协议学习笔记</a>有介绍。</p>
+<p>P.S：“多文件上传”困惑了我很久，但是只要熟读了HTTP相关文档，了解了<code>multipart/form-data</code>相关概念之后，实现“多文件上传”代码也是挺容易的，关于<code>multipart/form-data</code>，我的博文《<a href="/2015/04/04/HTTP协议学习笔记">HTTP协议学习笔记</a>》有介绍。</p>
 <p>先说单文件上传，单文件上传根据文件来源构建NSURLSessionUploadTask对象的方式有这么几种：</p>
 <figure class="highlight Objective-C"><pre><div class="line">// 1. 单文件（file路径）上传，进度信息，completion <span class="operator"><span class="keyword">handler</span></span></div><div class="line">uploadTaskWithRequest:fromFile:progress:completionHandler:</div><div class="line">// <span class="number">2.</span> 单文件（file <span class="keyword">data</span>）上传，进度信息，completion <span class="keyword">handler</span></div><div class="line">uploadTaskWithRequest:fromData:progress:completionHandler:</div></pre></figure>
 
@@ -168,7 +168,7 @@
 
 <div class="article-share" id="share">
 
-  <div data-url="http://sadjason.github.io/2015/04/05/AFNetworking使用笔记1/" data-title="AFNetworking使用笔记1 | 张不坏的博客" data-tsina="null" class="share clearfix">
+  <div data-url="http://sadjason.github.io/2015/04/05/using-AFNetworking-part1/" data-title="AFNetworking使用笔记 第一弹 | 张不坏的博客" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -178,10 +178,10 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2015/04/05/AFNetworking使用笔记2/" title="AFNetworking使用笔记2">
+ <a href="/2015/04/05/using-AFNetworking-part2/" title="AFNetworking使用笔记 第二弹">
   <strong>PREVIOUS:</strong><br/>
   <span>
-  AFNetworking使用笔记2</span>
+  AFNetworking使用笔记 第二弹</span>
 </a>
 </div>
 
@@ -198,7 +198,7 @@
 
 		<!-- 多说评论框 start -->
 	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
-	<div class="ds-thread" data-thread-key="2015/04/05/AFNetworking使用笔记1/" data-title="AFNetworking使用笔记1" data-url=""></div>
+	<div class="ds-thread" data-thread-key="2015/04/05/using-AFNetworking-part1/" data-title="AFNetworking使用笔记 第一弹" data-url=""></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">
@@ -253,7 +253,7 @@
 		
 			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
 		
-			<li><a href="/categories/iOS/" title="iOS">iOS<sup>62</sup></a></li>
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>61</sup></a></li>
 		
 		</ul>
 </div>
@@ -262,7 +262,7 @@
   
   <div class="archiveslist">
     <p class="asidetitle"><a href="/archives">归档</a></p>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">32</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
   </div>
 
 

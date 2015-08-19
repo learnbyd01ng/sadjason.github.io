@@ -62,22 +62,6 @@
 
   <section class="post" itemscope itemprop="blogPost">
   
-    <a href="/2015/02/01/using-GCD-part3/" title="GCD的使用（3）使用dispatch_once来执行只需运行一次的线程安全代码" itemprop="url">
-  
-    <h1 itemprop="name">GCD的使用（3）使用dispatch_once来执行只需运行一次的线程安全代码</h1>
-    
-     
-           <p itemprop="description" >单例模式（singleton）对Objective-C开发者而言并不陌生，常见的实现方式为：在类编写名为sharedInstance的方法，该方法只会返回全类共用的单例实例，而不会在每次调用时都创建新的实例。假设有一个类叫TestClass，那么这个共享实例一般会这么写：
-+ (</p>
-        
-    
-    <time datetime="2015-02-01T05:53:40.000Z" itemprop="datePublished">2015-02-01</time>
-  </a>
-</section>
-
-
-  <section class="post" itemscope itemprop="blogPost">
-  
     <a href="/2015/02/01/using-GCD-part2/" title="GCD的使用（2）多用GCD，少用performSelector系列方法" itemprop="url">
   
     <h1 itemprop="name">GCD的使用（2）多用GCD，少用performSelector系列方法</h1>
@@ -230,6 +214,22 @@ AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaT</
 </section>
 
 
+  <section class="post" itemscope itemprop="blogPost">
+  
+    <a href="/2015/01/19/NSError分析/" title="NSError分析" itemprop="url">
+  
+    <h1 itemprop="name">NSError分析</h1>
+    
+     
+           <p itemprop="description" >写在前面
+在iOS开发中，NSError的使用非常常见，使用也比较简单，也正因为简单，所以对这一部分知识不甚注重。但是近期在做app底层网络封装时发现了一些问题。我使用的网络框架是AFNetworking，AFNetworking常常会返回一些错误信息，有时需要将这些错误信息告诉</p>
+        
+    
+    <time datetime="2015-01-19T07:29:44.000Z" itemprop="datePublished">2015-01-19</time>
+  </a>
+</section>
+
+
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/11/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><span class="page-number current">12</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/13/">Next &raquo;</a>
@@ -270,7 +270,7 @@ AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaT</
 		
 			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
 		
-			<li><a href="/categories/iOS/" title="iOS">iOS<sup>62</sup></a></li>
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>61</sup></a></li>
 		
 		</ul>
 </div>
@@ -279,7 +279,7 @@ AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaT</
   
   <div class="archiveslist">
     <p class="asidetitle"><a href="/archives">归档</a></p>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">32</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
   </div>
 
 

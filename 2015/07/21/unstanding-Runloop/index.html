@@ -73,7 +73,7 @@
     </p>
   <p class="article-time">
     <time datetime="2015-07-21T15:50:55.000Z" itemprop="datePublished">2015-07-21</time>
-    更新日期:<time datetime="2015-07-22T07:53:06.000Z" itemprop="dateModified">2015-07-22</time>
+    更新日期:<time datetime="2015-08-16T11:03:36.000Z" itemprop="dateModified">2015-08-16</time>
     
   </p>
 </header>
@@ -112,7 +112,7 @@
 <p>OSX/iOS 系统中，提供了两个这样的对象：NSRunLoop 和 CFRunLoopRef。<br>CFRunLoopRef 是在 CoreFoundation 框架内的，它提供了纯 C 函数的 API，所有这些 API 都是线程安全的。<br>NSRunLoop 是基于 CFRunLoopRef 的封装，提供了面向对象的 API，但是这些 API 不是线程安全的。</p>
 <p>CFRunLoopRef 的代码是<a href="http://opensource.apple.com/source/CF/CF-855.17/CFRunLoop.c" target="_blank" rel="external">开源</a>的，你可以在这里 <a href="http://opensource.apple.com/tarballs/CF/CF-855.17.tar.gz" target="_blank" rel="external">http://opensource.apple.com/tarballs/CF/CF-855.17.tar.gz</a> 下载到整个 CoreFoundation 的源码。为了方便跟踪和查看，你可以新建一个 Xcode 工程，把这堆源码拖进去看。</p>
 <h2 id="RunLoop_与线程的关系"><strong>RunLoop 与线程的关系</strong></h2>
-<p>首先，iOS 开发中能遇到两个线程对象: pthread_t 和 NSThread。过去苹果有份<a href="http://www.fenestrated.net/~macman/mirrors/Apple%20Technotes%20(As%20of%202002" target="_blank" rel="external">文档</a>/tn/tn2028.html)标明了 NSThread 只是 pthread_t 的封装，但那份文档已经失效了，现在它们也有可能都是直接包装自最底层的 mach thread。苹果并没有提供这两个对象相互转换的接口，但不管怎么样，可以肯定的是 pthread_t 和 NSThread 是一一对应的。比如，你可以通过 pthread_main_np() 或 [NSThread mainThread] 来获取主线程；也可以通过 pthread_self() 或 [NSThread currentThread] 来获取当前线程。CFRunLoop 是基于 pthread 来管理的。</p>
+<p>首先，iOS 开发中能遇到两个线程对象: pthread_t 和 NSThread。过去苹果有份<a href="http://t.cn/RLrQeP1" target="_blank" rel="external">文档</a>标明了 NSThread 只是 pthread_t 的封装，但那份文档已经失效了，现在它们也有可能都是直接包装自最底层的 mach thread。苹果并没有提供这两个对象相互转换的接口，但不管怎么样，可以肯定的是 pthread_t 和 NSThread 是一一对应的。比如，你可以通过 pthread_main_np() 或 [NSThread mainThread] 来获取主线程；也可以通过 pthread_self() 或 [NSThread currentThread] 来获取当前线程。CFRunLoop 是基于 pthread 来管理的。</p>
 <p>苹果不允许直接创建 RunLoop，它只提供了两个自动获取的函数：CFRunLoopGetMain() 和 CFRunLoopGetCurrent()。 这两个函数内部的逻辑大概是下面这样:</p>
 <figure class="highlight C"><pre><div class="line"><span class="comment">/// 全局的Dictionary，key 是 pthread_t， value 是 CFRunLoopRef</span></div><div class="line"><span class="keyword">static</span> CFMutableDictionaryRef loopsDic;</div><div class="line"><span class="comment">/// 访问 loopsDic 时的锁</span></div><div class="line"><span class="keyword">static</span> CFSpinLock_t loopsLock;</div><div class="line"> </div><div class="line"><span class="comment">/// 获取一个 pthread 对应的 RunLoop。</span></div><div class="line">CFRunLoopRef _CFRunLoopGet(pthread_t thread) {</div><div class="line">    OSSpinLockLock(&loopsLock);</div><div class="line">    </div><div class="line">    <span class="keyword">if</span> (!loopsDic) {</div><div class="line">        <span class="comment">// 第一次进入时，初始化全局Dic，并先为主线程创建一个 RunLoop。</span></div><div class="line">        loopsDic = CFDictionaryCreateMutable();</div><div class="line">        CFRunLoopRef mainLoop = _CFRunLoopCreate();</div><div class="line">        CFDictionarySetValue(loopsDic, pthread_main_thread_np(), mainLoop);</div><div class="line">    }</div><div class="line">    </div><div class="line">    <span class="comment">/// 直接从 Dictionary 里获取。</span></div><div class="line">    CFRunLoopRef loop = CFDictionaryGetValue(loopsDic, thread));</div><div class="line">    </div><div class="line">    <span class="keyword">if</span> (!loop) {</div><div class="line">        <span class="comment">/// 取不到时，创建一个</span></div><div class="line">        loop = _CFRunLoopCreate();</div><div class="line">        CFDictionarySetValue(loopsDic, thread, loop);</div><div class="line">        <span class="comment">/// 注册一个回调，当线程销毁时，顺便也销毁其对应的 RunLoop。</span></div><div class="line">        _CFSetTSD(..., thread, loop, __CFFinalizeRunLoop);</div><div class="line">    }</div><div class="line">    </div><div class="line">    OSSpinLockUnLock(&loopsLock);</div><div class="line">    <span class="keyword">return</span> loop;</div><div class="line">}</div><div class="line"> 	</div><div class="line">CFRunLoopRef CFRunLoopGetMain() {</div><div class="line">    <span class="keyword">return</span> _CFRunLoopGet(pthread_main_thread_np());</div><div class="line">}</div><div class="line">	</div><div class="line">CFRunLoopRef CFRunLoopGetCurrent() {</div><div class="line">    <span class="keyword">return</span> _CFRunLoopGet(pthread_self());</div><div class="line">}</div></pre></figure>
 
@@ -230,7 +230,7 @@
 <p>当调用 performSelector:onThread: 时，实际上其会创建一个 Timer 加到对应的线程去，同样的，如果对应线程没有 RunLoop 该方法也会失效。</p>
 <h3 id="关于GCD"><strong>关于GCD</strong></h3>
 <p>实际上 RunLoop 底层也会用到 GCD 的东西，比如 RunLoop 是用 dispatch_source_t 实现的 Timer。但同时 GCD 提供的某些接口也用到了 RunLoop， 例如 dispatch_async()。</p>
-<p>当调用 dispatch<em>async(dispatch<em>get_main_queue(), block) 时，libDispatch 会向主线程的 RunLoop 发送消息，RunLoop会被唤醒，并从消息中取得这个 block，并在回调 __CFRUNLOOP_IS_SERVICING_THE_MAIN_DISPATCH_QUEUE</em></em>() 里执行这个 block。但这个逻辑仅限于 dispatch 到主线程，dispatch 到其他线程仍然是由 libDispatch 处理的。</p>
+<p>当调用 <code>dispatch_async(dispatch_get_main_queue(), block)</code> 时，libDispatch 会向主线程的 RunLoop 发送消息，RunLoop会被唤醒，并从消息中取得这个 block，并在回调 <strong>CFRUNLOOP_IS_SERVICING_THE_MAIN_DISPATCH_QUEUE</strong>() 里执行这个 block。但这个逻辑仅限于 dispatch 到主线程，dispatch 到其他线程仍然是由 libDispatch 处理的。</p>
 <h3 id="关于网络请求"><strong>关于网络请求</strong></h3>
 <p>iOS 中，关于网络请求的接口自下至上有如下几层:</p>
 <figure class="highlight C"><pre><div class="line">CFSocket</div><div class="line">CFNetwork       -&gt;ASIHttpRequest</div><div class="line">NSURLConnection -&gt;AFNetworking</div><div class="line">NSURLSession    -&gt;AFNetworking2, Alamofire</div></pre></figure>
@@ -362,7 +362,7 @@
 		
 			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
 		
-			<li><a href="/categories/iOS/" title="iOS">iOS<sup>62</sup></a></li>
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>61</sup></a></li>
 		
 		</ul>
 </div>
@@ -371,7 +371,7 @@
   
   <div class="archiveslist">
     <p class="asidetitle"><a href="/archives">归档</a></p>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">32</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
   </div>
 
 

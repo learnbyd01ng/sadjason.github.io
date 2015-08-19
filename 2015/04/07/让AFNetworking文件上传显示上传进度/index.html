@@ -72,7 +72,7 @@
     </p>
   <p class="article-time">
     <time datetime="2015-04-07T12:50:59.000Z" itemprop="datePublished">2015-04-07</time>
-    更新日期:<time datetime="2015-07-04T09:10:28.000Z" itemprop="dateModified">2015-07-04</time>
+    更新日期:<time datetime="2015-08-15T15:22:52.000Z" itemprop="dateModified">2015-08-15</time>
     
   </p>
 </header>
@@ -93,7 +93,7 @@
 <figure class="highlight Objective-C"><pre><div class="line">- (<span class="keyword">void</span>)connection:(<span class="built_in">NSURLConnection</span> __unused *)connection</div><div class="line">   didSendBodyData:(<span class="built_in">NSInteger</span>)bytesWritten</div><div class="line"> totalBytesWritten:(<span class="built_in">NSInteger</span>)totalBytesWritten</div><div class="line">totalBytesExpectedToWrite:(<span class="built_in">NSInteger</span>)totalBytesExpectedToWrite</div><div class="line">{</div><div class="line">    <span class="built_in">dispatch_async</span>(dispatch_get_main_queue(), ^{</div><div class="line">        <span class="keyword">if</span> (<span class="keyword">self</span><span class="variable">.uploadProgress</span>) {</div><div class="line">            <span class="keyword">self</span><span class="variable">.uploadProgress</span>((NSUInteger)bytesWritten, totalBytesWritten, totalBytesExpectedToWrite);</div><div class="line">        }</div><div class="line">    });</div><div class="line">}</div></pre></figure>
 
 <p>基于NSURLSession的框架，我刚开始料想AFNetworking中也提供了这样的接口，但是找了很久都没有找到，抱着解决问题的心态，读了相当一部分AFNetworking的代码，遂成此文。</p>
-<p>参考《<a href="/2015/04/05/AFNetworking使用笔记1">AFNetworking使用笔记1</a>》和《<a href="https://github.com/AFNetworking/AFNetworking/" target="_blank" rel="external">AFNetworking使用说明</a>》，可以很容易知道实现一个「上传任务」的步骤如下：</p>
+<p>参考《<a href="/2015/04/05/using-AFNetworking-part1/">AFNetworking使用笔记 第一弹</a>》和《<a href="https://github.com/AFNetworking/AFNetworking/" target="_blank" rel="external">AFNetworking使用说明</a>》，可以很容易知道实现一个「上传任务」的步骤如下：</p>
 <ol>
 <li>创建一个AFURLSessionManager实例并配置之；</li>
 <li>构建请求，即创建并配置NSURLRequest对象；</li>
@@ -205,9 +205,9 @@
 
 
 <div class="next">
-<a href="/2015/04/05/AFNetworking使用笔记2/"  title="AFNetworking使用笔记2">
+<a href="/2015/04/05/using-AFNetworking-part2/"  title="AFNetworking使用笔记 第二弹">
  <strong>NEXT:</strong><br/> 
- <span>AFNetworking使用笔记2
+ <span>AFNetworking使用笔记 第二弹
 </span>
 </a>
 </div>
@@ -271,7 +271,7 @@
 		
 			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
 		
-			<li><a href="/categories/iOS/" title="iOS">iOS<sup>62</sup></a></li>
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>61</sup></a></li>
 		
 		</ul>
 </div>
@@ -280,7 +280,7 @@
   
   <div class="archiveslist">
     <p class="asidetitle"><a href="/archives">归档</a></p>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">32</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
   </div>
 
 

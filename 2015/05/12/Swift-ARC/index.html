@@ -74,7 +74,7 @@ Swift uses Automatic Reference Counting(ARC) to track and manage your app’s me
     </p>
   <p class="article-time">
     <time datetime="2015-05-12T13:51:48.000Z" itemprop="datePublished">2015-05-12</time>
-    更新日期:<time datetime="2015-07-04T09:00:47.000Z" itemprop="dateModified">2015-07-04</time>
+    更新日期:<time datetime="2015-08-06T06:08:48.000Z" itemprop="dateModified">2015-08-06</time>
     
   </p>
 </header>
@@ -121,35 +121,34 @@ Swift uses Automatic Reference Counting(ARC) to track and manage your app’s me
 <li>当「弱引用」所引用的实例的「强引用」次数为0时，ARC会将该实例销毁，<strong>并将所指向它的所有「弱引用」赋值为nil</strong>；</li>
 </ul>
 <h4 id="无主引用"><strong>无主引用</strong></h4>
-<p>和「弱引用」相似，「无主引用」也不强持有实例。但是和「弱引用」不同的是，无主引用默认始终有值。因此，无主引用只能定义为非可选类型（non-optional type）。在属性、变量前添加<code>unowned</code>关键字，可以声明一个无主引用。</p>
-<p>因为是「非可选类型」，因此当使用「无主引用」的时候，不需要解包（unwrapping）可以直接访问。不过非可选类型变量不能赋值为nil，因此当实例被销毁的时候，ARC无法将引用赋值为 nil。</p>
-<p><strong>注意：</strong><br>当实例被销毁后，试图访问该实例的「无主引用」会触发运行时错误。使用「无主引用」时请确保引用始终指向一个未销毁的实例。</p>
-<p>虽然「无主引用」和「弱引用」的区别非常明显，但对其存在的意义仍然非常迷惑。举个栗子吧！</p>
-<p>接下来的例子定义了两个类，Customer和CreditCard，模拟了银行客户和客户的信用卡。每个类都一个属性，存储另外一个类的实例。这样的关系可能会产生「强引用环」。</p>
-<p>在这个模型中，消费者不一定有信用卡（简单起见，假设消费者最多只有一张信用卡），但是每张信用卡一定对应一个消费者。鉴于这种关系，Customer类有一个可选类型属性card，而CreditCard类的customer属性则是非可选类型的。如下：</p>
+<p>和<strong>弱引用</strong>相似，<strong>无主引用</strong>也不强持有实例。但是和<strong>弱引用</strong>不同的是，无主引用默认始终有值。因此，无主引用只能定义为非可选类型（non-optional type）。在属性、变量前添加<code>unowned</code>关键字，可以声明一个<strong>无主引用</strong>。</p>
+<p>因为是<strong>非可选类型</strong>，因此当使用<strong>无主引用</strong>的时候，不需要解包（unwrapping）可以直接访问。不过非可选类型变量不能赋值为<code>nil</code>，因此当实例被销毁的时候，ARC无法将引用赋值为<code>nil</code>。</p>
+<p><strong>注意：</strong><br>当实例被销毁后，试图访问该实例的<strong>无主引用</strong>会触发运行时错误。使用<strong>无主引用</strong>时请确保引用始终指向一个未销毁的实例。</p>
+<p>虽然<strong>无主引用</strong>和<strong>弱引用</strong>的区别非常明显，但对其存在的意义仍然非常迷惑。举个栗子吧！</p>
+<p>接下来的例子定义了两个类，Customer和CreditCard，模拟了银行客户和客户的信用卡。每个类都一个属性，存储另外一个类的实例。这样的关系可能会产生<strong>强引用环</strong>。</p>
+<p>在这个模型中，消费者不一定有信用卡（简单起见，假设消费者最多只有一张信用卡），但是每张信用卡一定对应一个消费者。鉴于这种关系，Customer类有一个可选类型属性card，而CreditCard类的customer属性则是<strong>非可选类型</strong>的。如下：</p>
 <figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Customer</span> </span>{</div><div class="line">    <span class="keyword">let</span> name: <span class="type">String</span></div><div class="line">    <span class="keyword">var</span> card: <span class="type">CreditCard</span>?</div><div class="line">    <span class="keyword">init</span>(name: <span class="type">String</span>) {</div><div class="line">        <span class="keyword">self</span>.name = name</div><div class="line">    }</div><div class="line">    <span class="keyword">deinit</span> { <span class="built_in">println</span>(<span class="string">"<span class="subst">\(name)</span> is being deinitialized"</span>) }</div><div class="line">}</div><div class="line">	</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">CreditCard</span> </span>{</div><div class="line">    <span class="keyword">let</span> number: <span class="type">UInt64</span></div><div class="line">    <span class="keyword">unowned</span> <span class="keyword">let</span> customer: <span class="type">Customer</span></div><div class="line">    <span class="keyword">init</span>(number: <span class="type">UInt64</span>, customer: <span class="type">Customer</span>) {</div><div class="line">        <span class="keyword">self</span>.number = number</div><div class="line">        <span class="keyword">self</span>.customer = customer</div><div class="line">    }</div><div class="line">    <span class="keyword">deinit</span> { <span class="built_in">println</span>(<span class="string">"Card #<span class="subst">\(number)</span> is being deinitialized"</span>) }</div><div class="line">}</div></pre></figure>
 
-<p>P.S：「无主引用」既可以定义为常量也可以定义为变量，但似乎更多的使用场景被定义为常量。</p>
+<p>P.S：unowned既可以修饰常量也修饰变量，但似乎更多的使用场景是被用来修饰常量。</p>
 <p>￼下面的代码定义了一个叫john的可选类型Customer变量,用来保存某个特定消费者的引用。因为是可变类型，该变量的初始值为nil：</p>
 <figure class="highlight Swift"><pre><div class="line"><span class="keyword">var</span> john: <span class="type">Customer</span>?</div></pre></figure>
 
 <p>￼现在创建一个Customer实例，然后用它来初始化CreditCard实例，并把刚创建出来的CreditCard实例赋值给Customer的card属性：</p>
 <figure class="highlight Swift"><pre><div class="line">john = <span class="type">Customer</span>(name: <span class="string">"John Appleseed"</span>)</div><div class="line">john!.card = <span class="type">CreditCard</span>(number: <span class="number">1234_5678_9012_3456</span>, customer: john!)</div></pre></figure>
 
-<p>我们来看看此时的引用关系：</p>
-<p><img src="/img/201505/QQ20150513-1.png" width="630" height="200/"></p>
-<p>Customer实例持有CreditCard实例的「强引用」，而CreditCard实例则持有Customer实例的「无主引用」。</p>
-<p>因为customer的无主引用，当破坏john变量持有的强引用时，就没有Customer实例的「强引用」了：</p>
-<p><img src="/img/201505/QQ20150513-2.png" width="630" height="200/"></p>
+<p>我们来看看此时的引用关系：<br><img src="/img/201505/QQ20150513-1.png" width="630" height="200/"></p>
+<p>Customer实例持有CreditCard实例的<strong>强引用</strong>，而CreditCard实例则持有Customer实例的<strong>无主引用</strong>。</p>
+<p>因为customer的<strong>无主引用</strong>，当破坏john变量持有的<strong>强引用</strong>时，就没有Customer实例的<strong>强引用</strong>了：<br><img src="/img/201505/QQ20150513-2.png" width="630" height="200/"></p>
 <p>此时Customer实例被销毁。然后，CreditCard实例的强引用也不复存在，因此CreditCard实例也被销毁：</p>
 <figure class="highlight Swift"><pre><div class="line">john = <span class="built_in">nil</span></div><div class="line"><span class="comment">// prints "John Appleseed is being deinitialized"</span></div><div class="line"><span class="comment">// prints "Card #1234567890123456 is being deinitialized"</span></div></pre></figure>
 
-<p>上面的代码证明，john变量赋值为nil后，Customer实例和CreditCard实例的deinitializer方法都打印了”deinitialized”消息。</p>
+<p>上例说明，john变量赋值为nil后，Customer实例和CreditCard实例的deinitializer方法都打印了“deinitialized”信息。</p>
 <p>通过这个示例，能够更深刻理解到「弱引用」和「无主引用」在解决强引用环之间的区别了：</p>
 <ul>
 <li>两个属性的值都可能是nil，并有可能产生强引用环，这种场景下适合使用弱引用；</li>
 <li>一个属性可以是nil，另外一个属性不允许是nil，并有可能产生强引用环，这种场景下适合使用无主引用；（有点从属的关系）</li>
 </ul>
+<p>P.S：个人认为将「unowned」翻译为「无主引用」不是很好；根据我的理解，unowned有种「you own me, but I don’t own you」的从属关系。到目前来看，没有<code>unowned</code>也是可以的，<code>weak</code>完全可以全方位代替它，但是在某些场合，它比<code>weak</code>表达的逻辑更清晰，只是最好不要用「无主引用」来翻译它吧。（2015年8月补充）</p>
 <h4 id="无主引用和隐式解包的可选属性"><strong>无主引用和隐式解包的可选属性</strong></h4>
 <p>上文介绍了「两个类实例之间互相引用导致可能造成强引用环」的场景以及相应的解决方案。</p>
 <p>然而，还存在另外一种场景，两个类实例互相引用，在初始化完成后，二者谁都不能为nil。使用「强引用」+「弱引用」？不行，因为「弱引用」必须是optional，这就允许引用为nil了；使用「var optional强引用」+「无主引用」？同样不行；使用「强引用」+「强引用」？更不行；采用「无主引用」+「无主引用」？似乎挺别扭的！</p>
@@ -290,7 +289,7 @@ Swift uses Automatic Reference Counting(ARC) to track and manage your app’s me
 		
 			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
 		
-			<li><a href="/categories/iOS/" title="iOS">iOS<sup>62</sup></a></li>
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>61</sup></a></li>
 		
 		</ul>
 </div>
@@ -299,7 +298,7 @@ Swift uses Automatic Reference Counting(ARC) to track and manage your app’s me
   
   <div class="archiveslist">
     <p class="asidetitle"><a href="/archives">归档</a></p>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">32</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
   </div>
 
 

@@ -4,10 +4,12 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>使用dispatch group | 张不坏的博客</title>
+    <title>使用dispatch group（未完待续） | 张不坏的博客</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="张不坏">
+    
+    <meta name="description" content="dispatch group是GCD的一项特性，能够把任务进行分组。调用者可以等待这组任务执行完毕，也可以在提供回调函数之后继续往下执行，这组任务完成时，调用者会得到通知。这个功能有许多用途，其中最重要、最值得注意的用法，就是把要并行执行的多个任务何为一组，于是调用者就可以知道这些任务何时才能全部执">
     
     
     
@@ -61,7 +63,7 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/04/12/using-dispatch-group/" title="使用dispatch group" itemprop="url">使用dispatch group</a>
+      <a href="/2015/04/12/using-dispatch-group/" title="使用dispatch group（未完待续）" itemprop="url">使用dispatch group（未完待续）</a>
   </h1>
   <p class="article-author">By
     
@@ -69,7 +71,7 @@
     </p>
   <p class="article-time">
     <time datetime="2015-04-12T10:20:54.000Z" itemprop="datePublished">2015-04-12</time>
-    更新日期:<time datetime="2015-07-04T09:09:02.000Z" itemprop="dateModified">2015-07-04</time>
+    更新日期:<time datetime="2015-08-16T06:58:11.000Z" itemprop="dateModified">2015-08-16</time>
     
   </p>
 </header>
@@ -81,7 +83,11 @@
 		
 		</div>
 		
-		  
+		<p>dispatch group是GCD的一项特性，能够把任务进行分组。调用者可以等待这组任务执行完毕，也可以在提供回调函数之后继续往下执行，这组任务完成时，调用者会得到通知。这个功能有许多用途，其中最重要、最值得注意的用法，就是把要并行执行的多个任务何为一组，于是调用者就可以知道这些任务何时才能全部执行完毕。比方说，可以把压缩的一系列文件任务表示出dispatch group。</p>
+<p>P.S：面试中经常回有这样的问题 — 「如何同步多个并行任务」，或者更形象的举例「并行下载多张图片，如何在所有图片下载完毕之后对图片进行拼接」，这种问题的答案都是「使用dispatch group」。</p>
+<p>……</p>
+<p>未完待续</p>
+  
 	</div>
 		<footer class="article-footer clearfix">
 
@@ -100,7 +106,7 @@
 
 <div class="article-share" id="share">
 
-  <div data-url="http://sadjason.github.io/2015/04/12/using-dispatch-group/" data-title="使用dispatch group | 张不坏的博客" data-tsina="null" class="share clearfix">
+  <div data-url="http://sadjason.github.io/2015/04/12/using-dispatch-group/" data-title="使用dispatch group（未完待续） | 张不坏的博客" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -119,9 +125,9 @@
 
 
 <div class="next">
-<a href="/2015/04/12/iOS多线程同步总结/"  title="iOS多线程同步总结">
+<a href="/2015/04/11/深入理解dispatch_sync/"  title="深入理解dispatch_sync">
  <strong>NEXT:</strong><br/> 
- <span>iOS多线程同步总结
+ <span>深入理解dispatch_sync
 </span>
 </a>
 </div>
@@ -130,7 +136,7 @@
 
 		<!-- 多说评论框 start -->
 	<!--<div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="请替换成文章的标题" data-url="请替换成文章的网址"></div>-->
-	<div class="ds-thread" data-thread-key="2015/04/12/using-dispatch-group/" data-title="使用dispatch group" data-url=""></div>
+	<div class="ds-thread" data-thread-key="2015/04/12/using-dispatch-group/" data-title="使用dispatch group（未完待续）" data-url=""></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">
@@ -185,7 +191,7 @@
 		
 			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
 		
-			<li><a href="/categories/iOS/" title="iOS">iOS<sup>62</sup></a></li>
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>61</sup></a></li>
 		
 		</ul>
 </div>
@@ -194,7 +200,7 @@
   
   <div class="archiveslist">
     <p class="asidetitle"><a href="/archives">归档</a></p>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">32</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
   </div>
 
 

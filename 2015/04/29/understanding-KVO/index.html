@@ -9,9 +9,8 @@
     
     <meta name="author" content="张不坏">
     
-    <meta name="description" content="http://objccn.io/issue-7-3/
-写在前面
-程序设计语言中有各种各样的设计模式（pattern）和与此对应的反设计模式（anti-pattern），譬如singleton、factory、observer、MVC等等。对于基于Objective-C的iOS开发而言，有些设计模式">
+    <meta name="description" content="写在前面
+程序设计语言中有各种各样的设计模式（pattern）和与此对应的反设计模式（anti-pattern），譬如singleton、factory、observer、MVC等等。对于基于Objective-C的iOS开发而言，有些设计模式几乎已经成为开发环境的一部分，譬如MVC，自打我们设计第">
     
     
     
@@ -73,7 +72,7 @@
     </p>
   <p class="article-time">
     <time datetime="2015-04-29T02:00:01.000Z" itemprop="datePublished">2015-04-29</time>
-    更新日期:<time datetime="2015-04-30T08:11:03.000Z" itemprop="dateModified">2015-04-30</time>
+    更新日期:<time datetime="2015-08-16T09:05:48.000Z" itemprop="dateModified">2015-08-16</time>
     
   </p>
 </header>
@@ -82,14 +81,13 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#KVO和Runtime"><span class="toc-number">2.</span> <span class="toc-text">KVO和Runtime</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#KVO的实现"><span class="toc-number">2.1.</span> <span class="toc-text">KVO的实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#KVO的槽点"><span class="toc-number">3.</span> <span class="toc-text">KVO的槽点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#所有的observe处理都放在一个方法里"><span class="toc-number">3.1.</span> <span class="toc-text">所有的observe处理都放在一个方法里</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#严重依赖于string"><span class="toc-number">3.2.</span> <span class="toc-text">严重依赖于string</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#需要自己处理superclass的observe事务"><span class="toc-number">3.3.</span> <span class="toc-text">需要自己处理superclass的observe事务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多次相同的removeObserver会导致crash"><span class="toc-number">3.4.</span> <span class="toc-text">多次相同的removeObserver会导致crash</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用KVO"><span class="toc-number">4.</span> <span class="toc-text">使用KVO</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#订阅"><span class="toc-number">4.1.</span> <span class="toc-text">订阅</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#响应"><span class="toc-number">4.2.</span> <span class="toc-text">响应</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#取消订阅"><span class="toc-number">4.3.</span> <span class="toc-text">取消订阅</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自己动手实现KVO"><span class="toc-number">5.</span> <span class="toc-text">自己动手实现KVO</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考资料"><span class="toc-number">6.</span> <span class="toc-text">参考资料</span></a></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#KVO和Runtime"><span class="toc-number">2.</span> <span class="toc-text">KVO和Runtime</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#KVO的实现"><span class="toc-number">2.1.</span> <span class="toc-text">KVO的实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#KVO的槽点"><span class="toc-number">3.</span> <span class="toc-text">KVO的槽点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#所有的observe处理都放在一个方法里"><span class="toc-number">3.1.</span> <span class="toc-text">所有的observe处理都放在一个方法里</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#严重依赖于string"><span class="toc-number">3.2.</span> <span class="toc-text">严重依赖于string</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#需要自己处理superclass的observe事务"><span class="toc-number">3.3.</span> <span class="toc-text">需要自己处理superclass的observe事务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多次相同的removeObserver会导致crash"><span class="toc-number">3.4.</span> <span class="toc-text">多次相同的removeObserver会导致crash</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用KVO"><span class="toc-number">4.</span> <span class="toc-text">使用KVO</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#订阅"><span class="toc-number">4.1.</span> <span class="toc-text">订阅</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#响应"><span class="toc-number">4.2.</span> <span class="toc-text">响应</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#取消订阅"><span class="toc-number">4.3.</span> <span class="toc-text">取消订阅</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考资料"><span class="toc-number">5.</span> <span class="toc-text">参考资料</span></a></li></ol>
 		</div>
 		
-		<p><a href="http://objccn.io/issue-7-3/" target="_blank" rel="external">http://objccn.io/issue-7-3/</a></p>
-<h2 id="写在前面"><strong>写在前面</strong></h2>
+		<h2 id="写在前面"><strong>写在前面</strong></h2>
 <p>程序设计语言中有各种各样的设计模式（pattern）和与此对应的反设计模式（anti-pattern），譬如singleton、factory、observer、MVC等等。对于基于Objective-C的iOS开发而言，有些设计模式几乎已经成为开发环境的一部分，譬如MVC，自打我们设计第一个页面开始就已经开始与之打交道了；KVO，即Key-Value Observing（根据我的理解它属于observer设计模式）也一样，只是它已经成为Objective-C事实标准了，作为一个iOS开发者，必须对它有相当的了解。</p>
 <p>之前对KVO的了解仅限于使用层面，没有去想过它是如何实现的，更没有想过它会存在一些坑；甚至在刚接触它时，会尽可能创造机会使用它，譬如监听UITextField的text值的变化；但近几天接触了Objective-C的Runtime相关的知识，从runtime层面了解到了KVO的实现原理（即KVO的「消息转发机制」），也通过阅读各位大神的博客了解到了它的坑。</p>
-<p>本文首先分析KVO和Runtime的关系，阐述KVO的实现原理；然后结合大神们的博客整理KVO存在的坑以及避免掉坑的正确使用姿势；最后基于Runtime自己动手实现KVO（其实也是参考人家）。</p>
+<p>本文首先分析KVO和Runtime的关系，阐述KVO的实现原理；然后结合大神们的博客整理KVO存在的坑以及避免掉坑的正确使用姿势。</p>
 <h2 id="KVO和Runtime"><strong>KVO和Runtime</strong></h2>
 <p>关于KVO，即Key-Value Observing，官方文档《Key-Value Observing Programming Guide》里的介绍比较简短明了：</p>
 <blockquote>
@@ -104,7 +102,11 @@
 <p>You should never rely on the isa pointer to determine class membership. Instead, you should use the class method to determine the class of an object instance.</p>
 </blockquote>
 <p>简单概述下KVO的实现：<br>当你观察一个对象（称该对象为「被观察对象」）时，一个新的类会动态被创建。这个类继承自「被观察对象」所对应类的，并<strong>重写该被观察属性的setter方法</strong>；针对setter方法的重写无非是在赋值语句前后加上相应的通知（或曰方法调用）；最后，把「被观察对象」的isa指针（isa指针告诉Runtime系统这个对象的类是什么）指向这个新创建的中间类，对象就神奇变成了新创建类的实例。</p>
-<p>根据文档的描述，虽然「被观察对象」的isa指针被修改了，但是调用其class方法得到的类信息仍然是它之前所继承类的类信息，而不是这个新创建类的类信息。</p>
+<p>根据文档的描述，虽然<strong>被观察对象</strong>的isa指针被修改了，<strong>但是调用其class方法得到的类信息仍然是它之前所继承类的类信息，而不是这个新创建类的类信息</strong>。</p>
+<p>补充：下面对isa指针和类方法class作以更多的说明。<br>isa指针和类方法class的返回值都是Class类型，如下：</p>
+<figure class="highlight Objective-C"><pre><div class="line">@<span class="class"><span class="keyword">interface</span> <span class="title">NSObject</span> &lt;<span class="title">NSObject</span>&gt; {</span></div><div class="line">    <span class="class"><span class="keyword">Class</span> <span class="title">isa</span>  <span class="title">OBJC_ISA_AVAILABILITY</span>;</span></div><div class="line">}</div><div class="line">    </div><div class="line">+ (<span class="class"><span class="keyword">Class</span>)<span class="title">class</span>;</span></div></pre></figure>
+
+<p>根据我的理解，一般情况下，isa指针和class方法返回值都是一样的；但KVO底层实现时，动态创建的类只是重写了被观察属性的setter方法，并未重写类方法<code>class</code>，因此向<strong>被观察者</strong>发送class消息实际上仍然调用的是<strong>被观察者</strong>原先类的类方法<code>+ (Class)class</code>，得到的类型信息当然是原先类的类信息，根据我的猜测，<code>isKindOfClass:</code>和<code>isMemberOfClass:</code>与<code>class</code>方法紧密相关。</p>
 <p>国外的大神Mike Ash早在2009年就做了关于KVO的实现细节的探究，更多详细参考<a href="https://www.mikeash.com/pyblog/friday-qa-2009-01-23.html" target="_blank" rel="external">这里</a>。</p>
 <h2 id="KVO的槽点"><strong>KVO的槽点</strong></h2>
 <p>AFNetworking作者Mattt Thompson在《<a href="http://nshipster.com/key-value-observing/" target="_blank" rel="external">Key-Value Observing</a>》中说：</p>
@@ -144,9 +146,6 @@
 <p>不过好在上述的槽点「严重依赖于string」和「多次相同的removeObserver会导致crash」有比较好的解决方案，如下『使用KVO』所述。</p>
 <h2 id="使用KVO"><strong>使用KVO</strong></h2>
 <h3 id="订阅"><strong>订阅</strong></h3>
-<ul>
-<li>(void)addObserver:(NSObject <em>)observer forKeyPath:(NSString </em>)keyPath options:(NSKeyValueObservingOptions)options context:(void *)context;</li>
-</ul>
 <p>KVO中与订阅相关的API只有一个：</p>
 <figure class="highlight Objective-C"><pre><div class="line"><span class="pp">- <span class="params">(void)</span>addObserver:<span class="params">(<span class="variable">NSObject</span> *)</span>observer</span></div><div class="line">         forKeyPath:<span class="params">(<span class="variable">NSString</span> *)</span>keyPath</div><div class="line">            options:<span class="params">(<span class="variable">NSKeyValueObservingOptions</span>)</span>options</div><div class="line">            context:<span class="params">(void *)</span>context;</div></pre></figure>
 
@@ -164,8 +163,8 @@
 <ul>
 <li>NSKeyValueObservingOptionNew: 指示change字典中包含新属性值；</li>
 <li>NSKeyValueObservingOptionOld: 指示change字典中包含旧属性值；</li>
-<li>NSKeyValueObservingOptionInitial: 相对复杂一些，NSKeyValueObserving.h文件中有详细说明，这里不赘述了；</li>
-<li>NSKeyValueObservingOptionPrior: 相对复杂一些，NSKeyValueObserving.h文件中有详细说明，这里不赘述了；</li>
+<li>NSKeyValueObservingOptionInitial: 相对复杂一些，NSKeyValueObserving.h文件中有详细说明，此处略过；</li>
+<li>NSKeyValueObservingOptionPrior: 相对复杂一些，NSKeyValueObserving.h文件中有详细说明，此处略过；</li>
 </ul>
 <p>现在细想，options这个参数也忒复杂了，难怪大神们觉得这个API丑陋（不过我等小民之前从未想过这个问题，=_=，没办法，Apple是个大帝国，我只是其中一个跪舔的小屁民）。</p>
 <p>不过更糟心的是下面的context参数。</p>
@@ -196,7 +195,6 @@
 <figure class="highlight Objective-C"><pre><div class="line"><span class="keyword">static</span> <span class="keyword">void</span> * zwContentSize = &zwContentSize;</div><div class="line">	</div><div class="line">- (<span class="keyword">void</span>)viewDidLoad {</div><div class="line">    </div><div class="line">    [<span class="keyword">super</span> viewDidLoad];</div><div class="line">    </div><div class="line">    <span class="comment">// 1. subscribe</span></div><div class="line">    [_tableView addObserver:<span class="keyword">self</span></div><div class="line">                 forKeyPath:NSStringFromSelector(<span class="keyword">@selector</span>(contentSize))</div><div class="line">                    options:NSKeyValueObservingOptionNew</div><div class="line">                    context:zwContentSize];</div><div class="line">}</div><div class="line">	</div><div class="line"><span class="comment">// 2. responding</span></div><div class="line">- (<span class="keyword">void</span>)observeValueForKeyPath:(<span class="built_in">NSString</span> *)keyPath</div><div class="line">                      ofObject:(<span class="keyword">id</span>)object</div><div class="line">                        change:(<span class="built_in">NSDictionary</span> *)change</div><div class="line">                       context:(<span class="keyword">void</span> *)context {</div><div class="line">    <span class="keyword">if</span> (context == zwContentSize) {</div><div class="line">        <span class="comment">// configure view</span></div><div class="line">    } <span class="keyword">else</span> {</div><div class="line">        [<span class="keyword">super</span> observeValueForKeyPath:keyPath ofObject:object change:change context:context];</div><div class="line">    }</div><div class="line">}</div><div class="line">	</div><div class="line">- (<span class="keyword">void</span>)dealloc {</div><div class="line">    <span class="keyword">@try</span> {</div><div class="line">        <span class="comment">// 3. unsubscribe</span></div><div class="line">        [_tableView removeObserver:<span class="keyword">self</span></div><div class="line">                        forKeyPath:NSStringFromSelector(<span class="keyword">@selector</span>(contentSize))</div><div class="line">                           context:zwContentSize];</div><div class="line">    }</div><div class="line">    <span class="keyword">@catch</span> (<span class="built_in">NSException</span> *exception) {</div><div class="line">        </div><div class="line">    }</div><div class="line">}</div></pre></figure>
 
 <p>总之，KVO很强大，但也挺坑，使用它要养成好习惯，避免入坑！</p>
-<h2 id="自己动手实现KVO"><strong>自己动手实现KVO</strong></h2>
 <h2 id="参考资料"><strong>参考资料</strong></h2>
 <ol>
 <li>《Key-Value Observing Programming Guide》；</li>
@@ -206,6 +204,7 @@
 <li>《<a href="https://www.mikeash.com/pyblog/key-value-observing-done-right.html" target="_blank" rel="external">Key-Value Observing Done Right</a>》；</li>
 <li>《<a href="http://khanlou.com/2013/12/kvo-considered-harmful/" target="_blank" rel="external">KVO Considered Harmful</a>》；</li>
 <li>《<a href="http://nshipster.com/key-value-observing/" target="_blank" rel="external">Key-Value Observing</a>》；</li>
+<li>《<a href="http://objccn.io/issue-7-3/" target="_blank" rel="external">KVC和KVO</a>》</li>
 </ol>
   
 	</div>
@@ -275,7 +274,7 @@
       
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#KVO和Runtime"><span class="toc-number">2.</span> <span class="toc-text">KVO和Runtime</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#KVO的实现"><span class="toc-number">2.1.</span> <span class="toc-text">KVO的实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#KVO的槽点"><span class="toc-number">3.</span> <span class="toc-text">KVO的槽点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#所有的observe处理都放在一个方法里"><span class="toc-number">3.1.</span> <span class="toc-text">所有的observe处理都放在一个方法里</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#严重依赖于string"><span class="toc-number">3.2.</span> <span class="toc-text">严重依赖于string</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#需要自己处理superclass的observe事务"><span class="toc-number">3.3.</span> <span class="toc-text">需要自己处理superclass的observe事务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多次相同的removeObserver会导致crash"><span class="toc-number">3.4.</span> <span class="toc-text">多次相同的removeObserver会导致crash</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用KVO"><span class="toc-number">4.</span> <span class="toc-text">使用KVO</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#订阅"><span class="toc-number">4.1.</span> <span class="toc-text">订阅</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#响应"><span class="toc-number">4.2.</span> <span class="toc-text">响应</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#取消订阅"><span class="toc-number">4.3.</span> <span class="toc-text">取消订阅</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自己动手实现KVO"><span class="toc-number">5.</span> <span class="toc-text">自己动手实现KVO</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考资料"><span class="toc-number">6.</span> <span class="toc-text">参考资料</span></a></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#KVO和Runtime"><span class="toc-number">2.</span> <span class="toc-text">KVO和Runtime</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#KVO的实现"><span class="toc-number">2.1.</span> <span class="toc-text">KVO的实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#KVO的槽点"><span class="toc-number">3.</span> <span class="toc-text">KVO的槽点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#所有的observe处理都放在一个方法里"><span class="toc-number">3.1.</span> <span class="toc-text">所有的observe处理都放在一个方法里</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#严重依赖于string"><span class="toc-number">3.2.</span> <span class="toc-text">严重依赖于string</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#需要自己处理superclass的observe事务"><span class="toc-number">3.3.</span> <span class="toc-text">需要自己处理superclass的observe事务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多次相同的removeObserver会导致crash"><span class="toc-number">3.4.</span> <span class="toc-text">多次相同的removeObserver会导致crash</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用KVO"><span class="toc-number">4.</span> <span class="toc-text">使用KVO</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#订阅"><span class="toc-number">4.1.</span> <span class="toc-text">订阅</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#响应"><span class="toc-number">4.2.</span> <span class="toc-text">响应</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#取消订阅"><span class="toc-number">4.3.</span> <span class="toc-text">取消订阅</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考资料"><span class="toc-number">5.</span> <span class="toc-text">参考资料</span></a></li></ol>
   </div>
 
 <div id="asidepart">
@@ -311,7 +310,7 @@
 		
 			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
 		
-			<li><a href="/categories/iOS/" title="iOS">iOS<sup>62</sup></a></li>
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>61</sup></a></li>
 		
 		</ul>
 </div>
@@ -320,7 +319,7 @@
   
   <div class="archiveslist">
     <p class="asidetitle"><a href="/archives">归档</a></p>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">32</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
   </div>
 
 

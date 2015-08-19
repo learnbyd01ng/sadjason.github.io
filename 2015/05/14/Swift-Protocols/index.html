@@ -73,7 +73,7 @@
     </p>
   <p class="article-time">
     <time datetime="2015-05-14T03:11:29.000Z" itemprop="datePublished">2015-05-14</time>
-    更新日期:<time datetime="2015-07-04T09:00:14.000Z" itemprop="dateModified">2015-07-04</time>
+    更新日期:<time datetime="2015-08-07T09:03:28.000Z" itemprop="dateModified">2015-08-07</time>
     
   </p>
 </header>
@@ -113,12 +113,12 @@
 <figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">SomeProtocol</span> </span>{</div><div class="line">    <span class="keyword">init</span>(someParameter: <span class="type">Int</span>)</div><div class="line">}</div></pre></figure>
 
 <h3 id="当类实现协议的构造器时"><strong>当类实现协议的构造器时</strong></h3>
-<p>假设有某个协议SomeProtocol，类SomeClass遵循该协议，那么意味着SomeClass的子类也遵循该协议。为什么呢？因为若SomeProtocol中声明了一些属性和方法以及下标，则SomeClass必然会定义这些属性和方法以及下标，通过继承，SomeClass的子类也必然包括这些属性和方法以及下标，所以我们说「SomeClass的子类也遵循SomeProtocol」。</p>
-<p>然而，上面的这种说法不严密，实际情况更复杂一些，因为协议SomeProtocol中不光可以声明方法/属性/下标，还可以声明「构造器」；但在Swift中，除了某些特殊情况外，构造器是不被子类继承的，所以SomeClass中虽然能够保证定义了protocol要求的「构造器」，但不能保证SomeClass中也定义了protocol要求的「构造器」。</p>
+<p>假设有某个协议SomeProtocol，类SomeClass遵循该协议，那么意味着SomeClass的子类也遵循该协议。为什么呢？因为若SomeProtocol中声明了一些属性和方法以及下标，则SomeClass必然会定义这些属性和方法以及下标，通过继承，SomeClass的子类也必然包括这些属性和方法以及下标，所以我们说：SomeClass的子类也遵循SomeProtocol。</p>
+<p>然而，上面的这种说法不严密，实际情况更复杂一些，因为协议SomeProtocol中不光可以声明方法/属性/下标，还可以声明<strong>构造器</strong>；<strong>但在Swift中，除了某些特殊情况外，构造器是不被子类继承的</strong>，所以SomeClass中虽然能够保证定义了protocol要求的构造器，但不能保证SomeClass的子类中也定义了protocol要求的构造器。</p>
 <p>P.S：哪些特殊情况？看<a href="/2015/05/12/Swift-Initialization/#类的继承和构造过程">这里</a>。</p>
 <p>所以这里有一个八阿哥（bug），SomeClass定义SomeProtocol中声明的构造器没问题，如何保证SomeClass的子类也定义SomeProtocol中声明的构造器呢？</p>
 <p>关键字<code>required</code>可以解决这个问题。</p>
-<p>Swift规定，SomeClass在定义SomeProtocol声明的「构造器」时，必须加上一个<code>required</code>修饰符作为前缀，如下：</p>
+<p>Swift规定，SomeClass在定义SomeProtocol声明的构造器时，必须加上一个<code>required</code>修饰符作为前缀，如下：</p>
 <figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">SomeClass</span>: <span class="title">SomeProtocol</span> </span>{</div><div class="line">    required <span class="keyword">init</span>(someParameter: <span class="type">Int</span>) {</div><div class="line">        <span class="comment">// initializer implementation goes here</span></div><div class="line">    }</div><div class="line">}</div></pre></figure>
 
 <p><code>required</code>的作用是确保SomeClass的子类必须也得实现这个构造器，<a href="/2015/05/12/Swift-Initialization/#Required_Initializers">这里</a>有更详细的描述。</p>
@@ -126,9 +126,9 @@
 <p>还有一种复杂的情况，如果某个子类需要override父类中的designated initializer，同时该子类还遵循了某个协议，该协议也定义了一个与该designated initializer同名的构造器，那么子类在定义该initializer时需要同时使用<code>required</code>和<code>override</code>修饰，如下：</p>
 <figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">SomeProtocol</span> </span>{</div><div class="line">    <span class="keyword">init</span>()</div><div class="line">}</div><div class="line">	</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">SomeSuperClass</span> </span>{</div><div class="line">    <span class="keyword">init</span>() {</div><div class="line">        <span class="comment">// initializer implementation goes here</span></div><div class="line">    }</div><div class="line">}</div><div class="line">	</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">SomeSubClass</span>: <span class="title">SomeSuperClass</span>, <span class="title">SomeProtocol</span> </span>{</div><div class="line">    <span class="comment">// "required" from SomeProtocol conformance;</span></div><div class="line">    <span class="comment">// "override" from SomeSuperClass</span></div><div class="line">    required <span class="keyword">override</span> <span class="keyword">init</span>() {</div><div class="line">        <span class="comment">// initializer implementation goes here</span></div><div class="line">    }</div><div class="line">}</div></pre></figure>
 
-<p>然后，<strong>「协议」还可以声明failable initializer</strong>。</p>
+<p>然后，<strong>协议</strong>还可以声明failable initializer。</p>
 <h2 id="协议类型"><strong>协议类型</strong></h2>
-<p>「协议」本身不具备任何功能，但在实际使用中，你完全可以把它当做一个类型来使用。使用场景包括：</p>
+<p><strong>协议</strong>本身不具备任何功能，但在实际使用中，你完全可以把它当做一个类型来使用。使用场景包括：</p>
 <ul>
 <li>作为函数/方法/构造器中的参数类型或返回类型；</li>
 <li>作为常量/变量/属性的类型；</li>
@@ -294,7 +294,7 @@
 		
 			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
 		
-			<li><a href="/categories/iOS/" title="iOS">iOS<sup>62</sup></a></li>
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>61</sup></a></li>
 		
 		</ul>
 </div>
@@ -303,7 +303,7 @@
   
   <div class="archiveslist">
     <p class="asidetitle"><a href="/archives">归档</a></p>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">32</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
   </div>
 
 

@@ -62,23 +62,6 @@
 
   <section class="post" itemscope itemprop="blogPost">
   
-    <a href="/2015/02/11/AFNetworking20源码分析收获/" title="学习AFNetworking源码" itemprop="url">
-  
-    <h1 itemprop="name">学习AFNetworking源码</h1>
-    
-     
-           <p itemprop="description" >忽略编译警告
-AFNetworking源码中常常会出现忽略警告的代码，如下：
-#pragma clang diagnostic push#pragma clang diagnostic ignored &quot;-Wgnu&quot;// code#pragma clang diagnostic </p>
-        
-    
-    <time datetime="2015-02-11T09:13:43.000Z" itemprop="datePublished">2015-02-11</time>
-  </a>
-</section>
-
-
-  <section class="post" itemscope itemprop="blogPost">
-  
     <a href="/2015/02/11/不要在init和dealloc函数中使用accessor/" title="不要在init和dealloc函数中使用accessor" itemprop="url">
   
     <h1 itemprop="name">不要在init和dealloc函数中使用accessor</h1>
@@ -222,11 +205,26 @@ Demo代码存放在https://github.com/sadjason/iOSDemos/tree/master/PopViewDemo
     
      
            <p itemprop="description" >在iOS实际开发中，常常需要控制UIButton、UIImageView，如下是一个登录界面的一部分：
-
-在点击登录button时，app会与服务器进行交互，网络比较差的情况会花费一些时间，在此过程中，得确保button处于不可被点击状态，最好还得让用户知道正在登录中，就我目前所</p>
+在点击登录button时，app会与服务器进行交互，网络比较差的情况会花费一些时间，在此过程中，得确保button处于不可被点击状态，最好还得让用户知道正在登录中，就我目前所接</p>
         
     
     <time datetime="2015-02-11T04:48:05.000Z" itemprop="datePublished">2015-02-11</time>
+  </a>
+</section>
+
+
+  <section class="post" itemscope itemprop="blogPost">
+  
+    <a href="/2015/02/01/using-GCD-part3/" title="GCD的使用（3）使用dispatch_once来执行只需运行一次的线程安全代码" itemprop="url">
+  
+    <h1 itemprop="name">GCD的使用（3）使用dispatch_once来执行只需运行一次的线程安全代码</h1>
+    
+     
+           <p itemprop="description" >单例模式（singleton）对Objective-C开发者而言并不陌生，常见的实现方式为：在类编写名为sharedInstance的方法，该方法只会返回全类共用的单例实例，而不会在每次调用时都创建新的实例。假设有一个类叫TestClass，那么这个共享实例一般会这么写：
++ (</p>
+        
+    
+    <time datetime="2015-02-01T05:53:40.000Z" itemprop="datePublished">2015-02-01</time>
   </a>
 </section>
 
@@ -271,7 +269,7 @@ Demo代码存放在https://github.com/sadjason/iOSDemos/tree/master/PopViewDemo
 		
 			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
 		
-			<li><a href="/categories/iOS/" title="iOS">iOS<sup>62</sup></a></li>
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>61</sup></a></li>
 		
 		</ul>
 </div>
@@ -280,7 +278,7 @@ Demo代码存放在https://github.com/sadjason/iOSDemos/tree/master/PopViewDemo
   
   <div class="archiveslist">
     <p class="asidetitle"><a href="/archives">归档</a></p>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">32</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
   </div>
 
 

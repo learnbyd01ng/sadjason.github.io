@@ -73,7 +73,7 @@
     </p>
   <p class="article-time">
     <time datetime="2015-04-26T00:53:43.000Z" itemprop="datePublished">2015-04-26</time>
-    更新日期:<time datetime="2015-07-04T09:06:55.000Z" itemprop="dateModified">2015-07-04</time>
+    更新日期:<time datetime="2015-08-16T07:10:51.000Z" itemprop="dateModified">2015-08-16</time>
     
   </p>
 </header>
@@ -87,6 +87,7 @@
 		
 		<p><strong>说明</strong></p>
 <p>本文转自《<a href="http://www.cocoachina.com/industry/20140605/8683.html" target="_blank" rel="external">NSHashtable and NSMaptable</a>》，其原作者是<a href="http://nshipster.com/nshashtable-and-nsmaptable/" target="_blank" rel="external">Mattt Thompson</a>，该大神是AFNetworking的作者。作者简单介绍了一下iOS开发中相对于NSDictionary和NSSet来说，不常被人使用NSHashTable和NSMapTable的相关知识。</p>
+<p>P.S：笔者关注《<a href="http://www.cocoachina.com/industry/20140605/8683.html" target="_blank" rel="external">NSHashtable and NSMaptable</a>》这篇博客的原因是因为以前遇到「如何实现NSNotificationCenter」这样的问题，我意识到实现NSNotificationCenter的关键在于找到一个能够支持弱指针的容器，而NSHashTable和NSMaptable恰好是这样的容器。</p>
 <p>NSSet，NSDictionary，NSArray是Foundation框架关于集合操作的常用类，和<a href="http://en.wikipedia.org/wiki/Java_collections_framework" target="_blank" rel="external">其他标准的集合操作库</a>不同，他们的实现方法对开发者进行<a href="http://ridiculousfish.com/blog/posts/array.html" target="_blank" rel="external">隐藏</a>，只允许开发者写一些简单的代码，让他们相信这些代码有理由正常的工作。</p>
 <p>然而这样的话最好的代码抽象风格就会被打破，苹果的本意也被曲解了。在这种情况下，开发者寻求更好的抽象方式来使用集合，或者说寻找一种更通用的方式。</p>
 <p>对于NSSet和NSDictionary，打破代码抽象风格的是他们在内存中存取object的方式。在NSSet中，objects是被强引用的（strongly referenced），同样NSDictionary中的keys和values也会被NSDictionary复制。如果一个开发者想要存储一个weak类型的值或者使用一个没有实现NSCopying协议的object作为NSDictionary的key，他可能会很聪明的想到<a href="http://nshipster.com/nsvalue/" target="_blank" rel="external">NSValue+valueWithNonretainedObject</a>。 iOS6和OSX 10.5以后，可以分别使用和NSSet，NSDictionary地位相同的NSHashTable，NSMapTable。</p>
@@ -95,10 +96,7 @@
 <p>NSHashTable是更广泛意义的NSSet，区别于NSSet/NSMutableSet，NSHashTable有如下特性：</p>
 <ul>
 <li>NSHashTable是可变的；</li>
-<li><ul>
 <li>NSHashTable可以持有weak类型的成员变量；</li>
-</ul>
-</li>
 <li>NSHashTable可以在添加成员变量的时候复制成员；</li>
 <li>NSHashTable可以随意的存储指针并且利用指针的唯一性来进行hash同一性检查（检查成员变量是否有重复）和对比操作（equal）；</li>
 </ul>
@@ -237,7 +235,7 @@
 		
 			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
 		
-			<li><a href="/categories/iOS/" title="iOS">iOS<sup>62</sup></a></li>
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>61</sup></a></li>
 		
 		</ul>
 </div>
@@ -246,7 +244,7 @@
   
   <div class="archiveslist">
     <p class="asidetitle"><a href="/archives">归档</a></p>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">32</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
   </div>
 
 

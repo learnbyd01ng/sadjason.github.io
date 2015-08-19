@@ -72,7 +72,7 @@
     </p>
   <p class="article-time">
     <time datetime="2015-06-01T07:26:41.000Z" itemprop="datePublished">2015-06-01</time>
-    更新日期:<time datetime="2015-06-01T13:38:17.000Z" itemprop="dateModified">2015-06-01</time>
+    更新日期:<time datetime="2015-08-16T08:17:17.000Z" itemprop="dateModified">2015-08-16</time>
     
   </p>
 </header>
@@ -118,14 +118,14 @@
 <p>我在<a href="http://www.zhihu.com/question/20383725" target="_blank" rel="external">知乎</a>上找到了一些说法。</p>
 <p>Node.js的作者Ryan Dahl回答过这个<a href="https://cnodejs.org/topic/4f16442ccae1f4aa27001137" target="_blank" rel="external">问题</a>：</p>
 <blockquote>
-<p>BostInno：为什么你开始要选择Javascript作为Node的语言呢？<br>&nbsp;&nbsp;<br>Dahl：开始我没有那么做，我用C、Lua和Haskell做了几个失败的小项目。Haskell不错，但是不还没有足够聪明可以去玩通GHC（Haskell的编译器）。Lua是一种不太理想却很可爱的语言，但我并不喜欢它，因为他已经有了大量的包含阻塞代码的库了。无论我做了什么，有些人总是愿意去读取有阻塞的Lua库。C语言有一些和Lua相似的问题，而且它的开发门槛有些高。我开始的确想写一种像Node.js的libc，我也的确做了一段时间。这个时候v8也出来了，我也做了一些研究，我突然意识到，Javascript的确是一种完美的语言，它有我想要的一切：单线程，没有服务端的IO处理，没有各种历史存在的库。</p>
+<p>BostInno：为什么你开始要选择Javascript作为Node的语言呢？<br>&nbsp;&nbsp;<br>Dahl：开始我没有那么做，我用C、Lua和Haskell做了几个失败的小项目。Haskell不错，但是还没有足够聪明可以去玩通GHC（Haskell的编译器）。Lua是一种不太理想却很可爱的语言，但我并不喜欢它，因为他已经有了大量的包含阻塞代码的库了。无论我做了什么，有些人总是愿意去读取有阻塞的Lua库。C语言有一些和Lua相似的问题，而且它的开发门槛有些高。我开始的确想写一种像Node.js的libc，我也的确做了一段时间。这个时候v8也出来了，我也做了一些研究，我突然意识到，Javascript的确是一种完美的语言，它有我想要的一切：单线程，没有服务端的IO处理，没有各种历史存在的库。</p>
 </blockquote>
 <p>基本上，「虚拟机性能」「开发成本」和「没有历史包袱」是促成Node选择JavaScript的主要原因。</p>
 <p>对于Python来说，主要是两个问题，CPython和v8的性能差距。大量存在的阻塞式类库，阻碍了Python的异步类库（比如Twisted、Tornado等）的发展。</p>
 <p>至于C/C++，其对字符串处理的支持做得太差，Ryan Dahl也认为「它的开发门槛有些高」，作为Web网络服务器开发语言挺不靠谱！</p>
 <h3 id="Node-js与并发"><strong>Node.js与并发</strong></h3>
 <p>Node.js的出现为解决现实当中系统性能瓶颈提供了新的思路和方案，其中最显著也是最大优点：即其「高并发」的特性，有网友称Node.js的并发模型为「异步、事件驱动模型」。</p>
-<p>P.S：本小节内容大量参考<a href="http://www.cnblogs.com/sysuys/p/3460614.html" target="_blank" rel="external">Node.js优缺点及适用场景讨论</a>。</p>
+<p>P.S：本小节内容大量参考《<a href="http://www.cnblogs.com/sysuys/p/3460614.html" target="_blank" rel="external">Node.js优缺点及适用场景讨论</a>》。</p>
 <p>为了更清晰阐述Node.js的并发模型，以两种经典传统模型作为对比，它们是：「系统线程模型」和「多线程、线程池模型」。</p>
 <p>举个例子，想象一个场景，我们在银行排队办理业务。</p>
 <h4 id="系统线程模型"><strong>系统线程模型</strong></h4>
@@ -136,8 +136,7 @@
 <p>这个模型已经比上一个有所进步，它调节服务端线程的数量来提高对并发请求的接收和响应，但并发量高的时候，请求仍然需要等待，它有个更严重的问题。回到代码层面上来讲，我们看看客户端请求与服务端通讯的过程：<br><img src="/img/201506/20150601-03.png" width="540" height="360"></p>
 <p>服务端与客户端每建立一个连接，都要为这个连接分配一套配套的资源，主要体现为系统内存资源，以PHP为例，维护一个连接可能需要20M的内存。这就是为什么一般并发量一旦上升，就需要开辟更多的服务器。</p>
 <h4 id="异步、事件驱动模型"><strong>异步、事件驱动模型</strong></h4>
-<p>「多线程、线程池模型」的问题很明显，那么Node.js是怎么解决这个问题的呢？这里我们需要联想另外一种场景：我们在快餐店点餐吃饭。</p>
-<p><img src="/img/201506/20150601-04.png" width="485" height="270"></p>
+<p>「多线程、线程池模型」的问题很明显，那么Node.js是怎么解决这个问题的呢？这里我们需要联想另外一种场景：我们在快餐店点餐吃饭。<br><img src="/img/201506/20150601-04.png" width="485" height="270"></p>
 <p>我们同样是要发起请求，等待服务器端响应；但是与银行例子不同的是，这次我们点完餐后拿到了一个号码，拿到号码，我们往往会在位置上等待，而在我们后面的请求会继续得到处理，同样是拿了一个号码然后到一旁等待，接待员能一直进行处理。</p>
 <p>等到饭菜做号了，会喊号码，我们拿到了自己的饭菜，进行后续的处理（吃饭）。</p>
 <p>这个喊号码的动作在Node.js中叫做回调（Callback），能在事件（烧菜，I/O）处理完成后继续执行后面的逻辑（吃饭），这体现了Node.js的显著特点：异步机制、事件驱动。整个过程没有阻塞新用户的连接（点餐），也不需要维护已经点餐的用户与厨师的连接。</p>
@@ -147,11 +146,11 @@
 <p>Node.js的另一个特性是：它是非I/O阻塞的。</p>
 <p>想象一下有这么一种业务场景：需要从<strong>多个数据源</strong>拉取数据，然后进行集中处理。</p>
 <p>一般的低级处理方式是<strong>「串行获取数据」</strong>，如下：</p>
-<figure class="highlight"><pre><div class="line"><span class="comment">// 从database 1中获取数据</span></div><div class="line">data1 <span class="subst">=</span> database1<span class="built_in">.</span>getSomeData();</div><div class="line">	</div><div class="line"><span class="comment">// 从database 2中获取数据</span></div><div class="line">data2 <span class="subst">=</span> database2<span class="built_in">.</span>getOtherData();</div><div class="line">	</div><div class="line"><span class="comment">// 集中处理数据</span></div><div class="line"><span class="keyword">handle</span>(<span class="built_in">data</span>, data2);</div></pre></figure>
+<figure class="highlight"><pre><div class="line"><span class="comment">// 从database 1中获取数据</span></div><div class="line">data1 <span class="subst">=</span> database1<span class="built_in">.</span>getSomeData();</div><div class="line">	</div><div class="line"><span class="comment">// 从database 2中获取数据</span></div><div class="line">data2 <span class="subst">=</span> database2<span class="built_in">.</span>getOtherData();</div><div class="line">	</div><div class="line"><span class="comment">// 集中处理数据</span></div><div class="line"><span class="keyword">handle</span>(data1, data2);</div></pre></figure>
 
 <p>数据库操作是典型的I/O操作，假设获取data1和获取data2的操作各需要1秒，那么这种串行获取就需要2秒。</p>
 <p>Node.js的一大特点是「非阻塞I/O」，它通过发射/监听事件来控制执行过程，如下：</p>
-<figure class="highlight JavaSctipt"><pre><div class="line"><span class="keyword">var</span> proxy = <span class="keyword">new</span> EventProxy();</div><div class="line">proxy.all(<span class="string">"data1Event"</span>, <span class="string">"data2Event"</span>, <span class="function"><span class="keyword">function</span><span class="params">(data1, database)</span> </span>{</div><div class="line">    <span class="comment">// TODO</span></div><div class="line">});</div><div class="line">	</div><div class="line">database1.getSomeData(<span class="function"><span class="keyword">function</span><span class="params">(data1)</span> </span>{</div><div class="line">    <span class="comment">// 发射事件「data2Event」</span></div><div class="line">    proxy.emit(<span class="string">"data1Event"</span>, data1)</div><div class="line">});</div><div class="line">	</div><div class="line">database2.getSomeData(<span class="function"><span class="keyword">function</span><span class="params">(data2)</span> </span>{</div><div class="line">    <span class="comment">// 发射事件「data2Event」</span></div><div class="line">    proxy.emit(<span class="string">"data2Event"</span>, data2)</div><div class="line">});</div></pre></figure>
+<figure class="highlight JavaSctipt"><pre><div class="line"><span class="keyword">var</span> proxy = <span class="keyword">new</span> EventProxy();</div><div class="line">proxy.all(<span class="string">"data1Event"</span>, <span class="string">"data2Event"</span>, <span class="function"><span class="keyword">function</span><span class="params">(data1, data2)</span> </span>{</div><div class="line">    <span class="comment">// TODO</span></div><div class="line">});</div><div class="line">	</div><div class="line">database1.getSomeData(<span class="function"><span class="keyword">function</span><span class="params">(data1)</span> </span>{</div><div class="line">    <span class="comment">// 发射事件「data1Event」</span></div><div class="line">    proxy.emit(<span class="string">"data1Event"</span>, data1)</div><div class="line">});</div><div class="line">	</div><div class="line">database2.getSomeData(<span class="function"><span class="keyword">function</span><span class="params">(data2)</span> </span>{</div><div class="line">    <span class="comment">// 发射事件「data2Event」</span></div><div class="line">    proxy.emit(<span class="string">"data2Event"</span>, data2)</div><div class="line">});</div></pre></figure>
 
 <p>Node.js遇到I/O事件会创建一个线程去执行，然后主线程会继续往下执行的，两个动作并行执行，假如各需要1秒，那么总的时间也就是1秒，它们的I/O操作执行完成后，分别发射事件：data1Event和data2Event。</p>
 <p>事件代理接收后继续往下执行后面的逻辑，这就是Node.js非阻塞I/O的特点。</p>
@@ -185,8 +184,7 @@
 <p>P.S：其实Node.js能实现几乎一切的应用，只是存在适不适合的问题。有很多大公司都在用的<br>Node.js，详见<a href="https://github.com/joyent/node/wiki/Projects,-Applications,-and-Companies-Using-Node" target="_blank" rel="external">这里</a>。</p>
 <h2 id="Node-js初体验"><strong>Node.js初体验</strong></h2>
 <h3 id="安装Node-js"><strong>安装Node.js</strong></h3>
-<p>Node.js的安装非常简单，<a href="https://nodejs.org/" target="_blank" rel="external">官网</a>提供了一些安装程序，可以直接傻瓜式安装，譬如笔者的使用环境是Mac OS X，下载pkg文件双击安装，最后的安装结果如下：</p>
-<p><img src="/img/201506/20150601-07.png" width="621" height="438"></p>
+<p>Node.js的安装非常简单，<a href="https://nodejs.org/" target="_blank" rel="external">官网</a>提供了一些安装程序，可以直接傻瓜式安装，譬如笔者的使用环境是Mac OS X，下载pkg文件双击安装，最后的安装结果如下：<br><img src="/img/201506/20150601-07.png" width="621" height="438"></p>
 <p>可以看到，Node.js的安装结果实际包含了两部分东东：node和npm。node对应的是Node.js，npm是啥呢？后文有详细说明！</p>
 <p><strong>卸载Node.js</strong></p>
 <p>有些时候，可能需要卸载Node.js，通过命令卸载的步骤如下：</p>
@@ -202,6 +200,8 @@
 </ul>
 <p>npm命令的使用本文就不赘述了，网上相关资源非常丰富。</p>
 <p>关于Node.js的入门学习，有很多资料和书籍，个人觉得《<a href="http://nqdeng.github.io/7-days-nodejs/" target="_blank" rel="external">7天学会Node.js</a>》不错！</p>
+<p><strong>写在后面</strong></p>
+<p>有时间读读RESTful相关的文章和书籍（图书馆有不少）。</p>
 <h2 id="参考资料"><strong>参考资料</strong></h2>
 <ul>
 <li><a href="http://www.zhihu.com/question/20383725" target="_blank" rel="external">Node.js为什么要用JavaScript去实现？</a>；</li>
@@ -316,7 +316,7 @@
 		
 			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
 		
-			<li><a href="/categories/iOS/" title="iOS">iOS<sup>62</sup></a></li>
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>61</sup></a></li>
 		
 		</ul>
 </div>
@@ -325,7 +325,7 @@
   
   <div class="archiveslist">
     <p class="asidetitle"><a href="/archives">归档</a></p>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">32</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
   </div>
 
 

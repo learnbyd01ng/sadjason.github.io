@@ -73,7 +73,7 @@
     </p>
   <p class="article-time">
     <time datetime="2015-05-14T03:11:11.000Z" itemprop="datePublished">2015-05-14</time>
-    更新日期:<time datetime="2015-07-04T09:00:28.000Z" itemprop="dateModified">2015-07-04</time>
+    更新日期:<time datetime="2015-08-06T06:44:40.000Z" itemprop="dateModified">2015-08-06</time>
     
   </p>
 </header>
@@ -94,25 +94,25 @@
 <li>定义和使用嵌套类型；</li>
 <li>使已有类型遵守某个协议；</li>
 </ul>
-<p>值得一提的是，「扩展」可以为已有类型添加方法/计算型属性/下标/构造器，但是不能override已有的方法/计算型属性/下标/构造器；</p>
+<p>值得一提的是，和OC中的categories一样，Swift中的extensions不可以添加<strong>存储型属性</strong>；它可以为已有类型添加方法/计算型属性/下标/构造器，但是不能override已有的方法/计算型属性/下标/构造器；</p>
 <h2 id="Extensions语法"><strong>Extensions语法</strong></h2>
-<p>使用关键字<code>extension</code>声明一个「扩展」，如下：</p>
+<p>使用关键字<code>extension</code>声明一个<strong>扩展</strong>，如下：</p>
 <figure class="highlight"><pre><div class="line"><span class="class"><span class="keyword">extension</span> <span class="title">SomeType</span> </span>{</div><div class="line">    <span class="comment">// new functionality to add to SomeType goes here</span></div><div class="line">}</div></pre></figure>
 
-<p>一个「扩展」可以扩展一个已有类型，使其能够适配一个或多个协议。此时，接口的名字应该完全按照类或结构体的名字的方式进行书写：</p>
+<p>一个extension可以扩展一个已有类型，使其能够适配一个或多个协议。此时，接口的名字应该完全按照类或结构体的名字的方式进行书写：</p>
 <figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">extension</span> <span class="title">SomeType</span>: <span class="title">SomeProtocol</span>, <span class="title">AnotherProtocol</span> </span>{</div><div class="line">    <span class="comment">// implementation of protocol requirements goes here</span></div><div class="line">}</div></pre></figure>
 
 <h2 id="扩展计算型属性"><strong>扩展计算型属性</strong></h2>
-<p>「扩展」可以向已有类型添加「计算型实例属性」和「计算型类型属性」。下面的例子向Swift的内置<code>Double</code>类型添加5个计算型实例属性，从而提供与距离单位协作的基本支持，如下：</p>
+<p><strong>extension</strong>可以向已有类型添加「计算型实例属性」和「计算型类型属性」。下面的例子向Swift的内置<code>Double</code>类型添加5个计算型实例属性，从而提供与距离单位协作的基本支持，如下：</p>
 <figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Double</span> </span>{</div><div class="line">    <span class="keyword">var</span> km: <span class="type">Double</span> { <span class="keyword">return</span> <span class="keyword">self</span> * <span class="number">1_000.0</span> }</div><div class="line">    <span class="keyword">var</span> m: <span class="type">Double</span> { <span class="keyword">return</span> <span class="keyword">self</span> }</div><div class="line">    <span class="keyword">var</span> cm: <span class="type">Double</span> { <span class="keyword">return</span> <span class="keyword">self</span> / <span class="number">100.0</span> }</div><div class="line">    <span class="keyword">var</span> mm: <span class="type">Double</span> { <span class="keyword">return</span> <span class="keyword">self</span> / <span class="number">1_000.0</span> }</div><div class="line">    <span class="keyword">var</span> ft: <span class="type">Double</span> { <span class="keyword">return</span> <span class="keyword">self</span> / <span class="number">3.28084</span> }</div><div class="line">}</div><div class="line">	</div><div class="line"><span class="keyword">let</span> oneInch = <span class="number">25.4</span>.mm</div><div class="line"><span class="built_in">println</span>(<span class="string">"One inch is <span class="subst">\(oneInch)</span> meters"</span>)</div><div class="line"><span class="comment">// prints "One inch is 0.0254 meters"</span></div><div class="line"><span class="keyword">let</span> threeFeet = <span class="number">3</span>.ft</div><div class="line"><span class="built_in">println</span>(<span class="string">"Three feet is <span class="subst">\(threeFeet)</span> meters"</span>)</div><div class="line"><span class="comment">// prints "Three feet is 0.914399970739201 meters"</span></div></pre></figure>
 
 <p>P.S：<code>25.4.mm</code>有种现实物理应用的感觉，屌爆了！</p>
-<p><strong>注意</strong>：「扩展」可以添加新的计算属性，但是不可以添加存储属性，也不可以向已有属性添加属性观测器（即didSet和willSet代码块）。</p>
+<p><strong>注意</strong>：extension可以添加新的计算属性，但是不可以添加存储属性，也不可以向已有属性添加属性观测器（即didSet和willSet代码块）。</p>
 <h2 id="扩展构造器"><strong>扩展构造器</strong></h2>
-<p>「扩展」可以向已有类型添加新的构造器。这可以让你扩展其他类型，将你自己的定制类型作为构造器参数，或者提供该类型的额外初始化选项（而这些额外处理在原始实现中并没有被包含）。</p>
+<p><strong>extension</strong>可以向已有类型添加新的构造器。这可以让你扩展其他类型，将你自己的定制类型作为构造器参数，或者提供该类型的额外初始化选项（而这些额外处理在原始实现中并没有被包含）。</p>
 <p>值得一提的是，如果你使用扩展提供了一个新的构造器，你依旧有责任保证构造过程能够让所有实例完全初始化。</p>
 <h2 id="扩展方法"><strong>扩展方法</strong></h2>
-<p>「扩展」可以向已有类型添加新的实例方法和类型方法。下面的例子向<code>Int</code>类型添加一个名为repetitions的新实例方法：</p>
+<p><strong>extension</strong>可以向已有类型添加新的<strong>实例方法</strong>和<strong>类型方法</strong>。下面的例子向<code>Int</code>类型添加一个名为repetitions的新实例方法：</p>
 <figure class="highlight Swift"><pre><div class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Int</span> </span>{</div><div class="line">    <span class="func"><span class="keyword">func</span></span> repetitions(task: () -&gt; ()) {</div><div class="line">        <span class="keyword">for</span> <span class="number">_</span> <span class="keyword">in</span> <span class="number">0</span>..&lt;<span class="keyword">self</span> {</div><div class="line">            task()</div><div class="line">        }</div><div class="line">    }</div><div class="line">}</div></pre></figure>
 
 <p>定义该扩展之后,你就可以对任意整数调用repetitions方法，实现的功能则是多次执行某任<br>务：</p>
@@ -123,7 +123,7 @@
 
 <p>上述针对<code>Int</code>的扩展方法属于immutable方法，其实也可以扩展mutable方法，在定义式中加上一个<code>mutating</code>关键字修饰即可。</p>
 <h2 id="扩展下标"><strong>扩展下标</strong></h2>
-<p>扩展可以向一个已有类型添加新下标。下面栗子向Swift内置类型<code>Int</code>添加了一个整型下标。该下标<code>[n]</code>返回十进制数字从右向左数的第n个数字：</p>
+<p><strong>extension</strong>可以向一个已有类型添加新下标。下面栗子向Swift内置类型<code>Int</code>添加了一个整型下标。该下标<code>[n]</code>返回十进制数字从右向左数的第n个数字：</p>
 <figure class="highlight"><pre><div class="line">123456789<span class="attr_selector">[0]</span>返回9</div><div class="line">123456789<span class="attr_selector">[1]</span>返回8</div></pre></figure>
 
 <p>代码实现如下：</p>
@@ -228,7 +228,7 @@
 		
 			<li><a href="/categories/Swift/" title="Swift">Swift<sup>17</sup></a></li>
 		
-			<li><a href="/categories/iOS/" title="iOS">iOS<sup>62</sup></a></li>
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>61</sup></a></li>
 		
 		</ul>
 </div>
@@ -237,7 +237,7 @@
   
   <div class="archiveslist">
     <p class="asidetitle"><a href="/archives">归档</a></p>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">32</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07">七月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06">六月 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05">五月 2015</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04">四月 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03">三月 2015</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02">二月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01">一月 2015</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">8</span></li></ul>
   </div>
 
 
