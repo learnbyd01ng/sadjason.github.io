@@ -72,7 +72,7 @@
     </p>
   <p class="article-time">
     <time datetime="2015-02-11T12:56:00.000Z" itemprop="datePublished">2015-02-11</time>
-    更新日期:<time datetime="2015-02-15T05:01:59.000Z" itemprop="dateModified">2015-02-15</time>
+    更新日期:<time datetime="2015-08-20T13:15:10.000Z" itemprop="dateModified">2015-08-20</time>
     
   </p>
 </header>
@@ -100,22 +100,19 @@
 <blockquote>
 <p>iOS uses hit-testing to find the view that is under a touch. Hit-testing involves checking whether a touch is within the bounds of any relevant view objects. If it is, it recursively checks all of what view’s subviews. The lowest view in the view hierarchy that contains the touch point becomes the hit-test view. After iOS determines the hit-test view, it passes the touch event to that view for handling.</p>
 </blockquote>
-<p>来用图文对此过程进行描述，如下图：</p>
-<p><img src="/img/201502/uiresponder-view.png" alt="uiresponder-views"></p>
+<p>来用图文对此过程进行描述，如下图：<br><img src="/img/201502/uiresponder-view.png" alt="uiresponder-views"></p>
 <p>假设在view E上发生了一个user touch event，iOS的hit-test过程如下：</p>
 <ol>
 <li>touch event发生在view A的bounds内，继续检查subview B和subview C；</li>
 <li>touch event没有发生在view B的bounds内，但发生在view C的bounds内，检查view C的subview D和subview E；</li>
 <li>touch event没有发生在view D的bounds内，但发生在view E的bounds内，而view E之下再无subviews，所以确定view E是所谓的hit-test view。</li>
 </ol>
-<p>回到上述的引文，笔者阅读这段文字时产生了一个疑问：如果view A确实是view B的subview，但是view A所对应的区域不在view B的bounds之内的，譬如下图，那么在view A上发生的touch event还能被检测到吗？</p>
-<p><img src="/img/201502/QQ20150215.png" alt="20150215"></p>
+<p>回到上述的引文，笔者阅读这段文字时产生了一个疑问：如果view A确实是view B的subview，但是view A所对应的区域不在view B的bounds之内的，譬如下图，那么在view A上发生的touch event还能被检测到吗？<br><img src="/img/201502/QQ20150215.png" alt="20150215"></p>
 <p>P.S：经过笔者的测验，得到的结果是不能！</p>
 <p>在viewDidLoad方法中添加如下代码：</p>
 <figure class="highlight Objective-C"><pre><div class="line"><span class="keyword">self</span><span class="variable">.view</span><span class="variable">.backgroundColor</span> = [<span class="built_in">UIColor</span> whiteColor];</div><div class="line">	</div><div class="line"><span class="built_in">UIView</span> *lightGrayView = ({</div><div class="line">    <span class="built_in">UIView</span> *view = [[<span class="built_in">UIView</span> alloc] init];</div><div class="line">    view<span class="variable">.backgroundColor</span> = <span class="built_in">UIColor</span><span class="variable">.lightGrayColor</span>;</div><div class="line">    view;</div><div class="line">});</div><div class="line">	</div><div class="line">[<span class="keyword">self</span><span class="variable">.view</span> addSubview:lightGrayView];</div><div class="line">	</div><div class="line">[lightGrayView makeConstraints:^(MASConstraintMaker *make) {</div><div class="line">    <span class="built_in">UIView</span> *superView = <span class="keyword">self</span><span class="variable">.view</span>;</div><div class="line">    <span class="keyword">int</span> padding = <span class="number">10.0</span>;</div><div class="line">    </div><div class="line">    make<span class="variable">.left</span><span class="variable">.equalTo</span>(superView<span class="variable">.left</span>)<span class="variable">.offset</span>(padding);</div><div class="line">    make<span class="variable">.right</span><span class="variable">.equalTo</span>(superView<span class="variable">.right</span>)<span class="variable">.offset</span>(-padding);</div><div class="line">    make<span class="variable">.height</span><span class="variable">.equalTo</span>(lightGrayView<span class="variable">.width</span>)<span class="variable">.offset</span>(-padding);</div><div class="line">    make<span class="variable">.centerY</span><span class="variable">.equalTo</span>(superView<span class="variable">.centerY</span>)<span class="variable">.offset</span>(<span class="number">0</span>);</div><div class="line">}];</div><div class="line">	</div><div class="line"><span class="built_in">UIView</span> *yellowView = ({</div><div class="line">    <span class="built_in">UIView</span> *view = [[<span class="built_in">UIView</span> alloc] init];</div><div class="line">    view<span class="variable">.backgroundColor</span> = <span class="built_in">UIColor</span><span class="variable">.yellowColor</span>;</div><div class="line">    view;</div><div class="line">});</div><div class="line">	</div><div class="line">[lightGrayView addSubview:yellowView];</div><div class="line">	</div><div class="line">[yellowView makeConstraints:^(MASConstraintMaker *make) {</div><div class="line">    <span class="built_in">UIView</span> *superView = lightGrayView;</div><div class="line">    </div><div class="line">    make<span class="variable">.width</span><span class="variable">.equalTo</span>(superView<span class="variable">.width</span>)<span class="variable">.multipliedBy</span>(<span class="number">0.5</span>)<span class="variable">.offset</span>(<span class="number">0.0</span>);</div><div class="line">    make<span class="variable">.height</span><span class="variable">.equalTo</span>(yellowView<span class="variable">.width</span>)<span class="variable">.offset</span>(<span class="number">0.0</span>);</div><div class="line">    make<span class="variable">.left</span><span class="variable">.equalTo</span>(superView<span class="variable">.left</span>)<span class="variable">.offset</span>(<span class="number">0</span>);</div><div class="line">    make<span class="variable">.top</span><span class="variable">.equalTo</span>(superView<span class="variable">.top</span>)<span class="variable">.offset</span>(-<span class="number">80</span>);</div><div class="line">}];</div><div class="line">yellowView<span class="variable">.userInteractionEnabled</span> = <span class="literal">YES</span>;</div><div class="line">[yellowView addGestureRecognizer:({</div><div class="line">    UITapGestureRecognizer *gesture =</div><div class="line">    [[UITapGestureRecognizer alloc] initWithTarget:<span class="keyword">self</span> action:<span class="keyword">@selector</span>(sayHello:)];</div><div class="line">    gesture<span class="variable">.numberOfTapsRequired</span> = <span class="number">1</span>;</div><div class="line">    gesture;</div><div class="line">})];</div></pre></figure>
 
-<p>P.S：代码中使用了第三方autolayout框架Masonry，结果如下图：</p>
-<p><img src="/img/201502/QQ20150215-1.png" alt="20150215-1"></p>
+<p>P.S：代码中使用了第三方autolayout框架Masonry，结果如下图：<br><img src="/img/201502/QQ20150215-1.png" alt="20150215-1"></p>
 <p>黄色view是灰色view的subview，但是黄色view并不全部包括在灰色view的bounds中，为黄色view添加一个tap gesture事件绑定，测试发现，当点击黄色view上半部分（其灰色bounds区域之外部分），tap event并未被触发，但是点击黄色view的下半部分，touch event会被触发。</p>
 <p>故而，可以得出结论，如果view A是view B的subview，但view A并未在view B的bounds之内，则当view A的touch event发生在view B的bounds之外时，其响应其实并未发生（或说并不被承认）。</p>
 <p>其实文档中也有相应的解释：</p>
@@ -129,8 +126,7 @@
 <p>A responder object is an object that can responder to and handle events. The UIResponder class is the base class for all responder objects, and it defines the programmatic interface not only for event handling but also for common responder behavior.</p>
 </blockquote>
 <p>UIApplication, UIViewController以及UIView这几个类的实例及其子类实例都是responders。</p>
-<p>当iOS的hit-testing找到了发生的target view之后，event就在responder chain之间传送，第一个有机会处理event的responder当然是hit-testing view，如果它不能处理这个event，则会往上层（譬如super view）继续传送，但考虑到UIViewController和UIApplication的实例也是responder，所以可能传送路线不只是hit-testing view — super view — super view — super view — …那么简单，具体来说有两个的传递路线：</p>
-<p>![QQ20150215-2]QQ20150215-2.png</p>
+<p>当iOS的hit-testing找到了发生的target view之后，event就在responder chain之间传送，第一个有机会处理event的responder当然是hit-testing view，如果它不能处理这个event，则会往上层（譬如super view）继续传送，但考虑到UIViewController和UIApplication的实例也是responder，所以可能传送路线不只是hit-testing view — super view — super view — super view — …那么简单，具体来说有两个的传递路线：<br><img src="/img/201502/QQ20150215-2.png" alt="QQ20150215-2"></p>
 <p>为什么是两种呢？其实稍微看一下也很简单，第二种对应的是view controller嵌套的情况。</p>
 <p>OK，回过头来看“获取当前view controller”的<a href="#写在前面">代码</a>，第一个部分“get current window”没啥问题，第二部分代码（如下）就值得玩味了：</p>
 <figure class="highlight Objective-C"><pre><div class="line"><span class="type">UIView</span> *frontView = [[window subviews] objectAtIndex:<span class="number">0</span>];</div><div class="line">id nextResponder = [frontView nextResponder];</div><div class="line"></div><div class="line"><span class="keyword">if</span> ([nextResponder isKindOfClass:[<span class="type">UIViewController</span> class]]) {</div><div class="line">    <span class="literal">result</span> = nextResponder;</div><div class="line">} <span class="keyword">else</span> {</div><div class="line">    <span class="literal">result</span> = window.rootViewController;</div><div class="line">}</div></pre></figure>
