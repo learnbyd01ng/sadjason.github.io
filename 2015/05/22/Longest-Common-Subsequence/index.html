@@ -74,7 +74,7 @@ P.S：LCS问题可以相当复杂，譬如3-LCS（求三">
     </p>
   <p class="article-time">
     <time datetime="2015-05-22T00:30:11.000Z" itemprop="datePublished">2015-05-22</time>
-    更新日期:<time datetime="2015-07-04T08:58:40.000Z" itemprop="dateModified">2015-07-04</time>
+    更新日期:<time datetime="2015-09-07T15:57:44.000Z" itemprop="dateModified">2015-09-07</time>
     
   </p>
 </header>
@@ -91,7 +91,10 @@ P.S：LCS问题可以相当复杂，譬如3-LCS（求三">
 <p>本文是基于动态规划的LCS解题报告。</p>
 <p>P.S：LCS问题可以相当复杂，譬如3-LCS（求三条串的LCS问题）以及更高阶的LCS问题，本文主要针对最简单的二阶LCS问题，即求解两个字符串的LCS问题。</p>
 <h2 id="LCS概述"><strong>LCS概述</strong></h2>
-<p>LCS问题的引入貌似是为了解答一个生物问题：<br>在生物应用中，经常需要比较两个（或多个）不同生物体的DNA。一个DNA串由一串称为碱基的分子组成，碱基有4种类型，用英文单词{A,C,G,T}代表这四种碱基，这样某个生物的DNA可能为S1=ACCGGTCGAGTGCGCGGAAGCCGGCCGAA，另一个生物的DNA可能为S2=GTCGTTCGGAATGCCGTTGCTCTGTAAA    ，现在需要比较这两个串以确定它们的DNA相似度，该相似度常用来度量两种生物相似度的指标。</p>
+<p>LCS问题的引入貌似是为了解答一个生物问题：</p>
+<blockquote>
+<p>在生物应用中，经常需要比较两个（或多个）不同生物体的DNA。一个DNA串由一串称为碱基的分子组成，碱基有4种类型，用英文单词{A,C,G,T}代表这四种碱基，这样某个生物的DNA可能为S1=ACCGGTCGAGTGCGCGGAAGCCGGCCGAA，另一个生物的DNA可能为S2=GTCGTTCGGAATGCCGTTGCTCTGTAAA    ，现在需要比较这两个串以确定它们的DNA相似度，该相似度常用来度量两种生物相似度的指标。</p>
+</blockquote>
 <p>有了这个应用场景，我们就能很容易描述LCS问题了：<br>给定两个序列X={x1, x2, x3, …, xm}和Y={y1, y2, y3, …, yn}，求X和Y长度最长的公共子序列。</p>
 <p>再叙述下文之前，还得详细比较两个概念：「子序列」和「子串」。</p>
 <p><strong>子序列和子串</strong></p>
@@ -100,17 +103,17 @@ P.S：LCS问题可以相当复杂，譬如3-LCS（求三">
 <li>s和xxoo都是有序集合；</li>
 <li>xxoo中的所有元素都能在s中找到对应，并且这些元素在s中的前后顺序和在xxoo中的前后顺序是一致的；</li>
 </ul>
-<p>因此xxoo=”xxoo”是s=”#x#x#x#o#o#o#”的子序列，但xxoo不是p=”#o#o#o#x#x#x#”的子序列。</p>
-<p>值得注意的是，有两个概念容易弄混淆，「子序列」和「子串」，它们的英文描述分别是：subsequence和subsequence。「子串」相对于「子序列」多了一个条件，简而言之，如果xxoo是s的子序列，且xxoo中的元素在s集合中是连续的，则认为xxoo是s的子串。譬如对于字符串s=”abcdefg”，”ac”是s的子序列但不是子串，因为在s中字符’a’和’c’不连续，而子串要求字符在原集合中连续，因此”ab”是s的子串。</p>
+<p>因此xxoo=“xxoo”是s=“#x#x#x#o#o#o#”的子序列，但xxoo不是p=“#o#o#o#x#x#x#”的子序列。</p>
+<p>值得注意的是，有两个概念容易弄混淆，「子序列」和「子串」，它们的英文描述分别是：subsequence和subsequence。「子串」相对于「子序列」多了一个条件，简而言之，如果xxoo是s的子序列，且xxoo中的元素在s集合中是连续的，则认为xxoo是s的子串。譬如对于字符串s=“abcdefg”，“ac”是s的子序列但不是子串，因为在s中字符’a’和’c’不连续，而子串要求字符在原集合中连续，因此”ab”是s的子串。</p>
 <h2 id="LCS分析"><strong>LCS分析</strong></h2>
 <p><strong>暴力求解</strong></p>
 <p>所有的算法问题都有一个暴力解答的方案，LCS也不例外，我们来分析一下暴力求解的代价。</p>
 <p>如果用暴力搜索方法求解LCS问题，就要穷举X的所有子序列，对每个子序列检查它是否也是Y的子序列，记录找到的最长子序列。假设X的每个子序列对应X的下标集合{1,2,3,…,m}的一个子集，则X有2^m个子序列，因此暴力方法的运行时间为指数阶（这还不考虑「检查X的子序列是否是Y的子序列」的时间复杂度），这种做法显然不可取。</p>
 <p>如下定理所示，LCS问题具有最优子结构性质的。</p>
 <p><strong>LCS的最优子结构</strong></p>
-<p>令X={x1, x2, x3, …, xm}和Y={y1, y2, y3, …, yn}为两个序列，Z={z1, z2, z3, …, zk}为X和Y的任意LCS，设X(i)、Y(i)、Z(i)分别表示X、Y、Z的前i个元素构成的集合。则：</p>
+<p>令X={x1, x2, x3, …, xm}和Y={y1, y2, y3, …, yn}为两个序列，Z={z1, z2, z3, …, zk}为X和Y的任意LCS，设X(i)、Y(i)、Z(i)分别表示X、Y、Z的前i个元素构成的集合（Z和Z(k)、Y和Y(n)、X和X(m)等价）。则：</p>
 <ol>
-<li>如果xm=yn，则zk=xm=yn且Z(k-1)是X（m-1)和Y(i-1)的一个LCS；</li>
+<li>如果xm=yn，则zk=xm=yn且Z(k-1)是X(m-1)和Y(n-1)的一个LCS；</li>
 <li>如果xm!=yn，那么zk!=xm意味着Z是X(m-1)和Y的一个LCS；</li>
 <li>如果xm!=yn，那么zk!=yn意味着Z是X和Y(n-1)的一个LCS；</li>
 </ol>
@@ -128,9 +131,9 @@ P.S：LCS问题可以相当复杂，譬如3-LCS（求三">
 <li>若m=0或n=0，lcs(m, n)=0；</li>
 </ul>
 <p>P.S：max(lcs(m-1, n), lcs(m, n-1))返回长度更长的一个LCS。</p>
-<p>显然，在具体实现时，根据上述的式子我们知道，lcs[i][j]的依赖于lcs[i-1][j-1]、lcs[i-1][j]以及lcs[i][j-1]，如下图：<br><img src="/img/201505/QQ20150524-1.png" width="466" height="466/"></p>
+<p>显然，在具体实现时，根据上述的式子我们知道，lcs[i][j]的依赖于lcs[i-1][j-1]、lcs[i-1][j]以及lcs[i][j-1]，如下图：<br><img src="/img/201505/QQ20150524-1.png" width="233" height="233/"></p>
 <p>因此我们在填充这个表的时候，要从上到下，从左到右逐行逐列填充。</p>
-<p>此外，在代码实现过程中，我们一般不存储LCS值信息（字符串），因为这样过于浪费存储空间了，一般只存储最长公共子序列的长度信息，有了长度信息我们将具体的子序列给找出来。如下这张图为我们提供了理论指导：<br><img src="/img/201505/1313577405FsRn.jpg" width="374" height="384/"></p>
+<p>此外，在代码实现过程中，我们一般不存储LCS值信息（字符串），因为这样过于浪费存储空间了，一般只存储最长公共子序列的长度信息，有了长度信息我们将具体的子序列给找出来。如下这张图为我们提供了理论指导：<br><img src="/img/201505/1313577405FsRn.jpg" width="187" height="192/"></p>
 <p>关于这张图的具体描述，本文就略过了，《算法导论》上有更详细的说明。</p>
 <h2 id="代码实现"><strong>代码实现</strong></h2>
 <p>本文LCS的代码基于Python实现，如下：</p>

@@ -76,7 +76,7 @@
     </p>
   <p class="article-time">
     <time datetime="2015-06-21T10:33:31.000Z" itemprop="datePublished">2015-06-21</time>
-    更新日期:<time datetime="2015-08-01T08:34:50.000Z" itemprop="dateModified">2015-08-01</time>
+    更新日期:<time datetime="2015-08-25T15:28:25.000Z" itemprop="dateModified">2015-08-25</time>
     
   </p>
 </header>
@@ -103,7 +103,7 @@
 <blockquote>
 <p>常见的排列算法有：字典序法、递增进位制数法、递减进位制数法、邻位对换法以及递归法。</p>
 </blockquote>
-<p>其中最常见的算法包括：字典序法和递归法，下文将针对具体题目阐述这两种算法。</p>
+<p>其中最常见的算法包括：<strong>字典序法</strong>和<strong>递归法</strong>，下文将针对具体题目阐述这两种算法。</p>
 <h3 id="当集合不含重复元素时"><strong>当集合不含重复元素时</strong></h3>
 <p>LeetCode有题：<a href="https://leetcode.com/problems/permutations/" target="_blank" rel="external">Permutations</a>，描述如下：</p>
 <blockquote>
@@ -134,7 +134,7 @@
 <p>很多的博客上都详细介绍了<strong>字典排序</strong>的具体操作过程，本文也没啥特别的说明，直接摘录整合。</p>
 <p>设P是一个长度为n序列，pi表示第i个元素，则P=p1p2……pn，在「字典序法」算法中，我们要处理的事情包括：</p>
 <ol>
-<li>从排列的右端开始，找出第一个比右邻数字小的数字的序号j，即<code>j=max{i|pi&lt;pi+1}</code>，譬如对于<code>3465</code>，从第3个元素开始，<code>6</code>右邻数字<code>5</code>大，继续向左推进，<code>4</code>比右邻<code>6</code>小，满足要求，所以j对应<code>4</code>的序号；</li>
+<li>从排列的右端开始，找出第一个比右邻数字小的数字的序号j，即<code>j=max{i|pi&lt;pi+1}</code>，譬如对于<code>3465</code>，从第3个元素开始，<code>6</code>比右邻数字<code>5</code>大，继续向左推进，<code>4</code>比右邻<code>6</code>小，满足要求，所以j对应<code>4</code>的序号；</li>
 <li>在pj的右边的数字中，找出所有比pj大的数中的最小数字pk，譬如j对应数字<code>4</code>，<code>4</code>的右侧数字包括<code>6</code>和<code>5</code>，比<code>4</code>大的最小数字是<code>5</code>，所以k对应<code>5</code>的序号；</li>
 <li>交换pj和pk的值；</li>
 <li>反转序号j之后的数字；</li>
