@@ -74,7 +74,7 @@ Given a string S, find the longest palindromic substring in S. You may assu">
     </p>
   <p class="article-time">
     <time datetime="2015-05-22T01:25:06.000Z" itemprop="datePublished">2015-05-22</time>
-    更新日期:<time datetime="2015-07-04T08:57:01.000Z" itemprop="dateModified">2015-07-04</time>
+    更新日期:<time datetime="2015-09-09T14:40:47.000Z" itemprop="dateModified">2015-09-09</time>
     
   </p>
 </header>
@@ -114,9 +114,9 @@ Given a string S, find the longest palindromic substring in S. You may assu">
 <p>所以，初始化式如下：</p>
 <ul>
 <li>当i==j，p(i,j)=1；</li>
-<li>当j==i+1，若S[i]==S[j]，则p(i,j)=1，否则p(i,j)=0；</li>
+<li>当j==i+1，若S[i]==S[j]，则p(i,j)=2，否则p(i,j)=0；</li>
 </ul>
-<p>p(i,j)依赖于p(i-1)(j-1)，下图给出了更生动的描述：<br><img src="/img/201505/QQ20150524-4.png" width="466" height="466"></p>
+<p>p(i,j)依赖于p(i+1)(j-1)，下图给出了更生动的描述：<br><img src="/img/201505/QQ20150524-4.png" width="466" height="466"></p>
 <p>上图指明了二维数组p的填充策略：先填充最内侧的斜对角线上的表格，然后基于上文的转移方程填充其他对角线上的格子。</p>
 <p>P.S：图中黄色箭头覆盖的单元格的填充顺序也可以是：「自下向上」「从左向右」。</p>
 <p>综上，基于「动态规划」的「最长回文子串」的解题过程（Python代码）如下：</p>
